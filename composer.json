@@ -1,0 +1,85 @@
+{
+    "name": "softark/agri",
+    "description": "isarigami.net agri",
+    "keywords": ["isarigami", "岩座神", "agriculture", "農業"],
+    "homepage": "https://agri.isarigami.net/",
+    "type": "project",
+    "license": "BSD-3-Clause",
+    "support": {
+        "source": "https://github.com/softark/agri"
+    },
+    "minimum-stability": "stable",
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/softark/yii2-admin"
+    },
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  ],
+    "require": {
+      "php": ">=8.0",
+      "yiisoft/yii2": "~2.0.50",
+      "yiisoft/yii2-bootstrap5": "~2.0.2",
+      "yiisoft/yii2-symfonymailer": "~3.0.0",
+      "mdmsoft/yii2-admin": "dev-softark-extra",
+      "xstreamka/yii2-mobile-detect": "*",
+      "kartik-v/yii2-widget-datepicker": "dev-master",
+      "kartik-v/yii2-widget-timepicker": "dev-master",
+      "bower-asset/exif-js": "*",
+      "bower-asset/bootbox": "~5.0",
+      "ext-imagick": "*",
+      "ext-gd": "*",
+      "istvan-ujjmeszaros/bootstrap-duallistbox": "~4.0.0",
+      "softark/yii2-dual-listbox": "dev-master",
+      "ext-exif": "*",
+      "ext-curl": "*"
+    },
+    "require-dev": {
+        "yiisoft/yii2-debug": "~2.1.0",
+        "yiisoft/yii2-gii": "~2.2.0",
+        "yiisoft/yii2-faker": "~2.0.0",
+        "codeception/codeception": "^5.0.0 || ^4.0",
+        "codeception/lib-innerbrowser": "^4.0 || ^3.0 || ^1.1",
+        "codeception/module-asserts": "^3.0 || ^1.1",
+        "codeception/module-yii2": "^1.1",
+        "codeception/module-filesystem": "^3.0 || ^2.0 || ^1.1",
+        "codeception/verify": "^3.0 || ^2.2"
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer" : true
+        },
+        "process-timeout": 1800,
+        "fxp-asset": {
+            "enabled": false
+        }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "yii\\composer\\Installer::postInstall"
+        ],
+        "post-create-project-cmd": [
+            "yii\\composer\\Installer::postCreateProject",
+            "yii\\composer\\Installer::postInstall"
+        ]
+    },
+    "extra": {
+        "yii\\composer\\Installer::postCreateProject": {
+            "setPermission": [
+                {
+                    "runtime": "0777",
+                    "web/assets": "0777",
+                    "yii": "0755"
+                }
+            ]
+        },
+        "yii\\composer\\Installer::postInstall": {
+            "generateCookieValidationKey": [
+                "config/web.php"
+            ]
+        }
+    }
+}
