@@ -26,6 +26,7 @@ class Icon
         'delete' => ['label' => '削除', 'class' => 'fa-solid fa-trash-can'],
         'cancel' => ['label' => 'キャンセル', 'class' => 'fa-solid fa-xmark'],
         'rbac' => ['label' => 'RBAC', 'class' => 'fa-solid fa-gear'],
+        'role' => ['label' => '権限', 'class' => 'fa-solid fa-gear'],
         'register' => ['label' => 'メモを新規登録', 'class' => 'fa-solid fa-pencil'],
         'category' => ['label' => 'カテゴリ', 'class' => 'fa-solid fa-folder'],
         'category-create' => ['label' => 'カテゴリを新規登録', 'class' => 'fa-solid fa-folder-plus'],
@@ -39,6 +40,7 @@ class Icon
         'memo' => ['label' => 'メモ', 'class' => 'fa-solid fa-book'],
         'left' => ['label' => '前へ', 'class' => 'fa-solid fa-left-long'],
         'right' => ['label' => '次へ', 'class' => 'fa-solid fa-right-long'],
+        'go-back' => ['label' => '一覧へ', 'class' => 'fa-solid fa-turn-up'],
     ];
 
     /**

@@ -38,21 +38,21 @@ class m251125_094632_setup_rbac_basics extends Migration
         $userRole->ruleName = $isAUserRule->name;
         $auth->add($userRole);
 
-        // 'board' 「役員」ロールを追加
-        $boardRole = $auth->createRole('board');
-        $boardRole->description = '役員';
-        $auth->add($boardRole);
+        // 'editor' 「編集者」ロールを追加
+        $editorRole = $auth->createRole('editor');
+        $editorRole->description = '編集者';
+        $auth->add($editorRole);
 
-        // 'board' は子として 'user' を持つ
-        $auth->addChild($boardRole, $userRole);
+        // 'editor' は子として 'user' を持つ
+        $auth->addChild($editorRole, $userRole);
 
         // 'admin' ロールを追加
         $adminRole = $auth->createRole('admin');
         $adminRole->description = '管理者';
         $auth->add($adminRole);
 
-        // 'admin' は子として 'board' を持つ
-        $auth->addChild($adminRole, $boardRole);
+        // 'admin' は子として 'editor' を持つ
+        $auth->addChild($adminRole, $editorRole);
 
         // ユーザ 'system' に 'admin' ロールを割当て
         $auth->assign($adminRole, SYSTEM_USER_ID);
@@ -74,9 +74,9 @@ class m251125_094632_setup_rbac_basics extends Migration
         $adminRole = $auth->getRole('admin');
         $auth->remove($adminRole);
 
-        // 'board' ロールを削除
-        $boardRole = $auth->getRole('board');
-        $auth->remove($boardRole);
+        // 'editor' ロールを削除
+        $editorRole = $auth->getRole('editor');
+        $auth->remove($editorRole);
 
         // 'user' ロールを削除
         $userRole = $auth->getRole('user');

@@ -4,6 +4,7 @@
 /** @var string $content */
 
 use app\assets\AppAsset;
+use app\assets\BootboxAsset;
 use app\assets\FontAwesomeAsset;
 use app\widgets\Alert;
 use app\models\Icon;
@@ -13,6 +14,7 @@ use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
 
 AppAsset::register($this);
+BootboxAsset::overrideSystemConfirm();
 FontAwesomeAsset::register($this);
 
 $this->registerCsrfMetaTags();

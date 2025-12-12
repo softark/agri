@@ -73,7 +73,7 @@ $config = [
         ],
         'authManager' => [
             'class' => yii\rbac\DbManager::class,
-            'defaultRoles' => ['member'],
+            'defaultRoles' => ['user'],
             'cache' => 'cache',
             'cacheKey' => 'agri-rbac',
         ],
@@ -105,6 +105,7 @@ $config = [
         'class' => mdm\admin\components\AccessControl::class,
         'allowActions' => [
             'site/*',
+            'tanada/*',
         ],
     ],
     'params' => require(__DIR__ . '/params.php'),
