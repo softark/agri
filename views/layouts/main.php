@@ -4,26 +4,34 @@
 /** @var string $content */
 
 use app\assets\AppAsset;
+use app\assets\FontAwesomeAsset;
 use app\widgets\Alert;
+use app\models\Icon;
 use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
 
 AppAsset::register($this);
+FontAwesomeAsset::register($this);
 
 $this->registerCsrfMetaTags();
 $this->registerMetaTag(['charset' => Yii::$app->charset], 'charset');
 $this->registerMetaTag(['name' => 'viewport', 'content' => 'width=device-width, initial-scale=1, shrink-to-fit=no']);
 $this->registerMetaTag(['name' => 'description', 'content' => $this->params['meta_description'] ?? '']);
 $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_keywords'] ?? '']);
-$this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii::getAlias('@web/favicon.ico')]);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>" class="h-100">
 <head>
     <title><?= Html::encode($this->title) ?></title>
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="農会" />
+    <link rel="manifest" href="/site.webmanifest" />
     <?php $this->head() ?>
 </head>
 <body class="d-flex flex-column h-100">
@@ -32,27 +40,38 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 <header id="header">
     <?php
     NavBar::begin([
-        'brandLabel' => Yii::$app->name,
+        'brandLabel' => Html::img('/favicon-96x96.png', ['width' => 24, 'height' => 24, 'style' => 'margin-top:-8px;']) . ' ' . Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
     ]);
+    $items = [
+    ];
+    if (!Yii::$app->user->isGuest) {
+        $items[] = ['label' => Icon::getIconAndLabel('memo'), 'url' => ['/memo'], 'encode' => false];
+    }
     echo Nav::widget([
-        'options' => ['class' => 'navbar-nav'],
-        'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
-            Yii::$app->user->isGuest
-                ? ['label' => 'Login', 'url' => ['/site/login']]
-                : '<li class="nav-item">'
-                    . Html::beginForm(['/site/logout'])
-                    . Html::submitButton(
-                        'Logout (' . Yii::$app->user->identity->username . ')',
-                        ['class' => 'nav-link btn btn-link logout']
-                    )
-                    . Html::endForm()
-                    . '</li>'
-        ]
+            'options' => ['class' => 'navbar-nav me-auto'],
+            'items' => $items,
+            'activateParents' => true,
+            'encodeLabels' => false,
+    ]);
+    $items = [
+        // ['label' => 'HOME', 'url' => ['/site/index'], 'encode' => false],
+    ];
+    if (Yii::$app->user->isGuest) {
+        $items[] = ['label' => Icon::getIconAndLabel('login'), 'url' => ['/site/login'], 'encode' => false];
+    } else {
+        $items[] = ['label' => Icon::getIconAndLabel('users'), 'url' => ['/user/index'], 'encode' => false];
+        if (Yii::$app->user->can('admin')) {
+            $items[] = ['label' => Icon::getIconAndLabel('rbac'), 'url' => ['/rbac'], 'encode' => false];
+        }
+        $items[] = ['label' => Icon::getIcon('user') . ' ' . Yii::$app->user->identity->longname, 'url' => ['/user/view', 'id' => Yii::$app->user->identity->id], 'encode' => false];
+        $items[] = ['label' => Icon::getIconAndLabel('logout'), 'url' => ['/site/logout'], 'encode' => false, 'linkOptions' => ['data-method' => 'post']];
+    }
+    echo Nav::widget([
+            'options' => ['class' => 'navbar-nav'],
+            'encodeLabels' => false,
+            'items' => $items,
     ]);
     NavBar::end();
     ?>
@@ -71,8 +90,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 <footer id="footer" class="mt-auto py-3 bg-light">
     <div class="container">
         <div class="row text-muted">
-            <div class="col-md-6 text-center text-md-start">&copy; My Company <?= date('Y') ?></div>
-            <div class="col-md-6 text-center text-md-end"><?= Yii::powered() ?></div>
+            <div class="col-md-6 text-center text-md-start">&copy; isarigami.net <?= date('Y') ?></div>
         </div>
     </div>
 </footer>

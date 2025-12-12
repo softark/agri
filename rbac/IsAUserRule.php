@@ -6,15 +6,15 @@ use Yii;
 use yii\rbac\Rule;
 
 /**
- * Class IsAMemberRule
+ * Class IsAUserRule
  * @package app\rbac
  *
- * ログイン・ユーザであるかどうかを判断する規則。'member' ロールに使用する。
- * ログイン・ユーザであれば、'member' のロールを保持していると認める。
+ * ログイン・ユーザであるかどうかを判断する規則。'user' ロールに使用する。
+ * ログイン・ユーザであれば、'user' のロールを保持していると認める。
  */
-class IsAMemberRule extends Rule
+class IsAUserRule extends Rule
 {
-    public $name = 'isAMember';
+    public $name = 'isAUser';
 
     /**
      * @param int|string $user

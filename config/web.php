@@ -7,7 +7,14 @@ $config = [
     'name' => '岩座神農会',
     'language' => 'ja-JP',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log', 'session'],
+    'bootstrap' => [
+        'log',
+        'session',
+        function() {
+            \app\models\GridAndListUtil::setupGrid();
+            \app\models\GridAndListUtil::setupListView();
+        }
+    ],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm' => '@vendor/npm-asset',
@@ -52,17 +59,21 @@ $config = [
             ],
         ],
         'db' => require(__DIR__ . '/db.php'),
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                '<m:\w+>/<c:[\w-]+>/<id:\d+>' => '<m>/<c>/view',
+                '<m:\w+>/<c:[\w-]+>/<id:\d+>/<a:[\w-]+>' => '<m>/<c>/<a>',
+                '<c:[\w-]+>/<id:\d+>' => '<c>/view',
+                '<c:[\w-]+>/<id:\d+>/<a:[\w-]+>' => '<c>/<a>',
+                '<m:\w+>/<c:[\w-]+>/<a:[\w-]+>' => '<m>/<c>/<a>',
+                '<c:[\w-]+>/<a:[\w-]+>' => '<c>/<a>',
             ],
         ],
-        */
         'authManager' => [
             'class' => yii\rbac\DbManager::class,
-            'defaultRoles' => ['guest', 'friend'],
+            'defaultRoles' => ['member'],
             'cache' => 'cache',
             'cacheKey' => 'agri-rbac',
         ],
@@ -73,7 +84,7 @@ $config = [
             'controllerMap' => [
                 'assignment' => [
                     'class' => mdm\admin\controllers\AssignmentController::class,
-                    'searchClass' => \common\auth\UserSearch::class,
+                    'searchClass' => \app\models\UserSearch::class,
                     'usernameField' => 'username',
                     'fullnameField' => 'dispname',
                     'extraColumns' => [

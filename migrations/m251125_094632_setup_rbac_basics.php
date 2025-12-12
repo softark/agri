@@ -28,23 +28,23 @@ class m251125_094632_setup_rbac_basics extends Migration
     {
         $auth = $this->getAuthManager();
 
-        // 'isAMember' 規則を追加
-        $isAMemberRule = new \app\rbac\IsAMemberRule();
-        $auth->add($isAMemberRule);
+        // 'isAUser' 規則を追加
+        $isAUserRule = new \app\rbac\IsAUserRule();
+        $auth->add($isAUserRule);
 
-        // 'member' ロールを追加
-        $memberRole = $auth->createRole('member');
-        $memberRole->description = 'ログイン･ユーザ';
-        $memberRole->ruleName = $isAMemberRule->name;
-        $auth->add($memberRole);
+        // 'user' ロールを追加
+        $userRole = $auth->createRole('user');
+        $userRole->description = 'ログイン･ユーザ';
+        $userRole->ruleName = $isAUserRule->name;
+        $auth->add($userRole);
 
         // 'board' 「役員」ロールを追加
         $boardRole = $auth->createRole('board');
         $boardRole->description = '役員';
         $auth->add($boardRole);
 
-        // 'board' は子として 'member' を持つ
-        $auth->addChild($boardRole, $memberRole);
+        // 'board' は子として 'user' を持つ
+        $auth->addChild($boardRole, $userRole);
 
         // 'admin' ロールを追加
         $adminRole = $auth->createRole('admin');
@@ -78,31 +78,16 @@ class m251125_094632_setup_rbac_basics extends Migration
         $boardRole = $auth->getRole('board');
         $auth->remove($boardRole);
 
-        // 'member' ロールを削除
-        $memberRole = $auth->getRole('member');
-        $auth->remove($memberRole);
+        // 'user' ロールを削除
+        $userRole = $auth->getRole('user');
+        $auth->remove($userRole);
 
-        // 'IsAMember' ルールを削除
-        $isAMemberRule = new \app\rbac\IsAMemberRule();
-        $auth->remove($isAMemberRule);
+        // 'IsAUser' ルールを削除
+        $isAUserRule = new \app\rbac\IsAUserRule();
+        $auth->remove($isAUserRule);
 
         // 親子関係とロール割当ては自動的に削除される
 
         $auth->invalidateCache();
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m251125_094632_setup_rbac_basics cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }
