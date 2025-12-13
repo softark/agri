@@ -86,3 +86,6 @@ a.desc:after {
 .form-group {
     margin-bottom: 1rem;
 }
+.search-buttons {
+    padding-top: 22px;
+}

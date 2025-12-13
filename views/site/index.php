@@ -20,7 +20,14 @@ $this->title = '岩座神農会';
         <?php if (Yii::$app->user->isGuest): ?>
             <p><?= Html::a(Icon::getIconAndLabel('login'), ['/site/login'], ['class' => "btn btn-lg btn-success"]) ?></p>
         <?php else: ?>
-            <p><?= Html::a(Icon::getIcon('memo') . ' メモを見る', ['/memo/index'], ['class' => "btn btn-lg btn-success"]) ?></p>
+            <div class="row">
+                <?php if (Yii::$app->user->can('admin')): ?>
+                    <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
+                        <p><?= Html::a('棚田', ['/tanada'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
+                    </div>
+                <?php endif; ?>
+            </div>
+            <!--            <p>--><?php //= Html::a(Icon::getIcon('memo') . ' メモを見る', ['/memo/index'], ['class' => "btn btn-lg btn-success"]) ?><!--</p>-->
             <hr/>
             <p><?= Yii::$app->user->identity->getLongName() ?> としてログインしています。</p>
             <p>

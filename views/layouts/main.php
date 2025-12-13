@@ -49,7 +49,10 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
     $items = [
     ];
     if (!Yii::$app->user->isGuest) {
-        $items[] = ['label' => Icon::getIconAndLabel('memo'), 'url' => ['/memo'], 'encode' => false];
+//        $items[] = ['label' => Icon::getIconAndLabel('memo'), 'url' => ['/memo'], 'encode' => false];
+        if (Yii::$app->user->can('admin')) {
+            $items[] = ['label' => '棚田', 'url' => ['/tanada'], 'encode' => false];
+        }
     }
     echo Nav::widget([
             'options' => ['class' => 'navbar-nav me-auto'],

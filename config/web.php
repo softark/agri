@@ -105,7 +105,6 @@ $config = [
         'class' => mdm\admin\components\AccessControl::class,
         'allowActions' => [
             'site/*',
-            'tanada/*',
         ],
     ],
     'params' => require(__DIR__ . '/params.php'),
