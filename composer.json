@@ -30,6 +30,7 @@
       "kartik-v/yii2-widget-timepicker": "dev-master",
       "bower-asset/exif-js": "*",
       "bower-asset/bootbox": "~5.0",
+      "bower-asset/jquery-ui": "~1.12.1",
       "ext-imagick": "*",
       "ext-gd": "*",
       "istvan-ujjmeszaros/bootstrap-duallistbox": "~4.0.0",

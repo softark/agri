@@ -1,30 +1,34 @@
 <?php
 
 use app\models\Icon;
-use app\models\User;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\User $model */
+/** @var app\models\Person $model */
 
-$this->title = 'ユーザ : ' . $model->longname;
-$this->params['breadcrumbs'][] = ['label' => 'ユーザ', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $model->longname;
-\yii\web\YiiAsset::register($this);
+$this->title = $model->dispname;
+$this->params['breadcrumbs'][] = ['label' => '住所録', 'url' => ['index']];
+$this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="user-view">
+<div class="person-view">
 
-    <h1><?= Icon::getIcon('user') . ' ' . Html::encode($this->title) ?></h1>
+    <h1><?= Icon::getIcon('address-card') . ' 住所カード : ' . Html::encode($this->title) ?></h1>
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-lg-6 col-md-8">
 
             <?= DetailView::widget([
                     'model' => $model,
                     'attributes' => [
-                            'username',
                             'dispname',
+                            'yomigana',
+                            'org_name',
+                            'zip',
+                            'address',
+                            'phone1',
+                            'phone2',
+                            'memo',
                             [
                                     'attribute' => 'created_at',
                                     'value' => function ($model) {
@@ -51,18 +55,15 @@ $this->params['breadcrumbs'][] = $model->longname;
                             ],
                     ],
             ]) ?>
-
             <p>
-                <?php if (\yii::$app->user->can('user.edit', ['id' => $model->id])
-                        && $model->id >= User::USER_NORMAL_START) : ?>
+                <?php if (\yii::$app->user->can('person.edit', ['id' => $model->id])) : ?>
                     <?= Html::a(Icon::getIconAndLabel('update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
                 <?php endif; ?>
-                <?php if (\yii::$app->user->can('user.delete')
-                        && $model->id >= User::USER_NORMAL_START) : ?>
+                <?php if (\yii::$app->user->can('person.delete')) : ?>
                     <?= Html::a(Icon::getIconAndLabel('delete'), ['delete', 'id' => $model->id], [
                             'class' => 'btn btn-danger',
                             'data' => [
-                                    'confirm' => 'ユーザ <strong>"' . $model->longname . '"</strong> を削除しますか？',
+                                    'confirm' => '住所カード <strong>"' . $model->name . '"</strong> を削除しますか？',
                                     'method' => 'post',
                             ],
                     ]) ?>
@@ -71,5 +72,4 @@ $this->params['breadcrumbs'][] = $model->longname;
             </p>
         </div>
     </div>
-
 </div>

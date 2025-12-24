@@ -49,9 +49,11 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
     $items = [
     ];
     if (!Yii::$app->user->isGuest) {
-//        $items[] = ['label' => Icon::getIconAndLabel('memo'), 'url' => ['/memo'], 'encode' => false];
+        $items[] = ['label' => Icon::getIconAndLabel('address-book'), 'url' => ['/person'], 'encode' => false];
         if (Yii::$app->user->can('admin')) {
+            $items[] = ['label' => '住所録辞書', 'url' => ['/person-work'], 'encode' => false];
             $items[] = ['label' => '棚田', 'url' => ['/tanada'], 'encode' => false];
+            $items[] = ['label' => '山林', 'url' => ['/forest'], 'encode' => false];
         }
     }
     echo Nav::widget([

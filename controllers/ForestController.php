@@ -2,17 +2,17 @@
 
 namespace app\controllers;
 
-use app\models\Tanada;
-use app\models\TanadaSearch;
+use app\models\Forest;
+use app\models\ForestSearch;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * TanadaController implements the CRUD actions for Tanada model.
+ * ForestController implements the CRUD actions for Forest model.
  */
-class TanadaController extends Controller
+class ForestController extends Controller
 {
     /**
      * @inheritDoc
@@ -33,13 +33,13 @@ class TanadaController extends Controller
     }
 
     /**
-     * Lists all Tanada models.
+     * Lists all Forest models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new TanadaSearch();
+        $searchModel = new ForestSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         if (Yii::$app->request->isPjax) {
@@ -56,7 +56,7 @@ class TanadaController extends Controller
     }
 
     /**
-     * Displays a single Tanada model.
+     * Displays a single Forest model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -69,7 +69,29 @@ class TanadaController extends Controller
     }
 
     /**
-     * Updates an existing Tanada model.
+     * Creates a new Forest model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return string|\yii\web\Response
+     */
+    public function actionCreate()
+    {
+        $model = new Forest();
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Updates an existing Forest model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -89,15 +111,29 @@ class TanadaController extends Controller
     }
 
     /**
-     * Finds the Tanada model based on its primary key value.
+     * Deletes an existing Forest model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param int $id ID
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * Finds the Forest model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Tanada the loaded model
+     * @return Forest the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Tanada::findOne(['id' => $id])) !== null) {
+        if (($model = Forest::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

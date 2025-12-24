@@ -40,6 +40,10 @@ $config = [
                 'secure' => true,
             ],
         ],
+        'formatter' => [
+            'class' => 'yii\i18n\Formatter',
+            'nullDisplay' => '&nbsp;',
+        ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],

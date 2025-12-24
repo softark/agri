@@ -4,7 +4,7 @@ use yii\base\InvalidConfigException;
 use yii\db\Migration;
 use yii\rbac\DbManager;
 
-require_once ('builtInUsers.php');
+require_once('data/builtInUsers.php');
 
 class m251125_094632_setup_rbac_basics extends Migration
 {

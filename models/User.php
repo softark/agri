@@ -54,7 +54,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function tableName()
     {
-        return '{{%user}}';
+        return 'user';
     }
 
     /**
@@ -276,6 +276,8 @@ class User extends ActiveRecord implements IdentityInterface
                 $this->created_by = $user_id;
             }
             $this->updated_by = $user_id;
+            $dt = new \DateTimeImmutable("now", new \DateTimeZone("UTC"));
+            $this->updated_at = $dt->format("Y-m-d H:i:s T");
             return true;
         } else {
             return false;

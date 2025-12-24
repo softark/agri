@@ -54,7 +54,6 @@ class UserController extends Controller
                 'dataProvider' => $dataProvider,
             ]);
         } else {
-            // LogUtil::info("viewed User index.");
             return $this->render('index', [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
@@ -83,15 +82,25 @@ class UserController extends Controller
     /**
      * Creates a new User model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return array|string|\string[][]|Response
      */
     public function actionCreate()
     {
         $model = new User();
+        $model->scenario = 'create';
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['index']);
+            if ($model->load(Yii::$app->request->post())) {
+                if (Yii::$app->request->isAjax) {
+                    Yii::$app->response->format = Response::FORMAT_JSON;
+                    return ActiveForm::validate($model);
+                }
+                if ($model->validate()) {
+                    $model->setPassword($model->password);
+                    $model->auth_key = Yii::$app->security->generateRandomString();
+                    $model->save(false);
+                    return $this->redirect(['index']);
+                }
             }
         } else {
             $model->loadDefaultValues();

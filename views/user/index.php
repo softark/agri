@@ -17,6 +17,10 @@ $this->params['breadcrumbs'][] = 'ユーザ';
 
     <h1><?= Icon::getIconAndLabel('users') ?></h1>
 
+    <?php if (Yii::$app->user->can('user.create')) : ?>
+        <p><?= Html::a(Icon::getIconAndLabel('user-create'), ['create'], ['class' => 'btn btn-success']) ?></p>
+    <?php endif; ?>
+
     <div class="row">
         <div class="col col-lg-8">
             <?php Pjax::begin(); ?>
@@ -73,8 +77,4 @@ $this->params['breadcrumbs'][] = 'ユーザ';
 
         </div>
     </div>
-    <?php if (Yii::$app->user->can('user.create')) : ?>
-        <?= Html::a(Icon::getIconAndLabel('user-create'), ['create'], ['class' => 'btn btn-success']) ?>
-    <?php endif; ?>
-
 </div>
