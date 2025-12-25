@@ -73,6 +73,8 @@ class Person extends \yii\db\ActiveRecord
         return $this->_shortaddress;
     }
 
+    public int $selected = 0;
+
     /**
      * {@inheritdoc}
      */

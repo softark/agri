@@ -65,48 +65,68 @@ class PersonWork extends \yii\db\ActiveRecord
         return $this->hasOne(Person::class, ['id' => 'person_id']);
     }
 
-    public static function importFromTanada()
+    /**
+     * @return int
+     * @throws \yii\db\Exception
+     */
+    public static function importFromTanada() : int
     {
+        $count = 0;
         $tanadas = Tanada::find()->select(['owner'])->distinct()->all();
         foreach ($tanadas as $tanada) {
-            if (self::find()->where(['name' => $tanada->owner])->count() == 0) {
-                $pw = new PersonWork();
-                $pw->name = $tanada->owner;
-                $pw->save();
+            if ($tanada->owner != '') {
+                if (self::find()->where(['name' => $tanada->owner])->count() == 0) {
+                    $pw = new PersonWork();
+                    $pw->name = $tanada->owner;
+                    $pw->save();
+                    $count++;
+                }
             }
         }
         $tanadas = Tanada::find()->select(['cultivator'])->distinct()->all();
         foreach ($tanadas as $tanada) {
             if (self::find()->where(['name' => $tanada->cultivator])->count() == 0) {
-                $pw = new PersonWork();
-                $pw->name = $tanada->cultivator;
-                $pw->save();
+                if ($tanada->cultivator != '') {
+                    $pw = new PersonWork();
+                    $pw->name = $tanada->cultivator;
+                    $pw->save();
+                    $count++;
+                }
             }
         }
+        return $count;
     }
 
-    public static function importFromForest()
+    public static function importFromForest() : int
     {
+        $count = 0;
         $forests = Forest::find()->select(['owner', 'o_addr'])->distinct()->all();
         foreach ($forests as $forest) {
             if (self::find()->where(['name' => $forest->owner])
                     ->andWhere(['address' => $forest->o_addr])->count() == 0) {
-                $pw = new PersonWork();
-                $pw->name = $forest->owner;
-                $pw->address = $forest->o_addr;
-                $pw->save();
+                if ($forest->owner != '') {
+                    $pw = new PersonWork();
+                    $pw->name = $forest->owner;
+                    $pw->address = $forest->o_addr;
+                    $pw->save();
+                    $count++;
+                }
             }
         }
         $forests = Forest::find()->select(['manager', 'm_addr'])->distinct()->all();
         foreach ($forests as $forest) {
             if (self::find()->where(['name' => $forest->manager])
                     ->andWhere(['address' => $forest->m_addr])->count() == 0) {
-                $pw = new PersonWork();
-                $pw->name = $forest->manager;
-                $pw->address = $forest->m_addr;
-                $pw->save();
+                if ($forest->manager != '') {
+                    $pw = new PersonWork();
+                    $pw->name = $forest->manager;
+                    $pw->address = $forest->m_addr;
+                    $pw->save();
+                    $count++;
+                }
             }
         }
+        return $count;
     }
 
 }

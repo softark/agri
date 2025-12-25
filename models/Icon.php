@@ -43,6 +43,8 @@ class Icon
         'left' => ['label' => '前へ', 'class' => 'fa-solid fa-left-long'],
         'right' => ['label' => '次へ', 'class' => 'fa-solid fa-right-long'],
         'go-back' => ['label' => '一覧へ', 'class' => 'fa-solid fa-turn-up'],
+        'link' => ['label' => 'リンク選択','class' => 'fa-solid fa-link'],
+        'unlink' => ['label' => 'リンク解除','class' => 'fa-solid fa-link-slash'],
     ];
 
     /**

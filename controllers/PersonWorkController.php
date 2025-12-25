@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\PersonWork;
 use app\models\PersonWorkSearch;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -26,6 +27,11 @@ class PersonWorkController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                        'import-tanada' => ['POST'],
+                        'import-forest' => ['POST'],
+                        'add-link' => ['POST'],
+                        'delete-link' => ['POST'],
+                        'init' => ['POST'],
                     ],
                 ],
             ]
@@ -69,48 +75,6 @@ class PersonWorkController extends Controller
     }
 
     /**
-     * Creates a new PersonWork model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
-    public function actionCreate()
-    {
-        $model = new PersonWork();
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
-        }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Updates an existing PersonWork model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
      * Deletes an existing PersonWork model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
@@ -142,19 +106,47 @@ class PersonWorkController extends Controller
 
     public function actionImportTanada()
     {
-        PersonWork::importFromTanada();
+        $count = PersonWork::importFromTanada();
+        if ($count > 0) {
+            Yii::$app->session->setFlash('success', "$count 件の住所録辞書エントリを追加しました。");
+        } else {
+            Yii::$app->session->setFlash('warning', "0 件の住所録辞書エントリを追加しました。");
+        }
         return $this->redirect(['index']);
     }
 
     public function actionImportForest()
     {
-        PersonWork::importFromForest();
+        $count = PersonWork::importFromForest();
+        if ($count > 0) {
+            Yii::$app->session->setFlash('success', "$count 件の住所録辞書エントリを追加しました。");
+        } else {
+            Yii::$app->session->setFlash('warning', "0 件の住所録辞書エントリを追加しました。");
+        }
         return $this->redirect(['index']);
     }
 
     public function actionInit()
     {
         PersonWork::deleteAll();
+        Yii::$app->session->setFlash('success', '住所録辞書を初期化しました。');
         return $this->redirect(['index']);
+    }
+
+    public function actionAddLink($id, $person_id)
+    {
+        $model = $this->findModel($id);
+        $model->person_id = $person_id;
+        $model->save();
+        // return $this->redirect(['view', 'id' => $id]);
+        return $this->redirect(ArrayHelper::getValue(Yii::$app->request, 'referrer', ['index']));
+    }
+
+    public function actionDeleteLink($id)
+    {
+        $model = $this->findModel($id);
+        $model->person_id = null;
+        $model->save();
+        return $this->redirect(ArrayHelper::getValue(Yii::$app->request, 'referrer', ['index']));
     }
 }

@@ -24,6 +24,8 @@ class m251213_121248_setup_rbac_for_person extends Migration
         // 'person' のルート
         $routeIndex = $auth->createPermission('/person/index');
         $auth->add($routeIndex);
+        $routeSelect = $auth->createPermission('/person/select');
+        $auth->add($routeSelect);
         $routeView = $auth->createPermission('/person/view');
         $auth->add($routeView);
         $routeUpdate = $auth->createPermission('/person/update');
@@ -41,6 +43,7 @@ class m251213_121248_setup_rbac_for_person extends Migration
         $auth->add($personList);
 
         $auth->addChild($personList, $routeIndex);
+        $auth->addChild($personList, $routeSelect);
 
         // 'person.view' 許可
         $personView = $auth->createPermission('person.view');
@@ -101,6 +104,8 @@ class m251213_121248_setup_rbac_for_person extends Migration
         // 'person' のルートを削除
         $routeIndex = $auth->getPermission('/person/index');
         $auth->remove($routeIndex);
+        $routeSelect = $auth->getPermission('/person/select');
+        $auth->remove($routeSelect);
         $routeView = $auth->getPermission('/person/view');
         $auth->remove($routeView);
         $routeUpdate = $auth->getPermission('/person/update');

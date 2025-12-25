@@ -12,11 +12,25 @@ use yii\helpers\ArrayHelper;
  */
 class PersonSearch extends Person
 {
+    /**
+     * @var string フォーム名
+     */
+    public $_form_name = 'ps';
+
     use LoadParamsTrait;
 
     public $search_name;
 
     public $search_phone;
+
+    /**
+     * @return string フォーム名
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function formName()
+    {
+        return $this->_form_name;
+    }
 
     public function attributeLabels()
     {
@@ -57,7 +71,7 @@ class PersonSearch extends Person
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $formName = null)
+    public function search($params, $pageSize = 20)
     {
         $query = Person::find();
 
@@ -65,6 +79,9 @@ class PersonSearch extends Person
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => $pageSize,
+            ],
             'sort' => [
                 'defaultOrder' => ['name' => SORT_ASC],
                 'attributes' => [

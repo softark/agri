@@ -6,6 +6,7 @@ use app\models\Person;
 use app\models\PersonSearch;
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -54,6 +55,18 @@ class PersonController extends Controller
                 'dataProvider' => $dataProvider,
             ]);
         }
+    }
+
+    public function actionSelect()
+    {
+        if (Yii::$app->request->isPjax) {
+            $searchModel = new PersonSearch(['_form_name' => 'psel']);
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, 10);
+            return $this->renderPartial('_select', [
+                'dataProvider' => $dataProvider,
+            ]);
+        }
+        throw new BadRequestHttpException();
     }
 
     /**
