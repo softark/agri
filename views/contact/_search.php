@@ -1,33 +1,32 @@
 <?php
 
 use app\models\Icon;
-use app\models\Person;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var app\models\PersonSearch $model */
+/** @var app\models\ContactSearch $model */
 /** @var yii\widgets\ActiveForm $form */
 
 $this->registerJs("
-$('#person-search-form').on('click', '#clear-btn', function(event){
-    $('#person-search-form select').val('');
-    $('#person-search-form input').val('');
-    $('#person-search-form').submit();
+$('#contact-search-form').on('click', '#clear-btn', function(event){
+    $('#contact-search-form select').val('');
+    $('#contact-search-form input').val('');
+    $('#contact-search-form').submit();
     event.preventDefault();
 });
-$('#person-search-form').on('change', 'select', function(event){
-    $('#person-search-form').submit();
+$('#contact-search-form').on('change', 'select', function(event){
+    $('#contact-search-form').submit();
     event.preventDefault();
 });
-$('#person-search-form').on('change', 'input', function(event){
-    $('#person-search-form').submit();
+$('#contact-search-form').on('change', 'input', function(event){
+    $('#contact-search-form').submit();
     event.preventDefault();
 });
 ");
 ?>
 
-<div class="person-search">
+<div class="contact-search">
 
     <?php $form = ActiveForm::begin([
             'action' => ['index'],
@@ -36,15 +35,15 @@ $('#person-search-form').on('change', 'input', function(event){
                     'data-pjax' => 1,
                     'autocomplete' => 'off'
             ],
-            'id' => 'person-search-form',
+            'id' => 'contact-search-form',
     ]); ?>
 
     <div class="row">
         <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($model, 'type')->dropDownList(Person::getTypes()) ?>
+            <?= $form->field($model, 'address1') ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($model, 'search_name') ?>
+            <?= $form->field($model, 'search_phone') ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'note') ?>

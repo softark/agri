@@ -31,6 +31,8 @@ class PersonWorkController extends Controller
                         'import-forest' => ['POST'],
                         'add-link' => ['POST'],
                         'delete-link' => ['POST'],
+                        'add-link-view' => ['POST'],
+                        'delete-link-view' => ['POST'],
                         'init' => ['POST'],
                     ],
                 ],
@@ -133,20 +135,50 @@ class PersonWorkController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionAddLink($id, $person_id)
+    public function actionAddLink()
     {
+        $id = $this->request->post('id');
+        $person_id = $this->request->post('person_id');
         $model = $this->findModel($id);
         $model->person_id = $person_id;
         $model->save();
-        // return $this->redirect(['view', 'id' => $id]);
-        return $this->redirect(ArrayHelper::getValue(Yii::$app->request, 'referrer', ['index']));
+
+        return $this->asJson([
+            'ok' => true,
+            'id' => $model->id,
+            'cardHtml' => $this->renderPartial('_card_button', ['model' => $model]),
+            'buttonsHtml' => $this->renderPartial('_link_buttons', ['model' => $model]),
+        ]);
     }
 
-    public function actionDeleteLink($id)
+    public function actionDeleteLink()
+    {
+        $id = $this->request->post('id');
+        $model = $this->findModel($id);
+        $model->person_id = null;
+        $model->save();
+
+        return $this->asJson([
+            'ok' => true,
+            'id' => $model->id,
+            'cardHtml' => $this->renderPartial('_card_button', ['model' => $model]),
+            'buttonsHtml' => $this->renderPartial('_link_buttons', ['model' => $model]),
+        ]);
+    }
+    public function actionAddLinkView($id)
+    {
+        $model = $this->findModel($id);
+        $model->person_id = $this->request->post('person_id');
+        $model->save();
+
+        return $this->renderAjax('_card_link', ['model' => $model]);
+    }
+
+    public function actionDeleteLinkView($id)
     {
         $model = $this->findModel($id);
         $model->person_id = null;
         $model->save();
-        return $this->redirect(ArrayHelper::getValue(Yii::$app->request, 'referrer', ['index']));
+        return $this->renderAjax('_card_link', ['model' => $model]);
     }
 }

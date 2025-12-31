@@ -12,10 +12,10 @@ use yii\widgets\Pjax;
 /** @var app\models\PersonWorkSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = '住所録辞書';
+$this->title = '名簿ワーク';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-    <div class="person-work-index">
+    <div id="person-work-index" class="person-work-index">
 
         <h1><?= Html::encode($this->title) ?></h1>
 
@@ -23,65 +23,60 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Html::a('棚田テーブルからインポート', ['import-tanada'], [
                     'class' => 'btn btn-success',
                     'data' => [
-                            'confirm' => '棚田テーブルから住所録辞書エントリをインポートしますか？',
+                            'confirm' => '棚田テーブルから名簿ワークのエントリをインポートしますか？',
                             'method' => 'post',
                     ],
             ]) ?>
             <?= Html::a('山林テーブルからインポート', ['import-forest'], [
                     'class' => 'btn btn-success',
                     'data' => [
-                            'confirm' => '山林テーブルから住所録辞書エントリをインポートしますか？',
+                            'confirm' => '山林テーブルから名簿ワークのエントリをインポートしますか？',
                             'method' => 'post',
                     ],
             ]) ?>
             <?= Html::a('初期化', ['init'], [
                     'class' => 'btn btn-danger',
                     'data' => [
-                            'confirm' => '住所録辞書を初期化削除しますか？',
+                            'confirm' => '名簿ワークを初期化しますか？',
                             'method' => 'post',
                     ],
             ]) ?>
         </p>
 
-        <?php Pjax::begin(); ?>
         <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
+        <?php Pjax::begin(); ?>
         <?= GridView::widget([
                 'dataProvider' => $dataProvider,
             // 'filterModel' => $searchModel,
                 'columns' => [
                         ['class' => 'yii\grid\SerialColumn'],
-
+                        [
+                                'attribute' => 'src',
+                                'value' => 'srcText',
+                        ],
                         'name',
                         'address',
                         [
                                 'attribute' => 'person_id',
+                                'format' => 'raw',
+                                'contentOptions' => ['class' => 'col-card-button'],
                                 'value' => function ($model) {
-                                    if ($model->person_id != null) {
-                                        return $model->person->dispname;
-                                    } else {
-                                        return '（リンクなし）';
-                                    }
+                                    return $model->person_id !== null ?
+                                            Html::a($model->person->dispname, ['/person/view', 'id' => $model->person_id],
+                                                    ['class' => 'btn btn-primary btn-sm']) :
+                                            '';
                                 }
                         ],
                         [
-                                'label' => 'リンク',
+                                'attribute' => 'contact_id',
                                 'format' => 'raw',
+                                'contentOptions' => ['class' => 'col-card-button'],
                                 'value' => function ($model) {
-                                    if ($model->person_id != null) {
-                                        return Html::button(Icon::getIcon('link') . ' リンク変更', ['class' => 'btn btn-primary btn-sm add-link', 'data' => ['model-id' => $model->id]])
-                                                . ' '
-                                                . Html::a(Icon::getIconAndLabel('unlink'), ['delete-link', 'id' => $model->id], [
-                                                        'class' => 'btn btn-sm btn-danger',
-                                                        'data' => [
-                                                                'confirm' => '住所カードへのリンクを削除しますか？',
-                                                                'method' => 'post',
-                                                        ],
-                                                ]);
-
-                                    } else {
-                                        return Html::button(Icon::getIconAndLabel('link'), ['class' => 'btn btn-success btn-sm add-link', 'data' => ['model-id' => $model->id]]);
-                                    }
+                                    return $model->contact_id !== null ?
+                                            Html::a($model->contact->address, ['/contact/view', 'id' => $model->contact_id],
+                                                    ['class' => 'btn btn-primary btn-sm']) :
+                                            '';
                                 }
                         ],
                         [
@@ -96,24 +91,4 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php Pjax::end(); ?>
 
-        <?= Html::hiddenInput('person_id', '', ['id' => 'person-id']) ?>
-        <?= Html::hiddenInput('model_id', '', ['id' => 'model-id']) ?>
-        <?php
-        echo $this->render('/person/_select_modal.php', [
-                'personIdInput' => 'person-id',
-        ]);
-        ?>
     </div>
-
-<?php
-$url = Url::to(['/person-work/add-link']);
-$this->registerJs("
-$('.add-link').on('click', function(event){
-    event.preventDefault();
-    $('#model-id').val($(this).data('model-id'));
-    openPersonSelectModal();
-});
-$('#person-id').on('change', function() {
-  $.post('$url' + '?id=' + $('#model-id').val() + '&person_id=' + $(this).val());
-});
-");

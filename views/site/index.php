@@ -22,11 +22,14 @@ $this->title = '岩座神農会';
         <?php else: ?>
             <div class="row">
                 <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
-                    <p><?= Html::a(Icon::getIconAndLabel('address-book'), ['/person'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
+                    <p><?= Html::a(Icon::getIconAndLabel('person'), ['/person'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
                 </div>
                 <?php if (Yii::$app->user->can('admin')): ?>
                     <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
-                        <p><?= Html::a('住所録辞書', ['/person-work'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
+                        <p><?= Html::a(Icon::getIconAndLabel('contact'), ['/contact'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
+                    </div>
+                    <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
+                        <p><?= Html::a('名簿ワーク', ['/person-work'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
                     </div>
                     <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
                         <p><?= Html::a('棚田', ['/tanada'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>

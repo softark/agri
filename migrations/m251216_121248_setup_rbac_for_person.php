@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 
-class m251213_121248_setup_rbac_for_person extends Migration
+class m251216_121248_setup_rbac_for_person extends Migration
 {
     /**
      * @throws yii\base\InvalidConfigException
@@ -34,12 +34,10 @@ class m251213_121248_setup_rbac_for_person extends Migration
         $auth->add($routeCreate);
         $routeDelete = $auth->createPermission('/person/delete');
         $auth->add($routeDelete);
-        $routeImport = $auth->createPermission('/person/import');
-        $auth->add($routeImport);
 
         // 'person.list' 許可
         $personList = $auth->createPermission('person.list');
-        $personList->description = '関係者一覧';
+        $personList->description = '名簿一覧';
         $auth->add($personList);
 
         $auth->addChild($personList, $routeIndex);
@@ -47,38 +45,31 @@ class m251213_121248_setup_rbac_for_person extends Migration
 
         // 'person.view' 許可
         $personView = $auth->createPermission('person.view');
-        $personView->description = '関係者閲覧';
+        $personView->description = '名簿閲覧';
         $auth->add($personView);
 
         $auth->addChild($personView, $routeView);
 
         // 'person.edit' 許可
         $personEdit = $auth->createPermission('person.edit');
-        $personEdit->description = '関係者編集';
+        $personEdit->description = '名簿編集';
         $auth->add($personEdit);
 
         $auth->addChild($personEdit, $routeUpdate);
 
         // 'person.delete' 許可
         $personDelete = $auth->createPermission('person.delete');
-        $personDelete->description = '関係者削除';
+        $personDelete->description = '名簿削除';
         $auth->add($personDelete);
 
         $auth->addChild($personDelete, $routeDelete);
 
         // 'person.create' 許可
         $personCreate = $auth->createPermission('person.create');
-        $personCreate->description = '関係者登録';
+        $personCreate->description = '名簿登録';
         $auth->add($personCreate);
 
         $auth->addChild($personCreate, $routeCreate);
-
-        // 'person.import' 許可
-        $personImport = $auth->createPermission('person.import');
-        $personImport->description = '関係者インポート';
-        $auth->add($personImport);
-
-        $auth->addChild($personImport, $routeImport);
 
         // 'user' ロール
         $user = $auth->getRole("user");
@@ -86,13 +77,16 @@ class m251213_121248_setup_rbac_for_person extends Migration
         $auth->addChild($user, $personList);
         $auth->addChild($user, $personView);
 
-        // 'admin' ロール
-        $admin = $auth->getRole("admin");
+        // 'editor' ロール
+        $admin = $auth->getRole("editor");
 
         $auth->addChild($admin, $personEdit);
         $auth->addChild($admin, $personCreate);
+
+        // 'admin' ロール
+        $admin = $auth->getRole("admin");
+
         $auth->addChild($admin, $personDelete);
-        $auth->addChild($admin, $personImport);
 
         $auth->invalidateCache();
     }
@@ -114,8 +108,6 @@ class m251213_121248_setup_rbac_for_person extends Migration
         $auth->remove($routeCreate);
         $routeDelete = $auth->getPermission('/person/delete');
         $auth->remove($routeDelete);
-        $routeImport = $auth->getPermission('/person/import');
-        $auth->remove($routeImport);
 
         // 'person.list' 許可を削除
         $personList = $auth->getPermission('person.list');
@@ -136,10 +128,6 @@ class m251213_121248_setup_rbac_for_person extends Migration
         // 'person.delete' 許可を削除
         $personDelete = $auth->getPermission('person.delete');
         $auth->remove($personDelete);
-
-        // 'person.import' 許可を削除
-        $personImport = $auth->getPermission('person.import');
-        $auth->remove($personImport);
 
         // 親子関係とロール割当ては自動的に削除される
         $auth->invalidateCache();

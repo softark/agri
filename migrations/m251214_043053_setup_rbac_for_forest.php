@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 
-class m251224_043053_setup_rbac_for_forest extends Migration
+class m251214_043053_setup_rbac_for_forest extends Migration
 {
     /**
      * @return yii\rbac\DbManager

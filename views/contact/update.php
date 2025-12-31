@@ -4,11 +4,11 @@ use app\models\Icon;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
-/** @var app\models\Person $model */
+/** @var app\models\Contact $model */
 
-$this->title = '名簿 : ' . $model->dispname . ' - 編集';
-$this->params['breadcrumbs'][] = ['label' => '名簿', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->dispname, 'url' => ['view', 'id' => $model->id]];
+$this->title = '連絡先 : ' . $model->address . ' - 編集';
+$this->params['breadcrumbs'][] = ['label' => '連絡先', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => $model->address, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = '編集';
 ?>
 <div class="person-update">

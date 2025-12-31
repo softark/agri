@@ -36,7 +36,8 @@
       "istvan-ujjmeszaros/bootstrap-duallistbox": "~4.0.0",
       "softark/yii2-dual-listbox": "dev-master",
       "ext-exif": "*",
-      "ext-curl": "*"
+      "ext-curl": "*",
+      "ext-mbstring": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

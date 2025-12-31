@@ -6,7 +6,6 @@
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 use app\models\Icon;
-use app\models\Person;
 use app\models\PersonSearch;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Modal;
@@ -22,7 +21,7 @@ $searchModel = new PersonSearch(['_form_name' => 'psel']);
 $dataProvider = $searchModel->search([], 10);
 
 Modal::begin([
-        'title' => '名簿から選択',
+        'title' => '住所カードを選択',
         'toggleButton' => false,
         'id' => 'person-select-modal',
         'size' => Modal::SIZE_EXTRA_LARGE,
@@ -44,13 +43,16 @@ Modal::begin([
 ]); ?>
     <div class="row">
         <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($searchModel, 'type')->dropDownList(Person::getTypes()) ?>
-        </div>
-        <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($searchModel, 'search_name') ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($searchModel, 'note') ?>
+            <?= $form->field($searchModel, 'address') ?>
+        </div>
+        <div class="col-md-2 col-sm-3 col-5">
+            <?= $form->field($searchModel, 'search_phone') ?>
+        </div>
+        <div class="col-md-2 col-sm-3 col-5">
+            <?= $form->field($searchModel, 'memo') ?>
         </div>
         <div class="form-group col-md-2 col-sm-2">
             <?= Html::submitButton(Icon::getBtnText('search'), ['class' => 'btn btn-primary btn-sm d-block']) ?>

@@ -5,10 +5,8 @@
 
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-use app\models\Person;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
-
 ?>
 
 <?php Pjax::begin([
@@ -20,7 +18,7 @@ use yii\widgets\Pjax;
 
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
-    'rowOptions' => function ($model) {
+    'rowOptions' => function($model) {
         return [
             'class' => 'person-row',
             'data-person-id' => $model->id,
@@ -31,14 +29,16 @@ use yii\widgets\Pjax;
     'columns' => [
         ['class' => 'yii\grid\SerialColumn'],
         [
-            'attribute' => 'type',
-            'value' => 'typeText',
-        ],
-        [
             'attribute' => 'name',
             'value' => 'dispname'
         ],
-        'note',
+        [
+            'attribute' => 'address',
+            'value' => 'shortaddress'
+        ],
+        'phone1',
+        'phone2',
+        'memo',
     ],
 ]); ?>
 <?php Pjax::end();

@@ -2,20 +2,16 @@
 
 namespace app\controllers;
 
-use app\models\Person;
-use app\models\PersonSearch;
-use app\models\PersonWork;
-use Yii;
-use yii\helpers\ArrayHelper;
-use yii\web\BadRequestHttpException;
+use app\models\Contact;
+use app\models\ContactSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * PersonController implements the CRUD actions for Person model.
+ * ContactController implements the CRUD actions for Contact model.
  */
-class PersonController extends Controller
+class ContactController extends Controller
 {
     /**
      * @inheritDoc
@@ -36,42 +32,23 @@ class PersonController extends Controller
     }
 
     /**
-     * Lists all Person models.
+     * Lists all Contact models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new PersonSearch();
+        $searchModel = new ContactSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
-        if (Yii::$app->request->isPjax) {
-            return $this->renderPartial('index', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]);
-        } else {
-            return $this->render('index', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]);
-        }
-    }
-
-    public function actionSelect()
-    {
-        if (Yii::$app->request->isPjax) {
-            $searchModel = new PersonSearch(['_form_name' => 'psel']);
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, 10);
-            return $this->renderPartial('_select', [
-                'dataProvider' => $dataProvider,
-            ]);
-        }
-        throw new BadRequestHttpException();
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**
-     * Displays a single Person model.
+     * Displays a single Contact model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -84,17 +61,17 @@ class PersonController extends Controller
     }
 
     /**
-     * Creates a new Person model.
+     * Creates a new Contact model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @param int $work_id
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Person();
+        $model = new Contact();
+
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['index']);
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -106,7 +83,7 @@ class PersonController extends Controller
     }
 
     /**
-     * Updates an existing Person model.
+     * Updates an existing Contact model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -117,7 +94,7 @@ class PersonController extends Controller
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
@@ -126,7 +103,7 @@ class PersonController extends Controller
     }
 
     /**
-     * Deletes an existing Person model.
+     * Deletes an existing Contact model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -140,19 +117,18 @@ class PersonController extends Controller
     }
 
     /**
-     * Finds the Person model based on its primary key value.
+     * Finds the Contact model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Person the loaded model
+     * @return Contact the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Person::findOne(['id' => $id])) !== null) {
+        if (($model = Contact::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-
 }

@@ -5,15 +5,15 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\Person $model */
+/** @var app\models\Contact $model */
 
-$this->title = $model->dispname;
-$this->params['breadcrumbs'][] = ['label' => '名簿', 'url' => ['index']];
+$this->title = $model->address;
+$this->params['breadcrumbs'][] = ['label' => '連絡先', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="person-view">
 
-    <h1><?= Icon::getIconAndLabel('person') . ' : ' . Html::encode($this->title) ?></h1>
+    <h1><?= Icon::getIconAndLabel('contact') . ' : ' . Html::encode($this->title) ?></h1>
 
     <div class="row">
         <div class="col-lg-6 col-md-8">
@@ -21,12 +21,11 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= DetailView::widget([
                     'model' => $model,
                     'attributes' => [
-                            [
-                                    'attribute' => 'type',
-                                    'value' => 'typeText',
-                            ],
-                            'dispname',
-                            'yomigana',
+                            'address1',
+                            'address2',
+                            'phone1',
+                            'phone2',
+                            'mail',
                             'note',
                             [
                                     'attribute' => 'created_at',
@@ -55,14 +54,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
             ]) ?>
             <p>
-                <?php if (\yii::$app->user->can('person.edit', ['id' => $model->id])) : ?>
+                <?php if (\yii::$app->user->can('contact.edit', ['id' => $model->id])) : ?>
                     <?= Html::a(Icon::getIconAndLabel('update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
                 <?php endif; ?>
-                <?php if (\yii::$app->user->can('person.delete')) : ?>
+                <?php if (\yii::$app->user->can('contact.delete')) : ?>
                     <?= Html::a(Icon::getIconAndLabel('delete'), ['delete', 'id' => $model->id], [
                             'class' => 'btn btn-danger',
                             'data' => [
-                                    'confirm' => '名簿から <strong>"' . $model->dispname . '"</strong> を削除しますか？',
+                                    'confirm' => '連絡先 <strong>"' . $model->address . '"</strong> を削除しますか？',
                                     'method' => 'post',
                             ],
                     ]) ?>

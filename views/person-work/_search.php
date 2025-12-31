@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Icon;
+use app\models\PersonWork;
 use app\models\PersonWorkSearch;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -40,17 +41,24 @@ $('#search-form').on('change', 'input', function(event){
 
     <div class="row">
         <div class="col-md-2 col-sm-3 col-5">
+            <?= $form->field($model, 'src')->dropDownList(PersonWork::getSrcTypes(), ['prompt' => '']) ?>
+        </div>
+        <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'name') ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'address') ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($model, 'status')
+            <?= $form->field($model, 'p_link')
             ->dropDownList(PersonWorkSearch::getStatusList())?>
         </div>
+        <div class="col-md-2 col-sm-3 col-5">
+            <?= $form->field($model, 'c_link')
+                    ->dropDownList(PersonWorkSearch::getStatusList())?>
+        </div>
 
-        <div class="form-group search-buttons col-md-3 col-sm-3 col-4">
+        <div class="form-group search-buttons col-lg-2 col-md-3 col-sm-3 col-4">
             <p class="text-nowrap pt-2">
                 <?= Html::submitButton(Icon::getBtnText('search'), ['class' => 'btn btn-primary btn-sm']) ?>
                 <?= Html::button(Icon::getBtnText('clear'), ['class' => 'btn btn-outline-secondary btn-sm', 'id' => 'clear-btn']) ?>

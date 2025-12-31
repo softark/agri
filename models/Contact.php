@@ -5,16 +5,15 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "person".
+ * This is the model class for table "contact".
  *
  * @property int $id
- * @property string $name1
- * @property string|null $name2
- * @property string|null $name
- * @property string|null $yomi1
- * @property string|null $yomi2
- * @property string|null $yomi
- * @property int $type
+ * @property string|null $zip
+ * @property string|null $address1
+ * @property string|null $address2
+ * @property string|null $phone1
+ * @property string|null $phone2
+ * @property string|null $mail
  * @property string|null $note
  * @property string $created_at
  * @property int $created_by
@@ -22,57 +21,43 @@ use Yii;
  * @property int $updated_by
  *
  * @property PersonContact[] $personContacts
- * @property Contact[] $contacts
+ * @property Person[] $persons
  * @property User $createdBy
  * @property User $updatedBy
  */
-class Person extends \yii\db\ActiveRecord
+class Contact extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'person';
+        return 'contact';
     }
 
-    const TYPE_UNDEF = 0;
-    const TYPE_INDIVIDUAL = 1;
-    const TYPE_VOL_ORG = 2;
-    const TYPE_CORPORATE = 3;
-    const TYPE_GOVERNMENT = 4;
-
-    public static function getTypes() {
-        return [
-            self::TYPE_UNDEF => '不詳',
-            self::TYPE_INDIVIDUAL => '個人',
-            self::TYPE_VOL_ORG => '任意団体',
-            self::TYPE_CORPORATE => '法人',
-            self::TYPE_GOVERNMENT => '国・地方自治体',
-        ];
-    }
-
-    public function getTypeText() {
-        return self::getTypes()[$this->type];
-    }
-
-    private $_dispname = null;
-    public function getDispName()
+    public function getAddress()
     {
-        if ($this->_dispname === null) {
-            $this->_dispname = trim($this->name1 . ' ' . $this->name2);
-        }
-        return $this->_dispname;
+        return $this->address1 . $this->address2;
     }
 
-    private $_yomigana = null;
-    public function getYomigana()
+    private $_shortaddress = null;
+    public function getShortAddress()
     {
-        if ($this->_yomigana === null) {
-            $this->_yomigana = trim($this->yomi1 . ' ' . $this->yomi2);
+        if ($this->_shortaddress === null) {
+            if (($pos = strpos($this->address, '岩座神')) !== false) {
+                $this->_shortaddress = substr($this->address, $pos);
+            } else if (($pos = strpos($this->address, '多可町')) !== false) {
+                $this->_shortaddress = substr($this->address, $pos);
+            } else if (($pos = strpos($this->address, '兵庫県')) !== false) {
+                $this->_shortaddress = substr($this->address, $pos + strlen('兵庫県'));
+            } else {
+                $this->_shortaddress = $this->address;
+            }
         }
-        return $this->_yomigana;
+        return $this->_shortaddress;
     }
+
+    public int $selected = 0;
 
     /**
      * {@inheritdoc}
@@ -81,15 +66,14 @@ class Person extends \yii\db\ActiveRecord
     {
         return [
             [['note'], 'default', 'value' => ''],
-            [['type'], 'default', 'value' => 0],
             [['updated_by'], 'default', 'value' => 1],
-            [['name1'], 'required'],
-            [['created_by', 'updated_by'], 'default', 'value' => null],
-            [['type', 'created_by', 'updated_by'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
-            [['name1', 'name2', 'yomi1', 'yomi2'], 'string', 'max' => 30],
-            [['name', 'yomi'], 'string', 'max' => 60],
-            [['note'], 'string', 'max' => 255],
+            [['created_by', 'updated_by'], 'default', 'value' => null],
+            [['created_by', 'updated_by'], 'integer'],
+            [['zip'], 'string', 'max' => 10],
+            [['address1', 'address2', 'mail'], 'string', 'max' => 40],
+            [['phone1', 'phone2'], 'string', 'max' => 20],
+            [['note'], 'string', 'max' => 50],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['created_by' => 'id']],
             [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['updated_by' => 'id']],
         ];
@@ -102,15 +86,13 @@ class Person extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name1' => '姓',
-            'name2' => '名',
-            'name' => '名前',
-            'dispname' => '名前',
-            'yomi1' => 'よみがな（姓）',
-            'yomi2' => 'よみがな（名）',
-            'yomi' => 'よみがな',
-            'yomigana' => 'よみがな',
-            'type' => 'タイプ',
+            'zip' => '郵便番号',
+            'address' => '住所',
+            'address1' => '住所',
+            'address2' => '住所（続き）',
+            'phone1' => '携帯電話',
+            'phone2' => 'その他電話',
+            'mail' => 'メール',
             'note' => 'メモ',
             'created_at' => '登録日時',
             'created_by' => '登録者',
@@ -126,18 +108,18 @@ class Person extends \yii\db\ActiveRecord
      */
     public function getPersonContacts()
     {
-        return $this->hasMany(PersonContact::class, ['person_id' => 'id']);
+        return $this->hasMany(PersonContact::class, ['contact_id' => 'id']);
     }
 
     /**
-     * Gets query for [[Contact]].
+     * Gets query for [[Person]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getContacts()
+    public function getPersons()
     {
-        return $this->hasMany(Contact::class, ['id' => 'contact_id'])
-            ->viaTable('person_contact', ['person_id' => 'id']);
+        return $this->hasMany(Person::class, ['id' => 'person_id'])
+            ->viaTable('person_contact', ['contact_id' => 'id']);
     }
 
     /**
