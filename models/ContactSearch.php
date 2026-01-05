@@ -47,8 +47,8 @@ class ContactSearch extends Contact
     public function rules()
     {
         return [
-            [['id', 'created_by', 'updated_by'], 'integer'],
-            [['zip', 'address1', 'address2', 'phone1', 'phone2', 'mail', 'note', 'created_at', 'updated_at'], 'safe'],
+            [['id', 'person_id', 'order', 'created_by', 'updated_by'], 'integer'],
+            [['contact_name', 'role', 'zip', 'address1', 'address2', 'phone1', 'phone2', 'mail', 'note', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -81,8 +81,11 @@ class ContactSearch extends Contact
                 'pageSize' => $pageSize,
             ],
             'sort' => [
-                'defaultOrder' => ['address1' => SORT_ASC],
+                'defaultOrder' => ['contact_name' => SORT_ASC],
                 'attributes' => [
+                    'contact_name',
+                    'order',
+                    'role',
                     'zip' => [
                         'asc' => ['zip' => SORT_ASC, 'address1' => SORT_ASC],
                         'desc' => ['zip' => SORT_DESC, 'address1' => SORT_DESC],
@@ -117,7 +120,9 @@ class ContactSearch extends Contact
             'updated_by' => $this->updated_by,
         ]);
 
-        $query->andFilterWhere(['ilike', 'address1', $this->address1])
+        $query->andFilterWhere(['ilike', 'contact_name', $this->contact_name])
+            ->andFilterWhere(['ilike', 'role', $this->role])
+            ->andFilterWhere(['ilike', 'address1', $this->address1])
             ->andFilterWhere(['ilike', 'phone1', $this->phone1])
             ->andFilterWhere(['ilike', 'phone2', $this->phone2])
             ->andFilterWhere(['ilike', 'mail', $this->mail])

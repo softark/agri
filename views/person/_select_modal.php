@@ -10,7 +10,7 @@ use app\models\Person;
 use app\models\PersonSearch;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Modal;
-use yii\widgets\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 
 $this->registerCss("
 .person-row.is-selected td {
@@ -64,8 +64,12 @@ Modal::begin([
 Modal::end();
 
 $this->registerJs("
+var openDone = false;
 function openPersonSelectModal() {
-    updatePersonSelectList();
+    if (!openDone) {
+      updatePersonSelectList();
+      openDone = true;
+    }
     $('#person-select-modal').modal('show');
 }
 $('#person-search-form-modal').on('change', 'select', function(event){

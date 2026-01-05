@@ -69,6 +69,7 @@ class m251210_063520_register_users extends Migration
                 'auth_key' => Yii::$app->security->generateRandomString(),
             ]);
         }
+        $this->execute('alter sequence user_id_seq restart with 12');
     }
 
     /**

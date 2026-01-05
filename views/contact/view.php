@@ -1,7 +1,7 @@
 <?php
 
 use app\models\Icon;
-use yii\helpers\Html;
+use yii\bootstrap5\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
@@ -21,6 +21,9 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= DetailView::widget([
                     'model' => $model,
                     'attributes' => [
+                            'order',
+                            'role',
+                            'contact_name',
                             'address1',
                             'address2',
                             'phone1',

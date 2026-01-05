@@ -1,14 +1,14 @@
 <?php
 
 use app\models\Icon;
-use yii\bootstrap5\Html;
 use yii\helpers\ArrayHelper;
-use yii\widgets\ActiveForm;
+use yii\bootstrap5\ActiveForm;
+use yii\bootstrap5\Html;
 use app\models\Person;
 
 /** @var yii\web\View $this */
 /** @var app\models\Person $model */
-/** @var yii\widgets\ActiveForm $form */
+/** @var yii\bootstrap5\ActiveForm $form */
 
 ?>
 

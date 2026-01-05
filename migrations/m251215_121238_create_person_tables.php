@@ -22,7 +22,7 @@ class m251215_121238_create_person_tables extends Migration
             'yomi2' => $this->string(30)->null()->defaultValue(''),
             'yomi' => $this->string(60) . ' GENERATED ALWAYS as (yomi1 || yomi2) STORED',
             'type' => $this->integer()->notNull()->defaultValue(1),
-            'note' => $this->string()->null()->defaultValue(''),
+            'note' => $this->string(50)->null()->defaultValue(''),
             'created_at' => 'TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP',
             'created_by' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 1',
             'updated_at' => 'TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP',
@@ -30,12 +30,9 @@ class m251215_121238_create_person_tables extends Migration
         ]);
 
         // インデックス
-        $this->createIndex('ix_person_name1', '{{%person}}', 'name1');
-        $this->createIndex('ix_person_name2', '{{%person}}', 'name2');
-        $this->createIndex('ix_person_name', '{{%person}}', 'name');
-        $this->createIndex('ix_person_yomi1', '{{%person}}', 'yomi1');
-        $this->createIndex('ix_person_yomi2', '{{%person}}', 'yomi2');
-        $this->createIndex('ix_person_yomi', '{{%person}}', 'yomi');
+        $this->createIndex('ix_person_names', '{{%person}}', ['name1', 'name2'], true);
+        $this->createIndex('ix_person_name', '{{%person}}', 'name', true);
+        $this->createIndex('ix_person_yomi', '{{%person}}', 'yomi', false);
         $this->createIndex('ix_person_type', '{{%person}}', 'type');
         // 外部キー
         $this->addForeignKey('fk_person_created_by_user_id', '{{%person}}', 'created_by', '{{%user}}', 'id', 'RESTRICT', 'RESTRICT');
@@ -43,6 +40,10 @@ class m251215_121238_create_person_tables extends Migration
 
         $this->createTable('{{%contact}}', [
             'id' => $this->primaryKey(),
+            'person_id' => $this->integer()->notNull(),
+            'order' => $this->integer()->notNull()->defaultValue(1),
+            'role' => $this->string(30)->null()->defaultValue(''),
+            'contact_name' => $this->string(60)->null()->defaultValue(''),
             'zip' => $this->string(10)->null()->defaultValue(''),
             'address1' => $this->string(40)->null()->defaultValue(''),
             'address2' => $this->string(40)->null()->defaultValue(''),
@@ -57,6 +58,7 @@ class m251215_121238_create_person_tables extends Migration
         ]);
 
         // インデックス
+        $this->createIndex('ix_contact_person_id_order', '{{%contact}}', ['person_id', 'order'], true);
         $this->createIndex('ix_contact_zip', '{{%contact}}', 'zip');
         $this->createIndex('ix_contact_address1', '{{%contact}}', 'address1');
         $this->createIndex('ix_contact_phone1', '{{%contact}}', 'phone1');
@@ -67,60 +69,51 @@ class m251215_121238_create_person_tables extends Migration
         $this->createIndex('ix_contact_updated_by', '{{%contact}}', 'updated_by');
         $this->createIndex('ix_contact_updated_at', '{{%contact}}', 'updated_at');
         // 外部キー
+        $this->addForeignKey('fk_contact_person_id_person_id', '{{%contact}}', 'person_id', '{{%person}}', 'id', 'CASCADE', 'CASCADE');
         $this->addForeignKey('fk_contact_created_by_user_id', '{{%contact}}', 'created_by', '{{%user}}', 'id', 'RESTRICT', 'RESTRICT');
         $this->addForeignKey('fk_contact_updated_by_user_id', '{{%contact}}', 'updated_by', '{{%user}}', 'id', 'RESTRICT', 'RESTRICT');
 
-        $this->createTable('{{%person_contact}}', [
-            'person_id' => $this->integer()->notNull(),
-            'contact_id' => $this->integer()->notNull(),
-            'contact_name' => $this->string(60)->null()->defaultValue(''),
-            'role' => $this->string(30)->null()->defaultValue(''),
-            'order' => $this->integer()->notNull()->defaultValue(0),
-            'note' => $this->string(50)->null()->defaultValue(''),
-            'created_at' => 'TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP',
-            'created_by' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 1',
-            'updated_at' => 'TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP',
-            'updated_by' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 1',
-        ]);
-
-        // インデックス
-        $this->addPrimaryKey('ix_primary_person_contact', '{{%person_contact}}', ['person_id', 'contact_id']);
-        $this->createIndex('ix_person_contact_order', '{{%person_contact}}', 'order');
-        $this->createIndex('ix_person_contact_created_by', '{{%person_contact}}', 'created_by');
-        $this->createIndex('ix_person_contact_created_at', '{{%person_contact}}', 'created_at');
-        $this->createIndex('ix_person_contact_updated_by', '{{%person_contact}}', 'updated_by');
-        $this->createIndex('ix_person_contact_updated_at', '{{%person_contact}}', 'updated_at');
-        // 外部キー
-        $this->addForeignKey('fk_person_contact_person_id_person_id', '{{%person_contact}}', 'person_id', '{{%person}}', 'id', 'CASCADE', 'RESTRICT');
-        $this->addForeignKey('fk_person_contact_person_id_contact_id', '{{%person_contact}}', 'contact_id', '{{%contact}}', 'id', 'CASCADE', 'RESTRICT');
-        $this->addForeignKey('fk_person_contact_created_by_user_id', '{{%person_contact}}', 'created_by', '{{%user}}', 'id', 'RESTRICT', 'RESTRICT');
-        $this->addForeignKey('fk_person_contact_updated_by_user_id', '{{%person_contact}}', 'updated_by', '{{%user}}', 'id', 'RESTRICT', 'RESTRICT');
-
-        // $this->seed();
+        $this->seedPersons();
+        $this->seedContacts();
     }
 
-    public function seed()
+    public function seedPersons()
     {
-        $path = Yii::getAlias('@app/migrations/data/person-seed.csv');
+        $path = Yii::getAlias('@app/migrations/data/person.csv');
         $fp = fopen($path, 'r');
         if (!$fp) throw new \RuntimeException("Cannot open: $path");
 
-        $p_cols = ['name1', 'name2', 'yomi1', 'yomi2', 'note'];
-        $p_keys = array_flip($p_cols);
-        $c_cols = ['zip', 'address1', 'phone1', 'phone2', 'note'];
-        $c_keys = array_flip($c_cols);
+        $cols = ['id', 'name1', 'name2', 'yomi1', 'yomi2', 'type', 'note'];
+        $keys = array_flip($cols);
 
         $header = fgetcsv($fp);               // 1行目を列名にする想定
         while (($row = fgetcsv($fp)) !== false) {
             $assoc = array_combine($header, $row);
-            $p_assoc = array_intersect_key($assoc, $p_keys);
-            $this->insert('{{%person}}', $p_assoc);
-            $c_assoc = array_intersect_key($assoc, $c_keys);
-            if ($c_assoc['zip'] != '' || $c_assoc['address1'] != '' || $c_assoc['phone1'] != '' || $c_assoc['phone2'] != '') {
-                $this->insert('{{%contact}}', $c_assoc);
-            }
+            $assoc = array_intersect_key($assoc, $keys);
+            $this->insert('{{%person}}', $assoc);
         }
         fclose($fp);
+
+        $this->execute('alter sequence person_id_seq restart with 62');
+    }
+
+    public function seedContacts()
+    {
+        $path = Yii::getAlias('@app/migrations/data/contact.csv');
+        $fp = fopen($path, 'r');
+        if (!$fp) throw new \RuntimeException("Cannot open: $path");
+
+        $cols = ['id', 'person_id', 'order', 'role', 'contact_name', 'zip', 'address1', 'address2', 'phone1', 'phone2', 'mail', 'note'];
+        $keys = array_flip($cols);
+
+        $header = fgetcsv($fp);               // 1行目を列名にする想定
+        while (($row = fgetcsv($fp)) !== false) {
+            $assoc = array_combine($header, $row);
+            $assoc = array_intersect_key($assoc, $keys);
+            $this->insert('{{%contact}}', $assoc);
+        }
+        fclose($fp);
+        $this->execute('alter sequence contact_id_seq restart with 52');
     }
 
     /**
@@ -128,7 +121,6 @@ class m251215_121238_create_person_tables extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%person_contact}}');
         $this->dropTable('{{%contact}}');
         $this->dropTable('{{%person}}');
     }

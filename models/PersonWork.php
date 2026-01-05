@@ -11,11 +11,9 @@ use Yii;
  * @property string $name
  * @property string|null $address
  * @property int|null $person_id
- * @property int|null $contact_id
  * @property int $src
  *
  * @property Person $person
- * @property Contact $contact
  */
 class PersonWork extends \yii\db\ActiveRecord
 {
@@ -30,10 +28,10 @@ class PersonWork extends \yii\db\ActiveRecord
     {
         return [
             self::SRC_NONE => '無し',
-            self::SRC_TANADA_OWNER => '田畑所有者',
-            self::SRC_TANADA_CULTIVATOR => '田畑耕作者',
-            self::SRC_FOREST_OWNER => '山林所有者',
-            self::SRC_FOREST_MANAGER => '山林管理者',
+            self::SRC_TANADA_OWNER => '農-所有者',
+            self::SRC_TANADA_CULTIVATOR => '農-耕作者',
+            self::SRC_FOREST_OWNER => '山-所有者',
+            self::SRC_FOREST_MANAGER => '山-管理者',
         ];
     }
 
@@ -56,16 +54,15 @@ class PersonWork extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['address', 'person_id', 'contact_id'], 'default', 'value' => null],
+            [['address', 'person_id'], 'default', 'value' => null],
             [['name'], 'required'],
-            [['person_id', 'contact_id'], 'default', 'value' => null],
-            [['person_id', 'contact_id', 'src'], 'integer'],
+            [['person_id'], 'default', 'value' => null],
+            [['person_id', 'src'], 'integer'],
             ['src', 'default', 'value' => self::SRC_NONE],
             ['src', 'in', 'range' => array_keys(self::getSrcTypes())],
             [['name'], 'string', 'max' => 60],
             [['address'], 'string', 'max' => 100],
             [['person_id'], 'exist', 'skipOnError' => true, 'targetClass' => Person::class, 'targetAttribute' => ['person_id' => 'id']],
-            [['contact_id'], 'exist', 'skipOnError' => true, 'targetClass' => Contact::class, 'targetAttribute' => ['contact_id' => 'id']],
         ];
     }
 
@@ -80,7 +77,6 @@ class PersonWork extends \yii\db\ActiveRecord
             'address' => '住所',
             'src' => 'ソース',
             'person_id' => '名簿',
-            'contact_id' => '連絡先',
         ];
     }
 
@@ -92,16 +88,6 @@ class PersonWork extends \yii\db\ActiveRecord
     public function getPerson()
     {
         return $this->hasOne(Person::class, ['id' => 'person_id']);
-    }
-
-    /**
-     * Gets query for [[Contact]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getContact()
-    {
-        return $this->hasOne(Contact::class, ['id' => 'contact_id']);
     }
 
     /**
@@ -169,5 +155,4 @@ class PersonWork extends \yii\db\ActiveRecord
         }
         return $count;
     }
-
 }

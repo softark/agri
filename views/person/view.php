@@ -1,7 +1,8 @@
 <?php
 
 use app\models\Icon;
-use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
+use yii\bootstrap5\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
@@ -17,42 +18,50 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="row">
         <div class="col-lg-6 col-md-8">
-
+            <?php
+            $attributes = [
+                    [
+                            'attribute' => 'type',
+                            'value' => function ($model) {
+                                return $model->typeText;
+                            },
+                    ],
+                    'dispname',
+                    'yomigana',
+                    'note',
+            ];
+            if (Yii::$app->user->can('admin')) {
+                $attributes = ArrayHelper::merge($attributes, [
+                        [
+                                'attribute' => 'created_at',
+                                'value' => function ($model) {
+                                    return Yii::$app->formatter->asDatetime($model->created_at, 'yyyy-MM-dd HH:mm:ss');
+                                }
+                        ],
+                        [
+                                'attribute' => 'created_by',
+                                'value' => function ($model) {
+                                    return $model->createdBy->longname;
+                                }
+                        ],
+                        [
+                                'attribute' => 'updated_at',
+                                'value' => function ($model) {
+                                    return Yii::$app->formatter->asDatetime($model->updated_at, 'yyyy-MM-dd HH:mm:ss');
+                                }
+                        ],
+                        [
+                                'attribute' => 'updated_by',
+                                'value' => function ($model) {
+                                    return $model->updatedBy->longname;
+                                }
+                        ],
+                ]);
+            }
+            ?>
             <?= DetailView::widget([
                     'model' => $model,
-                    'attributes' => [
-                            [
-                                    'attribute' => 'type',
-                                    'value' => 'typeText',
-                            ],
-                            'dispname',
-                            'yomigana',
-                            'note',
-                            [
-                                    'attribute' => 'created_at',
-                                    'value' => function ($model) {
-                                        return Yii::$app->formatter->asDatetime($model->created_at, 'yyyy-MM-dd HH:mm:ss');
-                                    }
-                            ],
-                            [
-                                    'attribute' => 'created_by',
-                                    'value' => function ($model) {
-                                        return $model->createdBy->longname;
-                                    }
-                            ],
-                            [
-                                    'attribute' => 'updated_at',
-                                    'value' => function ($model) {
-                                        return Yii::$app->formatter->asDatetime($model->updated_at, 'yyyy-MM-dd HH:mm:ss');
-                                    }
-                            ],
-                            [
-                                    'attribute' => 'updated_by',
-                                    'value' => function ($model) {
-                                        return $model->updatedBy->longname;
-                                    }
-                            ],
-                    ],
+                    'attributes' => $attributes,
             ]) ?>
             <p>
                 <?php if (\yii::$app->user->can('person.edit', ['id' => $model->id])) : ?>
@@ -69,6 +78,75 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php endif; ?>
                 <?= Html::a(Icon::getIconAndLabel('go-back'), ['index'], ['class' => 'btn btn-outline-secondary']) ?>
             </p>
+            <hr />
+            <h3>連絡先</h3>
+            <?php if (count($model->contacts) == 0) : ?>
+                （登録なし）
+            <?php else: ?>
+                <?php foreach ($model->contacts as $contact) : ?>
+                    <?php
+                    $attributes = [
+                            'order',
+                            'role',
+                            'contact_name',
+                            'zip',
+                            'address1',
+                            'address2',
+                            'phone1',
+                            'phone2',
+                            'mail',
+                            'note',
+                    ];
+                    if (Yii::$app->user->can('admin')) {
+                        $attributes = ArrayHelper::merge($attributes, [
+                                [
+                                        'attribute' => 'created_at',
+                                        'value' => function ($model) {
+                                            return Yii::$app->formatter->asDatetime($model->created_at, 'yyyy-MM-dd HH:mm:ss');
+                                        }
+                                ],
+                                [
+                                        'attribute' => 'created_by',
+                                        'value' => function ($model) {
+                                            return $model->createdBy->longname;
+                                        }
+                                ],
+                                [
+                                        'attribute' => 'updated_at',
+                                        'value' => function ($model) {
+                                            return Yii::$app->formatter->asDatetime($model->updated_at, 'yyyy-MM-dd HH:mm:ss');
+                                        }
+                                ],
+                                [
+                                        'attribute' => 'updated_by',
+                                        'value' => function ($model) {
+                                            return $model->updatedBy->longname;
+                                        }
+                                ],
+                        ]);
+                    }
+                    ?>
+                    <?= DetailView::widget([
+                            'model' => $contact,
+                            'attributes' => $attributes,
+                    ]) ?>
+                    <p>
+                        <?php if (\yii::$app->user->can('contact.edit', ['id' => $contact->id])) : ?>
+                            <?= Html::a(Icon::getIconAndLabel('update'), ['/contact/update', 'id' => $contact->id], ['class' => 'btn btn-primary']) ?>
+                        <?php endif; ?>
+                        <?php if (\yii::$app->user->can('contact.delete')) : ?>
+                            <?= Html::a(Icon::getIconAndLabel('delete'), ['/contact/delete', 'id' => $contact->id], [
+                                    'class' => 'btn btn-danger',
+                                    'data' => [
+                                            'confirm' => '名簿からこの連絡先を削除しますか？',
+                                            'method' => 'post',
+                                    ],
+                            ]) ?>
+                        <?php endif; ?>
+                    </p>
+
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
 </div>

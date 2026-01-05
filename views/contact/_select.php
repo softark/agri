@@ -2,7 +2,6 @@
 
 /* @var $this yii\web\View */
 /* @var $openBtnId string */
-
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 use yii\grid\GridView;

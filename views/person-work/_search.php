@@ -3,12 +3,12 @@
 use app\models\Icon;
 use app\models\PersonWork;
 use app\models\PersonWorkSearch;
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap5\Html;
+use yii\bootstrap5\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var app\models\PersonWorkSearch $model */
-/** @var yii\widgets\ActiveForm $form */
+/** @var yii\bootstrap5\ActiveForm $form */
 
 $this->registerJs("
 $('#search-form').on('click', '#clear-btn', function(event){
@@ -52,10 +52,6 @@ $('#search-form').on('change', 'input', function(event){
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'p_link')
             ->dropDownList(PersonWorkSearch::getStatusList())?>
-        </div>
-        <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($model, 'c_link')
-                    ->dropDownList(PersonWorkSearch::getStatusList())?>
         </div>
 
         <div class="form-group search-buttons col-lg-2 col-md-3 col-sm-3 col-4">

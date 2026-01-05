@@ -24,10 +24,12 @@ $this->title = '岩座神農会';
                 <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
                     <p><?= Html::a(Icon::getIconAndLabel('person'), ['/person'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
                 </div>
-                <?php if (Yii::$app->user->can('admin')): ?>
+                <?php if (Yii::$app->user->can('editor')): ?>
                     <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
                         <p><?= Html::a(Icon::getIconAndLabel('contact'), ['/contact'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
                     </div>
+                <?php endif; ?>
+                <?php if (Yii::$app->user->can('admin')): ?>
                     <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
                         <p><?= Html::a('名簿ワーク', ['/person-work'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
                     </div>
@@ -39,7 +41,8 @@ $this->title = '岩座神農会';
                     </div>
                 <?php endif; ?>
             </div>
-            <!--            <p>--><?php //= Html::a(Icon::getIcon('memo') . ' メモを見る', ['/memo/index'], ['class' => "btn btn-lg btn-success"]) ?><!--</p>-->
+            <!--            <p>-->
+            <?php //= Html::a(Icon::getIcon('memo') . ' メモを見る', ['/memo/index'], ['class' => "btn btn-lg btn-success"]) ?><!--</p>-->
             <hr/>
             <p><?= Yii::$app->user->identity->getLongName() ?> としてログインしています。</p>
             <p>

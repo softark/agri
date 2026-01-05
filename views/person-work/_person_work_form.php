@@ -1,13 +1,15 @@
 <?php
 
 use app\models\Icon;
+use app\models\Person;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var app\models\Contact $model */
+/** @var app\models\PersonWorkForm $model */
 /** @var yii\bootstrap5\ActiveForm $form */
+/** @var string $route */
 
 \app\assets\JuiAsset::register($this);
 
@@ -90,34 +92,33 @@ $('#address1').autocomplete({
 ");
 ?>
 
-<div class="contact-form">
+<div class="person-work-form">
     <div class="row">
         <div class="col-lg-5">
+
             <?php $form = ActiveForm::begin([
-                    'id' => 'contact-edit-form',
+                    'id' => 'person-work-form',
                     'enableAjaxValidation' => false,
                     'options' => ['autocomplete' => 'off'],
                     'fieldConfig' => [
                             'options' => ['class' => 'mb-3']
                     ],
             ]); ?>
+            <?= $form->field($model, 'type')->dropDownList(Person::getTypes()) ?>
+            <?= $form->field($model, 'name1')->textInput(['maxlength' => true, 'autocomplete' => 'new_name1']) ?>
+            <?= $form->field($model, 'name2')->textInput(['maxlength' => true, 'autocomplete' => 'new_name2']) ?>
+            <?= $form->field($model, 'yomi1')->textInput(['maxlength' => true, 'autocomplete' => 'new_yomi1']) ?>
+            <?= $form->field($model, 'yomi2')->textInput(['maxlength' => true, 'autocomplete' => 'new_yomi2']) ?>
+            <?= $form->field($model, 'person_note')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'has_contact')->checkbox() ?>
             <?= $form->field($model, 'zip')->textInput(['maxlength' => true, 'id' => 'zip']) ?>
             <?= $form->field($model, 'address1')->textInput(['maxlength' => true, 'id' => 'address1']) ?>
             <?= $form->field($model, 'address2')->textInput(['maxlength' => true,]) ?>
-            <?= $form->field($model, 'phone1')->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'phone2')->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'mail')->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'note')->textInput(['maxlength' => true]) ?>
-
+            <?= $form->field($model, 'contact_note')->textInput(['maxlength' => true]) ?>
             <div class="form-group">
-                <?php if ($model->isNewRecord): ?>
-                    <?= Html::submitButton(Icon::getIconAndLabel('ok', '登録'), ['class' => 'btn btn-success']) ?>
-                <?php else: ?>
-                    <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
-                <?php endif ?>
-                <?= Html::a(Icon::getIconAndLabel('cancel'), ArrayHelper::getValue(Yii::$app->request, 'referrer', ['index']), ['class' => 'btn btn-outline-secondary']) ?>
+                <?= Html::submitButton(Icon::getIconAndLabel('ok', '登録'), ['class' => 'btn btn-success']) ?>
+                <?= Html::a(Icon::getIconAndLabel('cancel'), $route, ['class' => 'btn btn-outline-secondary']) ?>
             </div>
-
             <?php ActiveForm::end(); ?>
         </div>
     </div>

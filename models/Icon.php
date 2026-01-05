@@ -38,6 +38,8 @@ class Icon
         'forward' => ['label' => '次へ', 'class' => 'fa-solid fa-caret-right'],
         'fast-backward' => ['label' => '先頭へ', 'class' => 'fa-solid fa-backward-step'],
         'fast-forward' => ['label' => '末尾へ', 'class' => 'fa-solid fa-forward-step'],
+        'up' => ['label' => '上へ', 'class' => 'fa-solid fa-caret-up'],
+        'down' => ['label' => '下へ', 'class' => 'fa-solid fa-caret-down'],
         'copy' => ['label' => '複製', 'class' => 'fa-solid fa-clone'],
         'memo' => ['label' => 'メモ', 'class' => 'fa-solid fa-book'],
         'left' => ['label' => '前へ', 'class' => 'fa-solid fa-left-long'],
@@ -45,6 +47,9 @@ class Icon
         'go-back' => ['label' => '一覧へ', 'class' => 'fa-solid fa-turn-up'],
         'link' => ['label' => 'リンク選択','class' => 'fa-solid fa-link'],
         'unlink' => ['label' => 'リンク解除','class' => 'fa-solid fa-link-slash'],
+        'plus-c' => ['label' => '新規登録','class' => 'fa-solid fa-circle-plus'],
+        'plus-s' => ['label' => '新規登録','class' => 'fa-solid fa-square-plus'],
+        'plus' => ['label' => '追加','class' => 'fa-solid fa-plus'],
     ];
 
     /**

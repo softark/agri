@@ -2,7 +2,7 @@
 
 use app\models\Icon;
 use app\models\PersonWork;
-use yii\helpers\Html;
+use yii\bootstrap5\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
@@ -34,13 +34,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             'method' => 'post',
                     ],
             ]) ?>
-            <?= Html::a('初期化', ['init'], [
-                    'class' => 'btn btn-danger',
-                    'data' => [
-                            'confirm' => '名簿ワークを初期化しますか？',
-                            'method' => 'post',
-                    ],
-            ]) ?>
         </p>
 
         <?php echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -58,30 +51,53 @@ $this->params['breadcrumbs'][] = $this->title;
                         'name',
                         'address',
                         [
-                                'attribute' => 'person_id',
+                                'label' => '登録',
                                 'format' => 'raw',
-                                'contentOptions' => ['class' => 'col-card-button'],
+                                'contentOptions' => ['class' => 'col-person-register'],
                                 'value' => function ($model) {
-                                    return $model->person_id !== null ?
-                                            Html::a($model->person->dispname, ['/person/view', 'id' => $model->person_id],
-                                                    ['class' => 'btn btn-primary btn-sm']) :
+                                    return $model->person_id === null ?
+                                            Html::a('登録', ['register', 'id' => $model->id],
+                                                    ['class' => 'btn btn-success btn-sm']) :
                                             '';
                                 }
                         ],
                         [
-                                'attribute' => 'contact_id',
+                                'label' => '名簿へのリンク',
                                 'format' => 'raw',
-                                'contentOptions' => ['class' => 'col-card-button'],
+                                'contentOptions' => ['class' => 'col-link-buttons'],
                                 'value' => function ($model) {
-                                    return $model->contact_id !== null ?
-                                            Html::a($model->contact->address, ['/contact/view', 'id' => $model->contact_id],
-                                                    ['class' => 'btn btn-primary btn-sm']) :
-                                            '';
+                                    if ($model->person_id !== null) {
+                                        return Html::button(
+                                                        Icon::getIcon('link') . ' 変更',
+                                                        ['class' => 'btn btn-primary btn-sm add-link', 'data-model-id' => $model->id]
+                                                )
+                                                . ' ' .
+                                                Html::button(
+                                                        Icon::getIcon('unlink') . ' 解除',
+                                                        ['class' => 'btn btn-sm btn-danger del-link', 'data-model-id' => $model->id]
+                                                );
+                                    } else {
+                                        return Html::button(
+                                                Icon::getIcon('link') . ' 選択',
+                                                ['class' => 'btn btn-success btn-sm add-link', 'data-model-id' => $model->id]
+                                        );
+                                    }
+                                }
+                        ],
+                        [
+                                'attribute' => 'person_id',
+                                'format' => 'raw',
+                                'contentOptions' => ['class' => 'col-link-person'],
+                                'value' => function ($model) {
+                                    return $model->person_id !== null ?
+                                            Html::a($model->person->dispname . ' : ' . $model->person->priorAddress,
+                                            ['/person/view', 'id' => $model->person_id])
+                                            : '&nbsp;';
                                 }
                         ],
                         [
                                 'class' => ActionColumn::className(),
-                                'template' => '{view} {delete}',
+                                'template' => '{view}',
                                 'urlCreator' => function ($action, PersonWork $model, $key, $index, $column) {
                                     return Url::toRoute([$action, 'id' => $model->id]);
                                 }
@@ -91,4 +107,73 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php Pjax::end(); ?>
 
+        <?= Html::hiddenInput('person_id', '', ['id' => 'person-id']) ?>
+        <?= Html::hiddenInput('model_id', '', ['id' => 'model-id']) ?>
+        <?php
+        echo $this->render('/person/_select_modal.php', [
+                'personIdInput' => 'person-id',
+        ]);
+        ?>
+
     </div>
+
+<?php
+$urlAdd = Url::to(['/person-work/add-link']);
+$urlDel = Url::to(['/person-work/delete-link']);
+
+$this->registerJs("
+$('#person-work-index').on('click', '.add-link', function(event){
+  event.preventDefault();
+  $('#model-id').val($(this).data('model-id'));
+  openPersonSelectModal();
+});
+
+$('#person-id').on('change', function () {
+  const modelId = $('#model-id').val();
+  const personId = $(this).val();
+
+  $.ajax({
+    url: '$urlAdd',
+    type: 'POST',
+    dataType: 'json',
+    data: { id: modelId, person_id: personId, _csrf: yii.getCsrfToken() },
+    success: function (res) {
+      if (!res.ok) { alert(res.message ?? 'リンクの更新に失敗しました'); return; }
+      // ボタン（=クリック元）から行を取るのが確実
+      const row = $('.add-link[data-model-id=' + res.id + ']').closest('tr');
+      row.find('.col-person-register').html(res.personRegisterHtml);
+      row.find('.col-link-buttons').html(res.linkButtonsHtml);
+      row.find('.col-link-person').html(res.linkPersonHtml);
+      row.find('.col-link-contact').html(res.linkContactHtml);
+    },
+    error: function (xhr) {
+      alert('リンクの更新に失敗しました: ' + xhr.status);
+    }
+  });
+});
+
+$('#person-work-index').on('click', '.del-link', function (event) {
+  event.preventDefault();
+  event.stopPropagation();
+  const modelId = $(this).data('model-id');
+  const row = $(this).closest('tr');
+  yii.confirm('名簿へのリンクを削除しますか？', function () {
+    $.ajax({
+      url: '$urlDel',
+      type: 'POST',
+      dataType: 'json',
+      data: { id: modelId, _csrf: yii.getCsrfToken() },
+      success: function (res) {
+        if (!res.ok) { alert(res.message ?? 'リンクの削除に失敗しました。'); return; }
+        row.find('.col-person-register').html(res.personRegisterHtml);
+        row.find('.col-link-buttons').html(res.linkButtonsHtml);
+        row.find('.col-link-person').html(res.linkPersonHtml);
+        row.find('.col-link-contact').html(res.linkContactHtml);
+      },
+      error: function (xhr) {
+        alert('リンクの削除に失敗しました: ' + xhr.status);
+      }
+    });
+  });
+});
+");

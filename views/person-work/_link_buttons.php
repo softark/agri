@@ -1,7 +1,7 @@
 <?php
 
 use app\models\Icon;
-use yii\helpers\Html;
+use yii\bootstrap5\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
 
@@ -13,11 +13,11 @@ use yii\widgets\DetailView;
 <td class="col-link-buttons">
     <?php if ($model->person_id !== null): ?>
         <button type="button" class="btn btn-primary btn-sm add-link" data-model-id="<?= $model->id ?>">
-            <i class="fa-solid fa-link" title="リンク変更"></i> リンク変更</button>
+            <i class="fa-solid fa-link" title="リンク"></i> 変更</button>
         <button type="button" class="btn btn-sm btn-danger del-link" data-model-id="<?= $model->id ?>">
-            <i class="fa-solid fa-link-slash" title="リンク解除"></i> リンク解除</button>
+            <i class="fa-solid fa-link-slash" title="リンク"></i> 解除</button>
     <?php else: ?>
         <button type="button" class="btn btn-success btn-sm add-link" data-model-id="<?= $model->id ?>">
-            <i class="fa-solid fa-link" title="リンク選択"></i> リンク選択</button>
+            <i class="fa-solid fa-link" title="リンク"></i> 選択</button>
     <?php endif; ?>
 </td>

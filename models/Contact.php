@@ -8,6 +8,10 @@ use Yii;
  * This is the model class for table "contact".
  *
  * @property int $id
+ * @property int $person_id
+ * @property int $order
+ * @property string|null $contact_name
+ * @property string|null $role
  * @property string|null $zip
  * @property string|null $address1
  * @property string|null $address2
@@ -20,8 +24,7 @@ use Yii;
  * @property string $updated_at
  * @property int $updated_by
  *
- * @property PersonContact[] $personContacts
- * @property Person[] $persons
+ * @property Person $person
  * @property User $createdBy
  * @property User $updatedBy
  */
@@ -70,6 +73,12 @@ class Contact extends \yii\db\ActiveRecord
             [['created_at', 'updated_at'], 'safe'],
             [['created_by', 'updated_by'], 'default', 'value' => null],
             [['created_by', 'updated_by'], 'integer'],
+            [['person_id'], 'required'],
+            [['person_id'], 'exist', 'skipOnError' => true, 'targetClass' => Person::class, 'targetAttribute' => ['person_id' => 'id']],
+            [['person_id', 'order', 'created_by', 'updated_by'], 'integer'],
+            [['contact_name'], 'string', 'max' => 60],
+            [['order'], 'default', 'value' => 1],
+            [['role'], 'string', 'max' => 30],
             [['zip'], 'string', 'max' => 10],
             [['address1', 'address2', 'mail'], 'string', 'max' => 40],
             [['phone1', 'phone2'], 'string', 'max' => 20],
@@ -86,6 +95,10 @@ class Contact extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'person_id' => '名簿',
+            'order' => '優先順',
+            'contact_name' => '名前',
+            'role' => '役割・肩書',
             'zip' => '郵便番号',
             'address' => '住所',
             'address1' => '住所',
@@ -102,24 +115,13 @@ class Contact extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[PersonContact]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPersonContacts()
-    {
-        return $this->hasMany(PersonContact::class, ['contact_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[Person]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPersons()
+    public function getPerson()
     {
-        return $this->hasMany(Person::class, ['id' => 'person_id'])
-            ->viaTable('person_contact', ['contact_id' => 'id']);
+        return $this->hasOne(Person::class, ['id' => 'person_id']);
     }
 
     /**

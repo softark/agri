@@ -2,7 +2,7 @@
 
 use app\models\Icon;
 use app\models\Person;
-use yii\helpers\Html;
+use yii\bootstrap5\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
@@ -20,7 +20,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Icon::getIconAndLabel('person') ?></h1>
 
     <p>
-        <?= Html::a(Icon::getIconAndLabel('person') . ' に新規登録', ['create'], ['class' => 'btn btn-success']) ?>
+        <?php if (Yii::$app->user->can('person.edit')): ?>
+            <?= Html::a(Icon::getIconAndLabel('person') . ' に新規登録', ['create'], ['class' => 'btn btn-success']) ?>
+        <?php endif; ?>
     </p>
 
     <?php Pjax::begin(); ?>
@@ -45,7 +47,31 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     'note',
                     [
-                            'class' => ActionColumn::className(),
+                            'label' => '住所',
+                            'value' => function ($model) {
+                                if (count($model->contacts) > 0) {
+                                    return $model->contacts[0]->shortAddress;
+                                } else {
+                                    return '';
+                                }
+                            }
+                    ],
+                    [
+                            'label' => '電話',
+                            'value' => function ($model) {
+                                if (count($model->contacts) > 0) {
+                                    return $model->contacts[0]->phone1;
+                                } else {
+                                    return '';
+                                }
+                            }
+                    ],
+                    [
+                            'class' => ActionColumn::class,
+                            'template' => (Yii::$app->user->can('person.delete')) ?
+                                    '{view} {update} {delete}' :
+                                    ((Yii::$app->user->can('person.edit')) ?
+                                            '{view} {update}' : '{view}'),
                             'urlCreator' => function ($action, Person $model, $key, $index, $column) {
                                 return Url::toRoute([$action, 'id' => $model->id]);
                             }

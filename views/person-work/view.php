@@ -1,7 +1,7 @@
 <?php
 
 use app\models\Icon;
-use yii\helpers\Html;
+use yii\bootstrap5\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
 
@@ -24,7 +24,6 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= DetailView::widget([
                     'model' => $model,
                     'attributes' => [
-                            'id',
                             [
                                     'attribute' => 'src',
                                     'value' => function ($model) {
@@ -36,51 +35,128 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
             ]) ?>
             <p>
-                <?= Html::a(Icon::getIconAndLabel('delete'), ['delete', 'id' => $model->id], [
-                        'class' => 'btn btn-danger',
-                        'data' => [
-                                'confirm' => '名簿ワークエントリ <strong>"' . $model->name . '"</strong> を削除しますか？',
-                                'method' => 'post',
-                        ],
-                ]) ?>
                 <?= Html::a(Icon::getIconAndLabel('go-back'), ['index'], ['class' => 'btn btn-outline-secondary']) ?>
             </p>
-
-            <h3>名簿へのリンク</h3>
-            <div id="person-link">
-                <?php if ($model->person_id) : ?>
-                    <?= DetailView::widget([
-                            'model' => $model->person,
-                            'attributes' => [
-                                    'dispname',
-                                    'yomigana',
-                                    'typeText',
-                                    'note',
-                            ],
-                    ]) ?>
-                <?php else : ?>
-                    リンクなし
-                <?php endif; ?>
+            <hr/>
+            <div id="person-view">
+                <?= $this->render('_person_view', ['model' => $model]) ?>
             </div>
-            <h3>連絡先へのリンク</h3>
-            <div id="contact-link">
-                <?php if ($model->contact_id) : ?>
-                    <?= DetailView::widget([
-                            'model' => $model->contact,
-                            'attributes' => [
-                                    'zip',
-                                    'address',
-                                    'phone1',
-                                    'phone2',
-                                    'mail',
-                                    'note',
-                            ],
-                    ]) ?>
-                <?php else : ?>
-                    リンクなし
-                <?php endif; ?>
-            </div>
+            <?= $this->render('/person/_select_modal.php', [
+                    'personIdInput' => 'person-id',
+            ]);
+            ?>
         </div>
     </div>
 </div>
+
+<?php
+$urlAddLink = Url::to(['person-work/add-link-view', 'id' => $model->id]);
+$urlDeleteLink = Url::to(['person-work/delete-link-view', 'id' => $model->id]);
+$urlDeletePerson = Url::to(['person-work/delete-person', 'id' => $model->id]);
+$urlReorderContact = Url::to(['person-work/reorder-contact', 'id' => $model->id]);
+$urlDeleteContact = Url::to(['person-work/delete-contact', 'id' => $model->id]);
+$this->registerJs("
+$('#person-view').on('click', '#btn-person-select', function(event){
+    openPersonSelectModal();
+    event.preventDefault();
+});
+$('#person-view').on('change', '#person-id', function() {
+  const personId = $(this).val();
+  $.ajax({
+    url: '$urlAddLink',
+    type: 'POST',
+    data: {
+      person_id: personId,
+      _csrf: yii.getCsrfToken()
+    },
+    success: function (html) {
+      $('#person-view').html(html);
+    },
+    error: function (xhr) {
+      alert('名簿へのリンク更新に失敗しました: ' + xhr.status);
+    }
+  });
+});
+
+$('#person-view').on('click', '#btn-person-unlink', function(event){
+  event.preventDefault();
+  event.stopPropagation();
+  yii.confirm('名簿へのリンクを削除しますか？', function () {
+    $.ajax({
+      url: '$urlDeleteLink',
+      type: 'POST',
+      data: { _csrf: yii.getCsrfToken() },
+      success: function (html) {
+        $('#person-view').html(html);
+      },
+      error: function (xhr) {
+        alert('名簿へのリンク削除に失敗しました: ' + xhr.status);
+      }
+    });
+  });
+});
+
+$('#person-view').on('click', '.delete-person', function(event){
+  event.preventDefault();
+  event.stopPropagation();
+  const personId = $(this).data('person-id');
+  yii.confirm('この名簿を削除しますか？（連絡先も一緒に削除されます）', function () {
+    $.ajax({
+      url: '$urlDeletePerson',
+      type: 'POST',
+      data: {
+        person_id: personId,
+        _csrf: yii.getCsrfToken()
+      },
+      success: function (html) {
+        $('#person-view').html(html);
+      },
+      error: function (xhr) {
+        alert('名簿の削除に失敗しました: ' + xhr.status);
+      }
+    });
+  });
+});
+
+$('#person-view').on('click', '.reorder-contact', function(event){
+  event.preventDefault();
+  event.stopPropagation();
+  $.ajax({
+    url: '$urlReorderContact',
+    type: 'POST',
+    data: {
+      contact_id: $(this).data('contact-id'),
+      direction: $(this).data('direction'),
+      _csrf: yii.getCsrfToken()
+    },
+    success: function (html) {
+      $('#person-view').html(html);
+    },
+    error: function (xhr) {
+      alert('連絡先の順序変更に失敗しました: ' + xhr.status);
+    }
+  });
+});
+$('#person-view').on('click', '.delete-contact', function(event){
+  event.preventDefault();
+  event.stopPropagation();
+  const contactId = $(this).data('contact-id');
+  yii.confirm('この連絡先を削除しますか？', function () {
+    $.ajax({
+      url: '$urlDeleteContact',
+      type: 'POST',
+      data: {
+        contact_id: contactId,
+        _csrf: yii.getCsrfToken()
+      },
+      success: function (html) {
+        $('#person-view').html(html);
+      },
+      error: function (xhr) {
+        alert('連絡先の削除に失敗しました: ' + xhr.status);
+      }
+    });
+  });
+});
+");
 

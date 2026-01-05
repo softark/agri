@@ -39,6 +39,26 @@ use yii\widgets\Pjax;
             'value' => 'dispname'
         ],
         'note',
+        [
+            'label' => '連絡先',
+            'value' => function ($model) {
+                if (count($model->contacts) > 0) {
+                    return $model->contacts[0]->shortAddress;
+                } else {
+                    return null;
+                }
+            },
+        ],
+        [
+            'label' => '電話',
+            'value' => function ($model) {
+                if (count($model->contacts) > 0) {
+                    return $model->contacts[0]->phone1;
+                } else {
+                    return null;
+                }
+            },
+        ],
     ],
 ]); ?>
 <?php Pjax::end();

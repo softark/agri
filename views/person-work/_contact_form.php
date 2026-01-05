@@ -6,8 +6,9 @@ use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var app\models\Contact $model */
-/** @var yii\bootstrap5\ActiveForm $form */
+/** @var app\models\PersonWork $model */
+/** @var app\models\Person $person */
+/** @var app\models\Contact $contact */
 
 \app\assets\JuiAsset::register($this);
 
@@ -101,21 +102,25 @@ $('#address1').autocomplete({
                             'options' => ['class' => 'mb-3']
                     ],
             ]); ?>
-            <?= $form->field($model, 'zip')->textInput(['maxlength' => true, 'id' => 'zip']) ?>
-            <?= $form->field($model, 'address1')->textInput(['maxlength' => true, 'id' => 'address1']) ?>
-            <?= $form->field($model, 'address2')->textInput(['maxlength' => true,]) ?>
-            <?= $form->field($model, 'phone1')->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'phone2')->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'mail')->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'note')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($contact, 'order')->textInput(['disabled' => true]); ?>
+            <?= $form->field($contact, 'role')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($contact, 'contact_name')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($contact, 'zip')->textInput(['maxlength' => true, 'id' => 'zip']) ?>
+            <?= $form->field($contact, 'address1')->textInput(['maxlength' => true, 'id' => 'address1']) ?>
+            <?= $form->field($contact, 'address2')->textInput(['maxlength' => true,]) ?>
+            <?= $form->field($contact, 'phone1')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($contact, 'phone2')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($contact, 'mail')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($contact, 'note')->textInput(['maxlength' => true]) ?>
 
             <div class="form-group">
-                <?php if ($model->isNewRecord): ?>
+                <?php if ($contact->isNewRecord): ?>
                     <?= Html::submitButton(Icon::getIconAndLabel('ok', '登録'), ['class' => 'btn btn-success']) ?>
                 <?php else: ?>
                     <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
                 <?php endif ?>
-                <?= Html::a(Icon::getIconAndLabel('cancel'), ArrayHelper::getValue(Yii::$app->request, 'referrer', ['index']), ['class' => 'btn btn-outline-secondary']) ?>
+                <?= Html::a(Icon::getIconAndLabel('cancel'),
+                        ['view', 'id' => $model->id], ['class' => 'btn btn-outline-secondary']) ?>
             </div>
 
             <?php ActiveForm::end(); ?>

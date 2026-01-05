@@ -21,8 +21,8 @@ use Yii;
  * @property string $updated_at
  * @property int $updated_by
  *
- * @property PersonContact[] $personContacts
  * @property Contact[] $contacts
+ * @property Contact $priorContact
  * @property User $createdBy
  * @property User $updatedBy
  */
@@ -88,8 +88,15 @@ class Person extends \yii\db\ActiveRecord
             [['type', 'created_by', 'updated_by'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name1', 'name2', 'yomi1', 'yomi2'], 'string', 'max' => 30],
+            [['name1', 'name2'], function($attribute, $param, $validator) {
+                $persons = Person::findAll(['name' => $this->name1 . $this->name2]);
+                if (($this->isNewRecord && count($persons) > 0) || count($persons) > 1) {
+                    $this->addError('name1', '姓 および 名の "' . $this->name1 . '"-"'
+                        . $this->name2 . '" という組み合わせは既に登録されています。');
+                }
+            }],
             [['name', 'yomi'], 'string', 'max' => 60],
-            [['note'], 'string', 'max' => 255],
+            [['note'], 'string', 'max' => 50],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['created_by' => 'id']],
             [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['updated_by' => 'id']],
         ];
@@ -112,6 +119,9 @@ class Person extends \yii\db\ActiveRecord
             'yomigana' => 'よみがな',
             'type' => 'タイプ',
             'note' => 'メモ',
+            'contacts' => '連絡先',
+            'priorContact' => '連絡先',
+            'priorAddress' => '住所',
             'created_at' => '登録日時',
             'created_by' => '登録者',
             'updated_at' => '更新日時',
@@ -120,24 +130,37 @@ class Person extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[PersonContact]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPersonContacts()
-    {
-        return $this->hasMany(PersonContact::class, ['person_id' => 'id']);
-    }
-
-    /**
-     * Gets query for [[Contact]].
+     * Gets query for [[Contacts]].
      *
      * @return \yii\db\ActiveQuery
      */
     public function getContacts()
     {
-        return $this->hasMany(Contact::class, ['id' => 'contact_id'])
-            ->viaTable('person_contact', ['person_id' => 'id']);
+        return $this->hasMany(Contact::class, ['person_id' => 'id'])->orderBy('order');
+    }
+
+    /**
+     * @return Contact|null
+     */
+    public function getPriorContact()
+    {
+        if (count($this->contacts) > 0) {
+            return $this->contacts[0];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getPriorAddress()
+    {
+        if (count($this->contacts) > 0) {
+            return $this->contacts[0]->getShortAddress();
+        } else {
+            return '';
+        }
     }
 
     /**

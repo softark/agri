@@ -2,14 +2,13 @@
 
 /* @var $this yii\web\View */
 /* @var $personIdInput string */
-
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 use app\models\Icon;
 use app\models\PersonSearch;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Modal;
-use yii\widgets\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 
 $this->registerCss("
 .person-row.is-selected td {
