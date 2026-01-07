@@ -13,16 +13,12 @@ use yii\widgets\Pjax;
 /** @var app\models\PersonSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = '住所録';
+$this->title = '連絡先';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="person-index">
+<div class="contact-index">
 
     <h1><?= Icon::getIconAndLabel('contact') ?></h1>
-
-    <p>
-        <?= Html::a(Icon::getIconAndLabel('contact') . 'を新規登録', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
 
     <?php Pjax::begin(); ?>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -33,11 +29,23 @@ $this->params['breadcrumbs'][] = $this->title;
             'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
                     [
+                            'attribute' => 'person_id',
+                            'value' => 'person.dispname'
+                    ],
+                    'role',
+                    [
+                            'attribute' => 'name',
+                            'value' => 'dispname'
+                    ],
+                    [
                             'attribute' => 'address1',
                             'value' => 'shortaddress'
                     ],
-                    'phone1',
-                    'phone2',
+                    [
+                            'attribute' => 'phone1',
+                            'label' => '電話',
+                            'value' => 'phones'
+                    ],
                     'note',
                     [
                             'class' => ActionColumn::className(),

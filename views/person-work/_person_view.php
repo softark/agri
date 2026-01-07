@@ -32,10 +32,8 @@ use yii\widgets\DetailView;
                                 return $model->typeText;
                             }
                     ],
-                    'name1',
-                    'name2',
-                    'yomi1',
-                    'yomi2',
+                    'dispname',
+                    'yomigana',
                     'note',
                     [
                             'label' => '操作',
@@ -59,13 +57,9 @@ use yii\widgets\DetailView;
             <?= DetailView::widget([
                     'model' => $contact,
                     'attributes' => [
-                            'role',
-                            'contact_name',
-                            'zip',
-                            'address1',
-                            'address2',
-                            'phone1',
-                            'phone2',
+                            'fullname',
+                            'fulladdress',
+                            'phones',
                             'mail',
                             'note',
                             [

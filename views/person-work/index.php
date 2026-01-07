@@ -86,13 +86,22 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                                 'attribute' => 'person_id',
+                                'label' => '名簿・連絡先',
                                 'format' => 'raw',
                                 'contentOptions' => ['class' => 'col-link-person'],
                                 'value' => function ($model) {
-                                    return $model->person_id !== null ?
-                                            Html::a($model->person->dispname . ' : ' . $model->person->priorAddress,
-                                            ['/person/view', 'id' => $model->person_id])
-                                            : '&nbsp;';
+                                    if ($model->person_id !== null) {
+                                        $label = '';
+                                        if (count($model->person->contacts) > 0) {
+                                            $label = $model->person->contacts[0]->fullname .
+                                             ' : ' . $model->person->contacts[0]->shortAddress;
+                                        } else {
+                                            $label = $model->person->dispname;
+                                        }
+                                        return Html::a($label, ['/person/view', 'id' => $model->person_id], []);
+                                    } else {
+                                        return '&nbsp;';
+                                    }
                                 }
                         ],
                         [

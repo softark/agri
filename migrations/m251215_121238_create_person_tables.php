@@ -43,7 +43,9 @@ class m251215_121238_create_person_tables extends Migration
             'person_id' => $this->integer()->notNull(),
             'order' => $this->integer()->notNull()->defaultValue(1),
             'role' => $this->string(30)->null()->defaultValue(''),
-            'contact_name' => $this->string(60)->null()->defaultValue(''),
+            'name1' => $this->string(30)->notNull(),
+            'name2' => $this->string(30)->null()->defaultValue(''),
+            'name' => $this->string(60) . ' GENERATED ALWAYS as (name1 || name2) STORED',
             'zip' => $this->string(10)->null()->defaultValue(''),
             'address1' => $this->string(40)->null()->defaultValue(''),
             'address2' => $this->string(40)->null()->defaultValue(''),
@@ -59,6 +61,7 @@ class m251215_121238_create_person_tables extends Migration
 
         // インデックス
         $this->createIndex('ix_contact_person_id_order', '{{%contact}}', ['person_id', 'order'], true);
+        $this->createIndex('ix_contact_name', '{{%contact}}', 'name');
         $this->createIndex('ix_contact_zip', '{{%contact}}', 'zip');
         $this->createIndex('ix_contact_address1', '{{%contact}}', 'address1');
         $this->createIndex('ix_contact_phone1', '{{%contact}}', 'phone1');
@@ -94,7 +97,7 @@ class m251215_121238_create_person_tables extends Migration
         }
         fclose($fp);
 
-        $this->execute('alter sequence person_id_seq restart with 62');
+        $this->execute('alter sequence person_id_seq restart with 63');
     }
 
     public function seedContacts()
@@ -103,7 +106,7 @@ class m251215_121238_create_person_tables extends Migration
         $fp = fopen($path, 'r');
         if (!$fp) throw new \RuntimeException("Cannot open: $path");
 
-        $cols = ['id', 'person_id', 'order', 'role', 'contact_name', 'zip', 'address1', 'address2', 'phone1', 'phone2', 'mail', 'note'];
+        $cols = ['id', 'person_id', 'order', 'role', 'name1', 'name2', 'zip', 'address1', 'address2', 'phone1', 'phone2', 'mail', 'note'];
         $keys = array_flip($cols);
 
         $header = fgetcsv($fp);               // 1行目を列名にする想定
@@ -113,7 +116,7 @@ class m251215_121238_create_person_tables extends Migration
             $this->insert('{{%contact}}', $assoc);
         }
         fclose($fp);
-        $this->execute('alter sequence contact_id_seq restart with 52');
+        $this->execute('alter sequence contact_id_seq restart with 77');
     }
 
     /**

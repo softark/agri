@@ -44,13 +44,16 @@ Modal::begin([
 ]); ?>
     <div class="row">
         <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($searchModel, 'type')->dropDownList(Person::getTypes()) ?>
+            <?= $form->field($searchModel, 'type')->dropDownList(Person::getTypes(), ['prompt' => '']) ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($searchModel, 'search_name') ?>
         </div>
+        <div class="col-md-3 col-sm-4 col-6">
+            <?= $form->field($searchModel, 'search_address') ?>
+        </div>
         <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($searchModel, 'note') ?>
+            <?= $form->field($searchModel, 'search_phone') ?>
         </div>
         <div class="form-group col-md-2 col-sm-2">
             <?= Html::submitButton(Icon::getBtnText('search'), ['class' => 'btn btn-primary btn-sm d-block']) ?>
@@ -72,7 +75,7 @@ function openPersonSelectModal() {
     }
     $('#person-select-modal').modal('show');
 }
-$('#person-search-form-modal').on('change', 'select', function(event){
+$('#person-search-form').on('change', 'select', function(event){
     updatePersonSelectList();
     event.preventDefault();
 });

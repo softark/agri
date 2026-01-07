@@ -1,28 +1,27 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $personIdInput string */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 use app\models\Icon;
-use app\models\PersonSearch;
+use app\models\ContactSearch;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Modal;
-use yii\bootstrap5\ActiveForm;
+use yii\widgets\ActiveForm;
 
 $this->registerCss("
-.person-row.is-selected td {
+.contact-row.is-selected td {
   background: #0d6efd; /* Bootstrap3なら info 系 */
   color: white;
 ");
 
-$searchModel = new PersonSearch(['_form_name' => 'psel']);
+$searchModel = new ContactSearch(['_form_name' => 'csel']);
 $dataProvider = $searchModel->search([], 10);
 
 Modal::begin([
-        'title' => '住所カードを選択',
+        'title' => '連絡先を選択',
         'toggleButton' => false,
-        'id' => 'person-select-modal',
+        'id' => 'contact-select-modal',
         'size' => Modal::SIZE_EXTRA_LARGE,
 ]);
 ?>
@@ -33,25 +32,25 @@ Modal::begin([
     </div>
 
 <?php $form = ActiveForm::begin([
-        'id' => 'person-search-form',
+        'id' => 'contact-search-form',
         'method' => 'get',
-        'action' => ['/person/select'],
+        'action' => ['/contact/select'],
         'fieldConfig' => [
                 'inputOptions' => ['class' => 'allow_submit form-control']
         ],
 ]); ?>
     <div class="row">
         <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($searchModel, 'search_name') ?>
+            <?= $form->field($searchModel, 'name') ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($searchModel, 'address') ?>
+            <?= $form->field($searchModel, 'address1') ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($searchModel, 'search_phone') ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($searchModel, 'memo') ?>
+            <?= $form->field($searchModel, 'note') ?>
         </div>
         <div class="form-group col-md-2 col-sm-2">
             <?= Html::submitButton(Icon::getBtnText('search'), ['class' => 'btn btn-primary btn-sm d-block']) ?>
@@ -65,45 +64,73 @@ Modal::begin([
 Modal::end();
 
 $this->registerJs("
-function openPersonSelectModal() {
-    updatePersonSelectList();
-    $('#person-select-modal').modal('show');
+function openContactSelectModal() {
+    updateContactSelectList();
+    $('#contact-select-modal').modal('show');
 }
-$('#person-search-form-modal').on('change', 'select', function(event){
-    updatePersonSelectList();
+$('#contact-search-form').on('change', 'select', function(event){
+    updateContactSelectList();
     event.preventDefault();
 });
-$('#person-search-form').on('change', 'input', function(event){
-    updatePersonSelectList();
+$('#contact-search-form').on('change', 'input', function(event){
+    updateContactSelectList();
     event.preventDefault();
 });
-$('#person-search-form').on('click', '#clear-btn', function(event){
-    $('#person-search-form input:text').val('');
-    $('#person-search-form input:checked').prop('checked', false);
-    $('#person-search-form select').val('');
-    updatePersonSelectList();
+$('#contact-search-form').on('click', '#clear-btn', function(event){
+    $('#contact-search-form input:text').val('');
+    $('#contact-search-form input:checked').prop('checked', false);
+    $('#contact-search-form select').val('');
+    updateContactSelectList();
     event.preventDefault();
 });
-function updatePersonSelectList() {
-    $('#person-search-form').submit();
+function updateContactSelectList() {
+    $('#contact-search-form').submit();
 }
-$('#person-select-modal').on('click', '.person-row', function(e){
-  $('.person-row.is-selected').removeClass('is-selected');
-  $(this).addClass('is-selected');
 
-  const id = $(this).data('person-id');
-  $('#$personIdInput').val(id); // hidden or input
+var sel_role;
+var sel_name1;
+var sel_name2;
+var sel_zip;
+var sel_address1;
+var sel_address2;
+var sel_phone1;
+var sel_phone2;
+var sel_mail;
+var sel_note; 
+
+$('#contact-select-modal').on('click', '.contact-row', function(e){
+  $('.contact-row.is-selected').removeClass('is-selected');
+  $(this).addClass('is-selected');
+  sel_role = $(this).data('role');
+  sel_name1 = $(this).data('name1');
+  sel_name2 = $(this).data('name2');
+  sel_zip = $(this).data('zip');
+  sel_address1 = $(this).data('address1');
+  sel_address2 = $(this).data('address2');
+  sel_phone1 = $(this).data('phone1');
+  sel_phone2 = $(this).data('phone2');
+  sel_mail = $(this).data('mail');
+  sel_note = $(this).data('note');    
   $('#modal-ok').removeClass('disabled');
 });
 $('#modal-ok').on('click', function(event){
   event.preventDefault();
-  $('#$personIdInput').trigger('change');
-  $('#person-select-modal').modal('hide');
+  $('#role').val(sel_role);
+  $('#contact-name1').val(sel_name1);
+  $('#contact-name2').val(sel_name2);
+  $('#zip').val(sel_zip);
+  $('#address1').val(sel_address1);
+  $('#address2').val(sel_address2);
+  $('#phone1').val(sel_phone1);
+  $('#phone2').val(sel_phone2);
+  $('#mail').val(sel_mail);
+  $('#contact-note').val(sel_note);
+  $('#contact-select-modal').modal('hide');
   $('#modal-ok').addClass('disabled');
 });
 $('#modal-cancel').on('click', function(event){
   event.preventDefault();
-  $('#person-select-modal').modal('hide');
+  $('#contact-select-modal').modal('hide');
   $('#modal-ok').addClass('disabled');
 });
 ");

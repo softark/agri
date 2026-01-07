@@ -3,6 +3,7 @@
 use app\models\Icon;
 use yii\helpers\ArrayHelper;
 use yii\bootstrap5\Html;
+use yii\helpers\Url;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
@@ -33,30 +34,42 @@ $this->params['breadcrumbs'][] = $this->title;
             if (Yii::$app->user->can('admin')) {
                 $attributes = ArrayHelper::merge($attributes, [
                         [
-                                'attribute' => 'created_at',
+                                'label' => '登録',
                                 'value' => function ($model) {
-                                    return Yii::$app->formatter->asDatetime($model->created_at, 'yyyy-MM-dd HH:mm:ss');
+                                    return Yii::$app->formatter->asDatetime($model->created_at, 'yyyy-MM-dd HH:mm')
+                                            . ' / ' . $model->createdBy->longname;
                                 }
                         ],
                         [
-                                'attribute' => 'created_by',
+                                'label' => '更新',
                                 'value' => function ($model) {
-                                    return $model->createdBy->longname;
-                                }
-                        ],
-                        [
-                                'attribute' => 'updated_at',
-                                'value' => function ($model) {
-                                    return Yii::$app->formatter->asDatetime($model->updated_at, 'yyyy-MM-dd HH:mm:ss');
-                                }
-                        ],
-                        [
-                                'attribute' => 'updated_by',
-                                'value' => function ($model) {
-                                    return $model->updatedBy->longname;
+                                    return Yii::$app->formatter->asDatetime($model->updated_at, 'yyyy-MM-dd HH:mm')
+                                            . ' / ' . $model->updatedBy->longname;
                                 }
                         ],
                 ]);
+            }
+            $cmdButtons = [];
+            if (Yii::$app->user->can('person.edit')) {
+                $cmdButtons[] = Html::a(Icon::getIconAndLabel('update'),
+                        ['update', 'id' => $model->id, 'ret_route' => ['view', 'id' => $model->id]],
+                        ['class' => 'btn btn-primary btn-sm']);
+                if (Yii::$app->user->can('person.delete')) {
+                    $cmdButtons[] = Html::a(Icon::getIconAndLabel('delete'), ['delete', 'id' => $model->id], [
+                            'class' => 'btn btn-danger btn-sm',
+                            'data' => [
+                                    'confirm' => '名簿から <strong>"' . $model->dispname . '"</strong> とその連絡先を削除しますか？',
+                                    'method' => 'post',
+                            ],
+                    ]);
+                }
+            }
+            if (count($cmdButtons) > 0) {
+                $attributes[] = [
+                        'label' => '操作',
+                        'format' => 'raw',
+                        'value' => implode(' ', $cmdButtons),
+                ];
             }
             ?>
             <?= DetailView::widget([
@@ -64,89 +77,58 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attributes' => $attributes,
             ]) ?>
             <p>
-                <?php if (\yii::$app->user->can('person.edit', ['id' => $model->id])) : ?>
-                    <?= Html::a(Icon::getIconAndLabel('update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-                <?php endif; ?>
-                <?php if (\yii::$app->user->can('person.delete')) : ?>
-                    <?= Html::a(Icon::getIconAndLabel('delete'), ['delete', 'id' => $model->id], [
-                            'class' => 'btn btn-danger',
-                            'data' => [
-                                    'confirm' => '名簿から <strong>"' . $model->dispname . '"</strong> を削除しますか？',
-                                    'method' => 'post',
-                            ],
-                    ]) ?>
-                <?php endif; ?>
                 <?= Html::a(Icon::getIconAndLabel('go-back'), ['index'], ['class' => 'btn btn-outline-secondary']) ?>
             </p>
-            <hr />
-            <h3>連絡先</h3>
-            <?php if (count($model->contacts) == 0) : ?>
-                （登録なし）
-            <?php else: ?>
-                <?php foreach ($model->contacts as $contact) : ?>
-                    <?php
-                    $attributes = [
-                            'order',
-                            'role',
-                            'contact_name',
-                            'zip',
-                            'address1',
-                            'address2',
-                            'phone1',
-                            'phone2',
-                            'mail',
-                            'note',
-                    ];
-                    if (Yii::$app->user->can('admin')) {
-                        $attributes = ArrayHelper::merge($attributes, [
-                                [
-                                        'attribute' => 'created_at',
-                                        'value' => function ($model) {
-                                            return Yii::$app->formatter->asDatetime($model->created_at, 'yyyy-MM-dd HH:mm:ss');
-                                        }
-                                ],
-                                [
-                                        'attribute' => 'created_by',
-                                        'value' => function ($model) {
-                                            return $model->createdBy->longname;
-                                        }
-                                ],
-                                [
-                                        'attribute' => 'updated_at',
-                                        'value' => function ($model) {
-                                            return Yii::$app->formatter->asDatetime($model->updated_at, 'yyyy-MM-dd HH:mm:ss');
-                                        }
-                                ],
-                                [
-                                        'attribute' => 'updated_by',
-                                        'value' => function ($model) {
-                                            return $model->updatedBy->longname;
-                                        }
-                                ],
-                        ]);
-                    }
-                    ?>
-                    <?= DetailView::widget([
-                            'model' => $contact,
-                            'attributes' => $attributes,
-                    ]) ?>
-                    <p>
-                        <?php if (\yii::$app->user->can('contact.edit', ['id' => $contact->id])) : ?>
-                            <?= Html::a(Icon::getIconAndLabel('update'), ['/contact/update', 'id' => $contact->id], ['class' => 'btn btn-primary']) ?>
-                        <?php endif; ?>
-                        <?php if (\yii::$app->user->can('contact.delete')) : ?>
-                            <?= Html::a(Icon::getIconAndLabel('delete'), ['/contact/delete', 'id' => $contact->id], [
-                                    'class' => 'btn btn-danger',
-                                    'data' => [
-                                            'confirm' => '名簿からこの連絡先を削除しますか？',
-                                            'method' => 'post',
-                                    ],
-                            ]) ?>
-                        <?php endif; ?>
-                    </p>
-
-                <?php endforeach; ?>
-            <?php endif; ?>
+            <hr/>
+            <div id="contact-view">
+                <?= $this->render('_contact_view', ['model' => $model]); ?>
+            </div>
         </div>
     </div>
 </div>
+
+<?php
+$urlReorderContact = Url::to(['person/reorder-contact', 'id' => $model->id]);
+$urlDeleteContact = Url::to(['person/delete-contact', 'id' => $model->id]);
+$this->registerJs("
+$('#contact-view').on('click', '.reorder-contact', function(event){
+  event.preventDefault();
+  event.stopPropagation();
+  $.ajax({
+    url: '$urlReorderContact',
+    type: 'POST',
+    data: {
+      contact_id: $(this).data('contact-id'),
+      direction: $(this).data('direction'),
+      _csrf: yii.getCsrfToken()
+    },
+    success: function (html) {
+      $('#contact-view').html(html);
+    },
+    error: function (xhr) {
+      alert('連絡先の順序変更に失敗しました: ' + xhr.status);
+    }
+  });
+});
+$('#contact-view').on('click', '.delete-contact', function(event){
+  event.preventDefault();
+  event.stopPropagation();
+  const contactId = $(this).data('contact-id');
+  yii.confirm('この連絡先を削除しますか？', function () {
+    $.ajax({
+      url: '$urlDeleteContact',
+      type: 'POST',
+      data: {
+        contact_id: contactId,
+        _csrf: yii.getCsrfToken()
+      },
+      success: function (html) {
+        $('#contact-view').html(html);
+      },
+      error: function (xhr) {
+        alert('連絡先の削除に失敗しました: ' + xhr.status);
+      }
+    });
+  });
+});
+");

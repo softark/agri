@@ -10,7 +10,9 @@ use Yii;
  * @property int $id
  * @property int $person_id
  * @property int $order
- * @property string|null $contact_name
+ * @property string $name1
+ * @property string|null $name2
+ * @property string $name
  * @property string|null $role
  * @property string|null $zip
  * @property string|null $address1
@@ -38,6 +40,54 @@ class Contact extends \yii\db\ActiveRecord
         return 'contact';
     }
 
+    private $_dispname = null;
+    public function getDispName()
+    {
+        if ($this->_dispname === null) {
+            $this->_dispname = trim($this->name1 . ' ' . $this->name2);
+        }
+        return $this->_dispname;
+    }
+
+    private $_fullname = null;
+    public function getFullName()
+    {
+        if ($this->_fullname === null) {
+            $this->_fullname = trim($this->role . ' ' . $this->name1 . ' ' . $this->name2);
+        }
+        return $this->_fullname;
+    }
+
+    private $_fulladdress = null;
+    public function getFullAddress()
+    {
+        if ($this->_fulladdress === null) {
+            $this->_fulladdress = trim($this->zip . ' ' . $this->address1 . $this->address2);
+        }
+        return $this->_fulladdress;
+    }
+
+    private $_phones = null;
+    public function getPhones()
+    {
+        if ($this->_phones === null) {
+            if ($this->phone1 != '') {
+                if ($this->phone2 != '') {
+                    $this->_phones = trim($this->phone1 . ' / ' . $this->phone2);
+                } else {
+                    $this->_phones = $this->phone1;
+                }
+            } else {
+                if ($this->phone2 != '') {
+                    $this->_phones = $this->phone2;
+                } else {
+                    $this->_phones = '';
+                }
+            }
+        }
+        return $this->_phones;
+    }
+
     public function getAddress()
     {
         return $this->address1 . $this->address2;
@@ -60,8 +110,6 @@ class Contact extends \yii\db\ActiveRecord
         return $this->_shortaddress;
     }
 
-    public int $selected = 0;
-
     /**
      * {@inheritdoc}
      */
@@ -76,11 +124,13 @@ class Contact extends \yii\db\ActiveRecord
             [['person_id'], 'required'],
             [['person_id'], 'exist', 'skipOnError' => true, 'targetClass' => Person::class, 'targetAttribute' => ['person_id' => 'id']],
             [['person_id', 'order', 'created_by', 'updated_by'], 'integer'],
-            [['contact_name'], 'string', 'max' => 60],
+            [['name1', 'name2'], 'string', 'max' => 30],
+            ['name1', 'required'],
             [['order'], 'default', 'value' => 1],
             [['role'], 'string', 'max' => 30],
             [['zip'], 'string', 'max' => 10],
             [['address1', 'address2', 'mail'], 'string', 'max' => 40],
+            [['mail'], 'email'],
             [['phone1', 'phone2'], 'string', 'max' => 20],
             [['note'], 'string', 'max' => 50],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['created_by' => 'id']],
@@ -97,14 +147,20 @@ class Contact extends \yii\db\ActiveRecord
             'id' => 'ID',
             'person_id' => '名簿',
             'order' => '優先順',
-            'contact_name' => '名前',
-            'role' => '役割・肩書',
+            'name1' => '姓（名前前半）',
+            'name2' => '名（名前後半）',
+            'name' => '名前',
+            'dispname' => '名前',
+            'fullname' => '名前',
+            'role' => '組織名・役割・肩書',
             'zip' => '郵便番号',
             'address' => '住所',
             'address1' => '住所',
-            'address2' => '住所（続き）',
-            'phone1' => '携帯電話',
-            'phone2' => 'その他電話',
+            'address2' => '住所（丁目・番地以降）',
+            'fulladdress' => '住所',
+            'phone1' => '電話（メイン）',
+            'phone2' => '電話（その他）',
+            'phones' => '電話',
             'mail' => 'メール',
             'note' => 'メモ',
             'created_at' => '登録日時',

@@ -10,10 +10,10 @@ use yii\grid\GridView;
 /** @var app\models\Person $person */
 /** @var app\models\Contact $contact */
 
-$this->title = '名簿ワーク : ' . $model->name . ' / 連絡先 : ' . $contact->contact_name . ' - 編集';
+$this->title = '名簿ワーク : ' . $model->name . ' / 連絡先 : ' . $contact->fullname . ' - 編集';
 $this->params['breadcrumbs'][] = ['label' => '名簿ワーク', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = '連絡先 : ' . $contact->contact_name . ' - 編集';
+$this->params['breadcrumbs'][] = '連絡先 : ' . $contact->fullname . ' - 編集';
 
 ?>
 <div class="contact-create">

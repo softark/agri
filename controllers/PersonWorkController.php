@@ -36,8 +36,8 @@ class PersonWorkController extends Controller
                         'add-link-view' => ['POST'],
                         'delete-link-view' => ['POST'],
                         'delete-person' => ['POST'],
-                        'reorder-content' => ['POST'],
-                        'delete-content' => ['POST'],
+                        'reorder-contact' => ['POST'],
+                        'delete-contact' => ['POST'],
                     ],
                 ],
             ]
@@ -224,7 +224,8 @@ class PersonWorkController extends Controller
         $contact = new Contact();
         $contact->person_id = $person->id;
         $contact->order = count($person->contacts) + 1;
-        $contact->contact_name = $person->dispname;
+        $contact->name1 = $person->name1;
+        $contact->name2 = $person->name2;
 
         if ($this->request->isPost && $contact->load($this->request->post()) && $contact->save()) {
             return $this->redirect(['view', 'id' => $id]);

@@ -2,12 +2,12 @@
 
 use app\models\Icon;
 use yii\helpers\ArrayHelper;
-use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
-use yii\widgets\DetailView;
+use yii\bootstrap5\Html;
+use app\models\Person;
 
 /** @var yii\web\View $this */
-/** @var app\models\Contact $model */
+/** @var app\models\PersonForm $model */
 /** @var yii\bootstrap5\ActiveForm $form */
 /** @var string|array $ret_route */
 
@@ -15,9 +15,9 @@ use yii\widgets\DetailView;
 
 $this->registerJs("
 // 連絡先選択ダイアログのポップアップ
-$('#contact-form').on('click', '#btn-contact-select', function(event){
-  openContactSelectModal();
-  event.preventDefault();
+$('#person-form').on('click', '#btn-contact-select', function(event){
+    openContactSelectModal();
+    event.preventDefault();
 });
 
 // ZIP 検索データ受信時の処理
@@ -98,46 +98,38 @@ $('#address1').autocomplete({
 ");
 ?>
 
-<div class="contact-form" id="contact-form">
+<div class="person-form" id="person-form">
     <div class="row">
         <div class="col-lg-5">
-            <?= DetailView::widget([
-                    'model' => $model->person,
-                    'attributes' => [
-                            [
-                                    'attribute' => 'type',
-                                    'value' => function ($model) {
-                                        return $model->typeText;
-                                    },
-                            ],
-                            'dispname',
-                            'yomigana',
-                            'note',
-                    ],
-            ]) ?>
-            <p><?= Html::button(Icon::getIcon('contact') . ' 既存の連絡先をコピー', ['id' => 'btn-contact-select', 'class' => 'btn btn-outline-secondary']) ?></p>
             <?php $form = ActiveForm::begin([
-                    'id' => 'contact-edit-form',
+                    'id' => 'person-edit-form',
                     'enableAjaxValidation' => false,
                     'options' => ['autocomplete' => 'off'],
                     'fieldConfig' => [
                             'options' => ['class' => 'mb-3']
                     ],
             ]); ?>
-            <?= $form->field($model, 'order')->textInput(['disabled' => true]); ?>
+            <?= $form->field($model, 'type')->dropDownList(Person::getTypes()) ?>
+            <?= $form->field($model, 'name1')->textInput(['maxlength' => true, 'autocomplete' => 'new_name1']) ?>
+            <?= $form->field($model, 'name2')->textInput(['maxlength' => true, 'autocomplete' => 'new_name2']) ?>
+            <?= $form->field($model, 'yomi1')->textInput(['maxlength' => true, 'autocomplete' => 'new_yomi1']) ?>
+            <?= $form->field($model, 'yomi2')->textInput(['maxlength' => true, 'autocomplete' => 'new_yomi2']) ?>
+            <?= $form->field($model, 'person_note')->textInput(['maxlength' => true]) ?>
+            <hr/>
+            <?= $form->field($model, 'has_contact')->checkbox(['id' => 'has-contact']) ?>
+            <p><?= Html::button(Icon::getIcon('contact') . ' 既存の連絡先をコピー', ['id' => 'btn-contact-select', 'class' => 'btn btn-outline-secondary']) ?></p>
             <?= $form->field($model, 'role')->textInput(['maxlength' => true, 'id' => 'role']) ?>
-            <?= $form->field($model, 'name1')->textInput(['maxlength' => true, 'id' => 'contact-name1']) ?>
-            <?= $form->field($model, 'name2')->textInput(['maxlength' => true, 'id' => 'contact-name2']) ?>
+            <?= $form->field($model, 'contact_name1')->textInput(['maxlength' => true,  'id' => 'contact-name1']) ?>
+            <?= $form->field($model, 'contact_name2')->textInput(['maxlength' => true,  'id' => 'contact-name2']) ?>
             <?= $form->field($model, 'zip')->textInput(['maxlength' => true, 'id' => 'zip']) ?>
             <?= $form->field($model, 'address1')->textInput(['maxlength' => true, 'id' => 'address1']) ?>
             <?= $form->field($model, 'address2')->textInput(['maxlength' => true, 'id' => 'address2']) ?>
             <?= $form->field($model, 'phone1')->textInput(['maxlength' => true, 'id' => 'phone1']) ?>
             <?= $form->field($model, 'phone2')->textInput(['maxlength' => true, 'id' => 'phone2']) ?>
             <?= $form->field($model, 'mail')->textInput(['maxlength' => true, 'id' => 'mail']) ?>
-            <?= $form->field($model, 'note')->textInput(['maxlength' => true, 'id' => 'contact-note']) ?>
-
+            <?= $form->field($model, 'contact_note')->textInput(['maxlength' => true, 'id' => 'contact-note']) ?>
             <div class="form-group">
-                <?php if ($model->isNewRecord): ?>
+                <?php if ($model->person === null): ?>
                     <?= Html::submitButton(Icon::getIconAndLabel('ok', '登録'), ['class' => 'btn btn-success']) ?>
                 <?php else: ?>
                     <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
@@ -146,7 +138,7 @@ $('#address1').autocomplete({
             </div>
 
             <?php ActiveForm::end(); ?>
-            <?= $this->render('_select_modal.php', []); ?>
+            <?= $this->render('/contact/_select_modal.php', []); ?>
         </div>
     </div>
 </div>

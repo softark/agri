@@ -2,7 +2,9 @@
 
 namespace app\controllers;
 
+use app\models\Contact;
 use app\models\Person;
+use app\models\PersonForm;
 use app\models\PersonSearch;
 use app\models\PersonWork;
 use Yii;
@@ -29,6 +31,8 @@ class PersonController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                        'reorder-contact' => ['POST'],
+                        'delete-contact' => ['POST'],
                     ],
                 ],
             ]
@@ -91,17 +95,20 @@ class PersonController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Person();
+        $ret_route = ['index'];
+        $model = new PersonForm();
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['index']);
+            if ($model->load($this->request->post())) {
+                if ($model->validate() ) {
+                    $model->savePersonAndContact();
+                    return $this->redirect($ret_route);
+                }
             }
-        } else {
-            $model->loadDefaultValues();
         }
 
         return $this->render('create', [
             'model' => $model,
+            'ret_route' => $ret_route,
         ]);
     }
 
@@ -112,16 +119,24 @@ class PersonController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id, $ret_route = null)
     {
-        $model = $this->findModel($id);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+        if ($ret_route === null) {
+            $ret_route = ['index'];
         }
-
+        $model = new PersonForm();
+        $model->loadPersonAndContact($id);
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                if ($model->validate() ) {
+                    $model->savePersonAndContact();
+                    return $this->redirect($ret_route);
+                }
+            }
+        }
         return $this->render('update', [
             'model' => $model,
+            'ret_route' => $ret_route,
         ]);
     }
 
@@ -153,6 +168,91 @@ class PersonController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionCreateContact($id)
+    {
+        $model = $this->findModel($id);
+        $contact = new Contact();
+        $contact->person_id = $model->id;
+        $contact->order = count($model->contacts) + 1;
+        $contact->name1 = $model->name1;
+        $contact->name2 = $model->name2;
+
+        if ($this->request->isPost && $contact->load($this->request->post()) && $contact->save()) {
+            return $this->redirect(['view', 'id' => $id]);
+        }
+
+        return $this->render('create-contact', [
+            'model' => $model,
+            'contact' => $contact,
+        ]);
+    }
+
+    public function actionUpdateContact($id, $contact_id)
+    {
+        $model = $this->findModel($id);
+        $contact = Contact::findOne($contact_id);
+        if ($contact === null) {
+            throw new NotFoundHttpException('The requested contact does not exist.');
+        }
+
+        if ($this->request->isPost && $contact->load($this->request->post()) && $contact->save()) {
+            return $this->redirect(['view', 'id' => $id]);
+        }
+
+        return $this->render('update-contact', [
+            'model' => $model,
+            'contact' => $contact,
+        ]);
+    }
+
+    public function actionReorderContact($id)
+    {
+        $contact_id = $this->request->post('contact_id');
+        $direction = $this->request->post('direction');
+        $contact = Contact::findOne($contact_id);
+        if ($contact === null) {
+            throw new NotFoundHttpException('The requested contact does not exist.');
+        }
+        $curOrder = $contact->order;
+        $contact->order = -1;
+        $contact->save();
+        if ($direction == 'up') {
+            $contactOther = Contact::findOne(['person_id' => $id, 'order' => $curOrder - 1]);
+            $contactOther->order = $curOrder;
+            $contactOther->save();
+            $contact->order = $curOrder - 1;
+            $contact->save();
+        } else {
+            $contactOther = Contact::findOne(['person_id' => $id, 'order' => $curOrder + 1]);
+            $contactOther->order = $curOrder;
+            $contactOther->save();
+            $contact->order = $curOrder + 1;
+            $contact->save();
+        }
+        $model = $this->findModel($id);
+        return $this->renderAjax('_contact_view', ['model' => $model]);
+    }
+
+    public function actionDeleteContact($id)
+    {
+        $contact_id = $this->request->post('contact_id');
+        $curContact = Contact::findOne($contact_id);
+        if ($curContact === null) {
+            throw new NotFoundHttpException('The requested contact does not exist.');
+        }
+        $curOrder = $curContact->order;
+        $curContact->delete();
+        $contacts = Contact::find()->where(['person_id' => $id])
+            ->andWhere(['>', 'order', $curOrder])
+            ->orderBy(['order' => SORT_ASC])->all();
+        foreach($contacts as $contact) {
+            $contact->order = $contact->order - 1;
+            $contact->save();
+        }
+        $model = $this->findModel($id);
+        return $this->renderAjax('_contact_view', ['model' => $model]);
     }
 
 }

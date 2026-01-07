@@ -104,7 +104,8 @@ $('#address1').autocomplete({
             ]); ?>
             <?= $form->field($contact, 'order')->textInput(['disabled' => true]); ?>
             <?= $form->field($contact, 'role')->textInput(['maxlength' => true]) ?>
-            <?= $form->field($contact, 'contact_name')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($contact, 'name1')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($contact, 'name2')->textInput(['maxlength' => true]) ?>
             <?= $form->field($contact, 'zip')->textInput(['maxlength' => true, 'id' => 'zip']) ?>
             <?= $form->field($contact, 'address1')->textInput(['maxlength' => true, 'id' => 'address1']) ?>
             <?= $form->field($contact, 'address2')->textInput(['maxlength' => true,]) ?>

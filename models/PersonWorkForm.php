@@ -225,7 +225,8 @@ class PersonWorkForm extends Model
             if ($this->has_contact) {
                 $contact = new Contact();
                 $contact->person_id = $person->id;
-                $contact->contact_name = trim($person->name1 . ' ' . $person->name2);
+                $contact->name1 = $person->name1;
+                $contact->name2 = $person->name2;
                 $contact->zip = $this->zip;
                 $contact->address1 = $this->address1;
                 $contact->address2 = $this->address2;

@@ -109,8 +109,8 @@ class Person extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name1' => '姓',
-            'name2' => '名',
+            'name1' => '姓（名前前半）',
+            'name2' => '名（名前後半）',
             'name' => '名前',
             'dispname' => '名前',
             'yomi1' => 'よみがな（姓）',

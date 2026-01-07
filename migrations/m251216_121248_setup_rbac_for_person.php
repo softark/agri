@@ -34,6 +34,14 @@ class m251216_121248_setup_rbac_for_person extends Migration
         $auth->add($routeCreate);
         $routeDelete = $auth->createPermission('/person/delete');
         $auth->add($routeDelete);
+        $routeUpdateContact = $auth->createPermission('/person/update-contact');
+        $auth->add($routeUpdateContact);
+        $routeCreateContact = $auth->createPermission('/person/create-contact');
+        $auth->add($routeCreateContact);
+        $routeDeleteContact = $auth->createPermission('/person/delete-contact');
+        $auth->add($routeDeleteContact);
+        $routeReorderContact = $auth->createPermission('/person/reorder-contact');
+        $auth->add($routeReorderContact);
 
         // 'person.list' 許可
         $personList = $auth->createPermission('person.list');
@@ -56,6 +64,8 @@ class m251216_121248_setup_rbac_for_person extends Migration
         $auth->add($personEdit);
 
         $auth->addChild($personEdit, $routeUpdate);
+        $auth->addChild($personEdit, $routeUpdateContact);
+        $auth->addChild($personEdit, $routeReorderContact);
 
         // 'person.delete' 許可
         $personDelete = $auth->createPermission('person.delete');
@@ -63,6 +73,7 @@ class m251216_121248_setup_rbac_for_person extends Migration
         $auth->add($personDelete);
 
         $auth->addChild($personDelete, $routeDelete);
+        $auth->addChild($personDelete, $routeDeleteContact);
 
         // 'person.create' 許可
         $personCreate = $auth->createPermission('person.create');
@@ -70,6 +81,7 @@ class m251216_121248_setup_rbac_for_person extends Migration
         $auth->add($personCreate);
 
         $auth->addChild($personCreate, $routeCreate);
+        $auth->addChild($personCreate, $routeCreateContact);
 
         // 'user' ロール
         $user = $auth->getRole("user");
@@ -108,6 +120,14 @@ class m251216_121248_setup_rbac_for_person extends Migration
         $auth->remove($routeCreate);
         $routeDelete = $auth->getPermission('/person/delete');
         $auth->remove($routeDelete);
+        $routeUpdateContact = $auth->getPermission('/person/update-contact');
+        $auth->remove($routeUpdateContact);
+        $routeCreateContact = $auth->getPermission('/person/create-contact');
+        $auth->remove($routeCreateContact);
+        $routeDeleteContact = $auth->getPermission('/person/delete-contact');
+        $auth->remove($routeDeleteContact);
+        $routeReorderContact = $auth->getPermission('/person/reorder-contact');
+        $auth->remove($routeReorderContact);
 
         // 'person.list' 許可を削除
         $personList = $auth->getPermission('person.list');

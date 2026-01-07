@@ -7,9 +7,8 @@ use yii\bootstrap5\ActiveForm;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\Contact $model */
-/** @var yii\bootstrap5\ActiveForm $form */
-/** @var string|array $ret_route */
+/** @var app\models\Person $model */
+/** @var app\models\Contact $contact */
 
 \app\assets\JuiAsset::register($this);
 
@@ -102,7 +101,7 @@ $('#address1').autocomplete({
     <div class="row">
         <div class="col-lg-5">
             <?= DetailView::widget([
-                    'model' => $model->person,
+                    'model' => $model,
                     'attributes' => [
                             [
                                     'attribute' => 'type',
@@ -124,29 +123,30 @@ $('#address1').autocomplete({
                             'options' => ['class' => 'mb-3']
                     ],
             ]); ?>
-            <?= $form->field($model, 'order')->textInput(['disabled' => true]); ?>
-            <?= $form->field($model, 'role')->textInput(['maxlength' => true, 'id' => 'role']) ?>
-            <?= $form->field($model, 'name1')->textInput(['maxlength' => true, 'id' => 'contact-name1']) ?>
-            <?= $form->field($model, 'name2')->textInput(['maxlength' => true, 'id' => 'contact-name2']) ?>
-            <?= $form->field($model, 'zip')->textInput(['maxlength' => true, 'id' => 'zip']) ?>
-            <?= $form->field($model, 'address1')->textInput(['maxlength' => true, 'id' => 'address1']) ?>
-            <?= $form->field($model, 'address2')->textInput(['maxlength' => true, 'id' => 'address2']) ?>
-            <?= $form->field($model, 'phone1')->textInput(['maxlength' => true, 'id' => 'phone1']) ?>
-            <?= $form->field($model, 'phone2')->textInput(['maxlength' => true, 'id' => 'phone2']) ?>
-            <?= $form->field($model, 'mail')->textInput(['maxlength' => true, 'id' => 'mail']) ?>
-            <?= $form->field($model, 'note')->textInput(['maxlength' => true, 'id' => 'contact-note']) ?>
+            <?= $form->field($contact, 'order')->textInput(['disabled' => true]); ?>
+            <?= $form->field($contact, 'role')->textInput(['maxlength' => true, 'id' => 'role']) ?>
+            <?= $form->field($contact, 'name1')->textInput(['maxlength' => true, 'id' => 'contact-name1']) ?>
+            <?= $form->field($contact, 'name2')->textInput(['maxlength' => true, 'id' => 'contact-name2']) ?>
+            <?= $form->field($contact, 'zip')->textInput(['maxlength' => true, 'id' => 'zip']) ?>
+            <?= $form->field($contact, 'address1')->textInput(['maxlength' => true, 'id' => 'address1']) ?>
+            <?= $form->field($contact, 'address2')->textInput(['maxlength' => true, 'id' => 'address2']) ?>
+            <?= $form->field($contact, 'phone1')->textInput(['maxlength' => true, 'id' => 'phone1']) ?>
+            <?= $form->field($contact, 'phone2')->textInput(['maxlength' => true, 'id' => 'phone2']) ?>
+            <?= $form->field($contact, 'mail')->textInput(['maxlength' => true, 'id' => 'mail']) ?>
+            <?= $form->field($contact, 'note')->textInput(['maxlength' => true, 'id' => 'contact-note']) ?>
 
             <div class="form-group">
-                <?php if ($model->isNewRecord): ?>
+                <?php if ($contact->isNewRecord): ?>
                     <?= Html::submitButton(Icon::getIconAndLabel('ok', '登録'), ['class' => 'btn btn-success']) ?>
                 <?php else: ?>
                     <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
                 <?php endif ?>
-                <?= Html::a(Icon::getIconAndLabel('cancel'), $ret_route, ['class' => 'btn btn-outline-secondary']) ?>
+                <?= Html::a(Icon::getIconAndLabel('cancel'),
+                        ['view', 'id' => $model->id], ['class' => 'btn btn-outline-secondary']) ?>
             </div>
 
             <?php ActiveForm::end(); ?>
-            <?= $this->render('_select_modal.php', []); ?>
+            <?= $this->render('/contact/_select_modal.php', []); ?>
         </div>
     </div>
 </div>

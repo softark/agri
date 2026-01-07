@@ -42,10 +42,15 @@ $this->params['breadcrumbs'][] = $this->title;
                             'value' => 'dispname'
                     ],
                     [
-                            'attribute' => 'yomi',
-                            'value' => 'yomigana'
+                            'label' => '連絡先',
+                            'value' => function ($model) {
+                                if (count($model->contacts) > 0) {
+                                    return $model->contacts[0]->fullname;
+                                } else {
+                                    return '';
+                                }
+                            }
                     ],
-                    'note',
                     [
                             'label' => '住所',
                             'value' => function ($model) {
@@ -60,7 +65,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'label' => '電話',
                             'value' => function ($model) {
                                 if (count($model->contacts) > 0) {
-                                    return $model->contacts[0]->phone1;
+                                    return $model->contacts[0]->phones;
                                 } else {
                                     return '';
                                 }

@@ -38,9 +38,8 @@ use yii\widgets\Pjax;
             'attribute' => 'name',
             'value' => 'dispname'
         ],
-        'note',
         [
-            'label' => '連絡先',
+            'label' => '住所',
             'value' => function ($model) {
                 if (count($model->contacts) > 0) {
                     return $model->contacts[0]->shortAddress;
@@ -53,7 +52,7 @@ use yii\widgets\Pjax;
             'label' => '電話',
             'value' => function ($model) {
                 if (count($model->contacts) > 0) {
-                    return $model->contacts[0]->phone1;
+                    return $model->contacts[0]->phones;
                 } else {
                     return null;
                 }
