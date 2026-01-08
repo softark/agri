@@ -30,7 +30,7 @@ class PersonWorkController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'import-tanada' => ['POST'],
-                        'import-forest' => ['POST'],
+                        'import-isg-forest' => ['POST'],
                         'add-link' => ['POST'],
                         'delete-link' => ['POST'],
                         'add-link-view' => ['POST'],

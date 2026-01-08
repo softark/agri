@@ -5,7 +5,7 @@ use yii\bootstrap5\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\Forest $model */
+/** @var app\models\IsgForest $model */
 
 $this->title = '山林 : ' . $model->p_no . ' (' . $model->owner . ')';
 $this->params['breadcrumbs'][] = ['label' => '山林', 'url' => ['index']];

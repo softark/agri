@@ -26,16 +26,21 @@ $this->title = '岩座神農会';
                 </div>
                 <?php if (Yii::$app->user->can('admin')): ?>
                     <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
+                        <p><?= Html::a(Icon::getIconAndLabel('succeed'), ['/person-relation'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
+                    </div>
+                <?php endif; ?>
+                <?php if (Yii::$app->user->can('admin')): ?>
+                    <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
                         <p><?= Html::a(Icon::getIconAndLabel('contact'), ['/contact'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
                     </div>
                     <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
                         <p><?= Html::a('名簿ワーク', ['/person-work'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
                     </div>
                     <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
-                        <p><?= Html::a('棚田', ['/tanada'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
+                        <p><?= Html::a('棚田', ['/isg-tanada'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
                     </div>
                     <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
-                        <p><?= Html::a('山林', ['/forest'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
+                        <p><?= Html::a('山林', ['/isg-forest'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
                     </div>
                 <?php endif; ?>
             </div>

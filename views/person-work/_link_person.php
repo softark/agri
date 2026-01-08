@@ -12,8 +12,7 @@ use yii\widgets\DetailView;
 
 <td class="col-link-person">
     <?php if ($model->person_id !== null): ?>
-        <?= Html::a($model->person->dispname . ' : ' . $model->person->priorAddress,
-                ['/person/view', 'id' => $model->person_id]) ?>
+        <?= Html::a($model->person->fullname, ['/person/view', 'id' => $model->person_id]) ?>
     <?php else: ?>
         &nbsp;
     <?php endif; ?>

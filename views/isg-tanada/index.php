@@ -1,6 +1,6 @@
 <?php
 
-use app\models\Tanada;
+use app\models\IsgTanada;
 use yii\bootstrap5\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -8,7 +8,7 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 
 /** @var yii\web\View $this */
-/** @var app\models\TanadaSearch $searchModel */
+/** @var app\models\IsgTanadaSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = '棚田';
@@ -40,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                             'class' => ActionColumn::class,
                             'template' => '{view} {update}',
-                            'urlCreator' => function ($action, Tanada $model, $key, $index, $column) {
+                            'urlCreator' => function ($action, IsgTanada $model, $key, $index, $column) {
                                 return Url::toRoute([$action, 'id' => $model->id]);
                             }
                     ],

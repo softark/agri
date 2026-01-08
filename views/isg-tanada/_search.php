@@ -5,7 +5,7 @@ use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var app\models\TanadaSearch $model */
+/** @var app\models\IsgTanadaSearch $model */
 /** @var yii\bootstrap5\ActiveForm $form */
 
 $this->registerJs("

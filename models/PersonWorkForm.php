@@ -219,7 +219,10 @@ class PersonWorkForm extends Model
             $person->yomi1 = $this->yomi1;
             $person->yomi2 = $this->yomi2;
             $person->note = $this->person_note;
-            $person->save();
+            if (!$person->save()) {
+                Yii::error(['person_save_failed', $person->errors], __METHOD__);
+                throw new \RuntimeException('Person save failed');
+            }
             $this->personWork->person_id = $person->id;
 
             if ($this->has_contact) {
@@ -231,18 +234,23 @@ class PersonWorkForm extends Model
                 $contact->address1 = $this->address1;
                 $contact->address2 = $this->address2;
                 $contact->note = $this->contact_note;
-                $contact->save();
+                if (!$contact->save()) {
+                    Yii::error(['contact_save_failed', $contact->errors], __METHOD__);
+                    throw new \RuntimeException('Contact save failed');
+                }
             }
-            $this->personWork->save();
-
+            if (!$this->personWork->save()){
+                Yii::error(['contact_save_failed', $this->personWork->errors], __METHOD__);
+                throw new \RuntimeException('PersonWork save failed');
+            }
             $transaction->commit();
             return true;
         } catch (\Exception $e) {
             $transaction->rollBack();
-            Yii::error($e->getMessage());
+            Yii::error($e, __METHOD__);   // message だけより e 丸ごとが有益
         } catch (\Throwable $e) {
             $transaction->rollBack();
-            Yii::error($e->getMessage());
+            Yii::error($e, __METHOD__);   // message だけより e 丸ごとが有益
         }
         return false;
     }

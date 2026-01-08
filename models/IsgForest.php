@@ -21,7 +21,7 @@ use Yii;
  * @property string|null $memo
  * @property string|null $o_type
  */
-class Forest extends \yii\db\ActiveRecord
+class IsgForest extends \yii\db\ActiveRecord
 {
 
 

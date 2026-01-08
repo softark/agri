@@ -17,6 +17,7 @@ use yii\widgets\DetailView;
                 'id' => 'btn-person-select',
         ]) ?>
         <?= Html::hiddenInput('person_id', '', ['id' => 'person-id']) ?>
+        <?= Html::hiddenInput('person_name', '', ['id' => 'person-name']) ?>
         <?= Html::button(Icon::getIcon('unlink') . ' 名簿へのリンクを解除', [
                 'class' => 'btn btn-danger',
                 'id' => 'btn-person-unlink',
@@ -116,6 +117,7 @@ use yii\widgets\DetailView;
         <?= Html::button(Icon::getIcon('link') . ' 名簿へのリンクを選択',
                 ['class' => 'btn btn-primary', 'id' => 'btn-person-select']) ?>
         <?= Html::hiddenInput('person_id', '', ['id' => 'person-id']) ?>
+        <?= Html::hiddenInput('person_name', '', ['id' => 'person-name']) ?>
     </p>
     <h3>名簿</h3>
     <p>名簿なし</p>

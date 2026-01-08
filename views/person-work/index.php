@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'method' => 'post',
                     ],
             ]) ?>
-            <?= Html::a('山林テーブルからインポート', ['import-forest'], [
+            <?= Html::a('山林テーブルからインポート', ['import-isg-forest'], [
                     'class' => 'btn btn-success',
                     'data' => [
                             'confirm' => '山林テーブルから名簿ワークのエントリをインポートしますか？',
@@ -91,13 +91,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'contentOptions' => ['class' => 'col-link-person'],
                                 'value' => function ($model) {
                                     if ($model->person_id !== null) {
-                                        $label = '';
-                                        if (count($model->person->contacts) > 0) {
-                                            $label = $model->person->contacts[0]->fullname .
-                                             ' : ' . $model->person->contacts[0]->shortAddress;
-                                        } else {
-                                            $label = $model->person->dispname;
-                                        }
+                                        $label = $model->person->fullname;
                                         return Html::a($label, ['/person/view', 'id' => $model->person_id], []);
                                     } else {
                                         return '&nbsp;';
@@ -117,10 +111,12 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php Pjax::end(); ?>
 
         <?= Html::hiddenInput('person_id', '', ['id' => 'person-id']) ?>
+        <?= Html::hiddenInput('person_name', '', ['id' => 'person-name']) ?>
         <?= Html::hiddenInput('model_id', '', ['id' => 'model-id']) ?>
         <?php
         echo $this->render('/person/_select_modal.php', [
                 'personIdInput' => 'person-id',
+                'personNameInput' => 'person-name',
         ]);
         ?>
 

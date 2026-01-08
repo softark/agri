@@ -15,7 +15,7 @@ use Yii;
  * @property string|null $cultivator 耕作者・管理者
  * @property string|null $usage 農地利用状況
  */
-class Tanada extends \yii\db\ActiveRecord
+class IsgTanada extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}

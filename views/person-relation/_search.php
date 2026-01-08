@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var app\models\ContactSearch $model */
+/** @var app\models\PersonRelationSearch $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
-<div class="contact-search">
+<div class="person-relation-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -20,21 +20,13 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'id') ?>
 
-    <?= $form->field($model, 'zip') ?>
+    <?= $form->field($model, 'from_person_id') ?>
 
-    <?= $form->field($model, 'address1') ?>
+    <?= $form->field($model, 'to_person_id') ?>
 
-    <?= $form->field($model, 'address2') ?>
+    <?= $form->field($model, 'note') ?>
 
-    <?= $form->field($model, 'phone1') ?>
-
-    <?php // echo $form->field($model, 'phone2') ?>
-
-    <?php // echo $form->field($model, 'mail') ?>
-
-    <?php // echo $form->field($model, 'note') ?>
-
-    <?php // echo $form->field($model, 'created_at') ?>
+    <?= $form->field($model, 'created_at') ?>
 
     <?php // echo $form->field($model, 'created_by') ?>
 

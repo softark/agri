@@ -5,22 +5,22 @@ use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 
 /** @var yii\web\View $this */
-/** @var app\models\ForestSearch $model */
+/** @var app\models\IsgForestSearch $model */
 /** @var yii\bootstrap5\ActiveForm $form */
 
 $this->registerJs("
-$('#forest-search-form').on('click', '#clear-btn', function(event){
-$('#forest-search-form select').val('');
-$('#forest-search-form input').val('');
-$('#forest-search-form').submit();
+$('#isg-forest-search-form').on('click', '#clear-btn', function(event){
+$('#isg-forest-search-form select').val('');
+$('#isg-forest-search-form input').val('');
+$('#isg-forest-search-form').submit();
 event.preventDefault();
 });
-$('#forest-search-form').on('change', 'select', function(event){
-$('#forest-search-form').submit();
+$('#isg-forest-search-form').on('change', 'select', function(event){
+$('#isg-forest-search-form').submit();
 event.preventDefault();
 });
-$('#forest-search-form').on('change', 'input', function(event){
-$('#forest-search-form').submit();
+$('#isg-forest-search-form').on('change', 'input', function(event){
+$('#isg-forest-search-form').submit();
 event.preventDefault();
 });
 ");
@@ -35,7 +35,7 @@ event.preventDefault();
                     'data-pjax' => 1,
                     'autocomplete' => 'off'
             ],
-            'id' => 'forest-search-form',
+            'id' => 'isg-forest-search-form',
     ]); ?>
 
     <div class="row">

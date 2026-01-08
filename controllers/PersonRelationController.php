@@ -2,17 +2,16 @@
 
 namespace app\controllers;
 
-use app\models\Forest;
-use app\models\ForestSearch;
-use Yii;
+use app\models\PersonRelation;
+use app\models\PersonRelationSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * ForestController implements the CRUD actions for Forest model.
+ * PersonRelationController implements the CRUD actions for PersonRelation model.
  */
-class ForestController extends Controller
+class PersonRelationController extends Controller
 {
     /**
      * @inheritDoc
@@ -33,31 +32,24 @@ class ForestController extends Controller
     }
 
     /**
-     * Lists all Forest models.
+     * Lists all PersonRelation models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new ForestSearch();
+        $searchModel = new PersonRelationSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
-        if (Yii::$app->request->isPjax) {
-            return $this->renderPartial('index', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]);
-        } else {
-            return $this->render('index', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]);
-        }
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**
-     * Displays a single Forest model.
-     * @param int $id ID
+     * Displays a single PersonRelation model.
+     * @param int $id
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -69,17 +61,18 @@ class ForestController extends Controller
     }
 
     /**
-     * Creates a new Forest model.
+     * Creates a new PersonRelation model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new Forest();
+        $ret_route = ['index'];
+        $model = new PersonRelation();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect($ret_route);
             }
         } else {
             $model->loadDefaultValues();
@@ -87,33 +80,38 @@ class ForestController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'ret_route' => $ret_route,
         ]);
     }
 
     /**
-     * Updates an existing Forest model.
+     * Updates an existing PersonRelation model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
+     * @param int $id
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id, $ret_route = null)
     {
+        if ($ret_route === null) {
+            $ret_route = ['index'];
+        }
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect($ret_route);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'ret_route' => $ret_route,
         ]);
     }
 
     /**
-     * Deletes an existing Forest model.
+     * Deletes an existing PersonRelation model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
+     * @param int $id
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -125,15 +123,15 @@ class ForestController extends Controller
     }
 
     /**
-     * Finds the Forest model based on its primary key value.
+     * Finds the PersonRelation model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Forest the loaded model
+     * @param int $id
+     * @return PersonRelation the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Forest::findOne(['id' => $id])) !== null) {
+        if (($model = PersonRelation::findOne(['id' => $id])) !== null) {
             return $model;
         }
 

@@ -8,6 +8,7 @@ use Yii;
  * This is the model class for table "person".
  *
  * @property int $id
+ * @property int $status
  * @property string $name1
  * @property string|null $name2
  * @property string|null $name
@@ -21,6 +22,10 @@ use Yii;
  * @property string $updated_at
  * @property int $updated_by
  *
+ * @property PersonRelation[] fromPersonRelations
+ * @property PersonRelation[] toPersonRelations
+ * @property Person[] fromPersons
+ * @property Person[] toPersons
  * @property Contact[] $contacts
  * @property Contact $priorContact
  * @property User $createdBy
@@ -42,7 +47,8 @@ class Person extends \yii\db\ActiveRecord
     const TYPE_CORPORATE = 3;
     const TYPE_GOVERNMENT = 4;
 
-    public static function getTypes() {
+    public static function getTypes()
+    {
         return [
             self::TYPE_UNDEF => '不詳',
             self::TYPE_INDIVIDUAL => '個人',
@@ -52,11 +58,29 @@ class Person extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getTypeText() {
+    const STATUS_VALID = 1;
+    const STATUS_INVALID = 0;
+
+    public static function getStates()
+    {
+        return [
+            self::STATUS_VALID => '有効',
+            self::STATUS_INVALID => '無効',
+        ];
+    }
+
+    public function getTypeText()
+    {
         return self::getTypes()[$this->type];
     }
 
+    public function getStatusText()
+    {
+        return self::getStates()[$this->status];
+    }
+
     private $_dispname = null;
+
     public function getDispName()
     {
         if ($this->_dispname === null) {
@@ -66,12 +90,38 @@ class Person extends \yii\db\ActiveRecord
     }
 
     private $_yomigana = null;
+
     public function getYomigana()
     {
         if ($this->_yomigana === null) {
             $this->_yomigana = trim($this->yomi1 . ' ' . $this->yomi2);
         }
         return $this->_yomigana;
+    }
+
+    private $_fullname = null;
+
+    public function getFullName()
+    {
+        if ($this->_fullname === null) {
+            if (count($this->toPersons) > 0) {
+                $dispnames = [];
+                foreach ($this->toPersons as $person) {
+                    $dispnames[] = $person->getDispName();
+                }
+                $this->_fullname = $this->dispname . ' > ' . implode(', ', $dispnames);
+            } else {
+                $dispname = $this->getDispName();
+                if (count($this->contacts) > 0) {
+                    $contact = $this->contacts[0];
+                    if ($contact->role != '' || ( $contact->name != '' && $contact->name != $this->name)) {
+                        $dispname .= ' : ' . $contact->fullname;
+                    }
+                }
+                $this->_fullname = $dispname;
+            }
+        }
+        return $this->_fullname;
     }
 
     /**
@@ -81,14 +131,17 @@ class Person extends \yii\db\ActiveRecord
     {
         return [
             [['note'], 'default', 'value' => ''],
-            [['type'], 'default', 'value' => 0],
+            [['status'], 'default', 'value' => self::STATUS_VALID],
+            [['status'], 'in', 'range' => array_keys(self::getStates())],
+            [['type'], 'default', 'value' => self::TYPE_INDIVIDUAL],
+            [['type'], 'in', 'range' => array_keys(self::getTypes())],
             [['updated_by'], 'default', 'value' => 1],
-            [['name1'], 'required'],
+            [['status', 'type', 'name1'], 'required'],
             [['created_by', 'updated_by'], 'default', 'value' => null],
-            [['type', 'created_by', 'updated_by'], 'integer'],
+            [['status', 'type', 'created_by', 'updated_by'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name1', 'name2', 'yomi1', 'yomi2'], 'string', 'max' => 30],
-            [['name1', 'name2'], function($attribute, $param, $validator) {
+            [['name1', 'name2'], function ($attribute, $param, $validator) {
                 $persons = Person::findAll(['name' => $this->name1 . $this->name2]);
                 if (($this->isNewRecord && count($persons) > 0) || count($persons) > 1) {
                     $this->addError('name1', '姓 および 名の "' . $this->name1 . '"-"'
@@ -109,6 +162,8 @@ class Person extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'status' => '状態',
+            'type' => 'タイプ',
             'name1' => '姓（名前前半）',
             'name2' => '名（名前後半）',
             'name' => '名前',
@@ -117,7 +172,6 @@ class Person extends \yii\db\ActiveRecord
             'yomi2' => 'よみがな（名）',
             'yomi' => 'よみがな',
             'yomigana' => 'よみがな',
-            'type' => 'タイプ',
             'note' => 'メモ',
             'contacts' => '連絡先',
             'priorContact' => '連絡先',
@@ -161,6 +215,58 @@ class Person extends \yii\db\ActiveRecord
         } else {
             return '';
         }
+    }
+
+    /**
+     * Gets query for [[fromPersonRelations]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFromPersonRelations()
+    {
+        return $this->hasMany(PersonRelation::class, ['from_person_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[fromPersons]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFromPersons()
+    {
+        return $this->hasMany(Person::class, ['id' => 'from_person_id'])
+            ->viaTable('person_relation', ['to_person_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[foPersonRelations]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getToPersonRelations()
+    {
+        return $this->hasMany(PersonRelation::class, ['to_person_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[toPersons]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getToPersons()
+    {
+        return $this->hasMany(Person::class, ['id' => 'to_person_id'])
+            ->viaTable('person_relation', ['from_person_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[toPerson]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getToPerson()
+    {
+        return $this->hasOne(Person::class, ['id' => 'to_person_id']);
     }
 
     /**

@@ -24,6 +24,7 @@ use yii\widgets\Pjax;
         return [
             'class' => 'person-row',
             'data-person-id' => $model->id,
+            'data-person-name' => $model->dispname,
             'style' => 'cursor:pointer;',
         ];
     },
@@ -39,6 +40,18 @@ use yii\widgets\Pjax;
             'value' => 'dispname'
         ],
         [
+            'label' => '連絡先',
+            'value' => function($model) {
+                if (count($model->contacts) > 0) {
+                    $contact = $model->contacts[0];
+                    if ($contact->role != '' || ($contact->name != $model->name)) {
+                        return $model->contacts[0]->fullname;
+                    }
+                }
+                return '';
+            },
+        ],
+        [
             'label' => '住所',
             'value' => function ($model) {
                 if (count($model->contacts) > 0) {
@@ -48,16 +61,16 @@ use yii\widgets\Pjax;
                 }
             },
         ],
-        [
-            'label' => '電話',
-            'value' => function ($model) {
-                if (count($model->contacts) > 0) {
-                    return $model->contacts[0]->phones;
-                } else {
-                    return null;
-                }
-            },
-        ],
+//        [
+//            'label' => '電話',
+//            'value' => function ($model) {
+//                if (count($model->contacts) > 0) {
+//                    return $model->contacts[0]->phones;
+//                } else {
+//                    return null;
+//                }
+//            },
+//        ],
     ],
 ]); ?>
 <?php Pjax::end();

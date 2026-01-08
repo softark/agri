@@ -3,19 +3,17 @@
 use yii\bootstrap5\Html;
 
 /** @var yii\web\View $this */
-/** @var app\models\Forest $model */
+/** @var app\models\IsgTanada $model */
 
-$this->title = '山林 : ' . $model->p_no . ' (' . $model->owner . ') - 編集';
-$this->params['breadcrumbs'][] = ['label' => '山林', 'url' => ['index']];
+$this->title = '棚田 : ' . $model->p_no . ' (' . $model->owner . ') - 編集';
+$this->params['breadcrumbs'][] = ['label' => '棚田', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->p_no . ' (' . $model->owner . ')', 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = '編集';
 ?>
-<div class="forest-update">
+<div class="tanada-update">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?= $this->render('_form', [
-        'model' => $model,
+            'model' => $model,
     ]) ?>
-
-</div>

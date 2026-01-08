@@ -43,6 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
             <?= $this->render('/person/_select_modal.php', [
                     'personIdInput' => 'person-id',
+                    'personNameInput' => 'person-name',
             ]);
             ?>
         </div>

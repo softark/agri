@@ -32,10 +32,9 @@ $this->params['breadcrumbs'][] = $this->title;
                             'attribute' => 'person_id',
                             'value' => 'person.dispname'
                     ],
-                    'role',
                     [
                             'attribute' => 'name',
-                            'value' => 'dispname'
+                            'value' => 'fullname'
                     ],
                     [
                             'attribute' => 'address1',
@@ -46,7 +45,6 @@ $this->params['breadcrumbs'][] = $this->title;
                             'label' => '電話',
                             'value' => 'phones'
                     ],
-                    'note',
                     [
                             'class' => ActionColumn::className(),
                             'urlCreator' => function ($action, Contact $model, $key, $index, $column) {

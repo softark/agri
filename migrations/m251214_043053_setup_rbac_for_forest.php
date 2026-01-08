@@ -21,8 +21,8 @@ class m251214_043053_setup_rbac_for_forest extends Migration
     {
         $auth = $this->getAuthManager();
 
-        // 'forest' のルート
-        $routeAll = $auth->createPermission('/forest/*');
+        // 'isg-forest' のルート
+        $routeAll = $auth->createPermission('/isg-forest/*');
         $auth->add($routeAll);
 
         // 'admin' ロール
@@ -36,8 +36,8 @@ class m251214_043053_setup_rbac_for_forest extends Migration
     {
         $auth = $this->getAuthManager();
 
-        // 'forest' のルートを削除
-        $routeAll = $auth->getPermission('/forest/*');
+        // 'isg-forest' のルートを削除
+        $routeAll = $auth->getPermission('/isg-forest/*');
         $auth->remove($routeAll);
 
         // 親子関係とロール割当ては自動的に削除される

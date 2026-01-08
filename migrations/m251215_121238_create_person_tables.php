@@ -15,13 +15,14 @@ class m251215_121238_create_person_tables extends Migration
     {
         $this->createTable('{{%person}}', [
             'id' => $this->primaryKey(),
+            'status' => $this->integer()->notNull()->defaultValue(1),
+            'type' => $this->integer()->notNull()->defaultValue(1),
             'name1' => $this->string(30)->notNull(),
             'name2' => $this->string(30)->null()->defaultValue(''),
             'name' => $this->string(60) . ' GENERATED ALWAYS as (name1 || name2) STORED',
             'yomi1' => $this->string(30)->null()->defaultValue(''),
             'yomi2' => $this->string(30)->null()->defaultValue(''),
             'yomi' => $this->string(60) . ' GENERATED ALWAYS as (yomi1 || yomi2) STORED',
-            'type' => $this->integer()->notNull()->defaultValue(1),
             'note' => $this->string(50)->null()->defaultValue(''),
             'created_at' => 'TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP',
             'created_by' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 1',
@@ -34,16 +35,33 @@ class m251215_121238_create_person_tables extends Migration
         $this->createIndex('ix_person_name', '{{%person}}', 'name', true);
         $this->createIndex('ix_person_yomi', '{{%person}}', 'yomi', false);
         $this->createIndex('ix_person_type', '{{%person}}', 'type');
+        $this->createIndex('ix_person_status', '{{%person}}', 'status');
         // 外部キー
         $this->addForeignKey('fk_person_created_by_user_id', '{{%person}}', 'created_by', '{{%user}}', 'id', 'RESTRICT', 'RESTRICT');
         $this->addForeignKey('fk_person_updated_by_user_id', '{{%person}}', 'updated_by', '{{%user}}', 'id', 'RESTRICT', 'RESTRICT');
+
+        $this->createTable('{{%person_relation}}', [
+            'id' => $this->primaryKey(),
+            'from_person_id' => $this->integer()->notNull(),
+            'to_person_id' => $this->integer()->notNull(),
+            'note' => $this->string(50)->null()->defaultValue(''),
+            'created_at' => 'TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP',
+            'created_by' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 1',
+            'updated_at' => 'TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP',
+            'updated_by' => Schema::TYPE_INTEGER . ' NOT NULL DEFAULT 1',
+        ]);
+        // インデックス
+        $this->createIndex('ix_person_relation_pkey', '{{%person_relation}}', ['from_person_id', 'to_person_id'], true);
+        // 外部キー
+        $this->addForeignKey('fk_person_relation_from_person_id', '{{%person_relation}}', 'from_person_id', '{{%person}}', 'id', 'CASCADE', 'RESTRICT');
+        $this->addForeignKey('fk_person_relation_to_person_id', '{{%person_relation}}', 'to_person_id', '{{%person}}', 'id', 'CASCADE', 'RESTRICT');
 
         $this->createTable('{{%contact}}', [
             'id' => $this->primaryKey(),
             'person_id' => $this->integer()->notNull(),
             'order' => $this->integer()->notNull()->defaultValue(1),
             'role' => $this->string(30)->null()->defaultValue(''),
-            'name1' => $this->string(30)->notNull(),
+            'name1' => $this->string(30)->null()->defaultValue(''),
             'name2' => $this->string(30)->null()->defaultValue(''),
             'name' => $this->string(60) . ' GENERATED ALWAYS as (name1 || name2) STORED',
             'zip' => $this->string(10)->null()->defaultValue(''),
@@ -78,6 +96,7 @@ class m251215_121238_create_person_tables extends Migration
 
         $this->seedPersons();
         $this->seedContacts();
+        $this->seedPersonRelations();
     }
 
     public function seedPersons()
@@ -86,7 +105,7 @@ class m251215_121238_create_person_tables extends Migration
         $fp = fopen($path, 'r');
         if (!$fp) throw new \RuntimeException("Cannot open: $path");
 
-        $cols = ['id', 'name1', 'name2', 'yomi1', 'yomi2', 'type', 'note'];
+        $cols = ['id', 'name1', 'name2', 'yomi1', 'yomi2', 'type', 'status', 'note'];
         $keys = array_flip($cols);
 
         $header = fgetcsv($fp);               // 1行目を列名にする想定
@@ -97,7 +116,7 @@ class m251215_121238_create_person_tables extends Migration
         }
         fclose($fp);
 
-        $this->execute('alter sequence person_id_seq restart with 76');
+        $this->execute('alter sequence person_id_seq restart with 91');
     }
 
     public function seedContacts()
@@ -116,7 +135,26 @@ class m251215_121238_create_person_tables extends Migration
             $this->insert('{{%contact}}', $assoc);
         }
         fclose($fp);
-        $this->execute('alter sequence contact_id_seq restart with 93');
+        $this->execute('alter sequence contact_id_seq restart with 108');
+    }
+
+    public function seedPersonRelations()
+    {
+        $path = Yii::getAlias('@app/migrations/data/person_relation.csv');
+        $fp = fopen($path, 'r');
+        if (!$fp) throw new \RuntimeException("Cannot open: $path");
+
+        $cols = ['id', 'from_person_id', 'to_person_id', 'note'];
+        $keys = array_flip($cols);
+
+        $header = fgetcsv($fp);               // 1行目を列名にする想定
+        while (($row = fgetcsv($fp)) !== false) {
+            $assoc = array_combine($header, $row);
+            $assoc = array_intersect_key($assoc, $keys);
+            $this->insert('{{%person_relation}}', $assoc);
+        }
+        fclose($fp);
+        $this->execute('alter sequence contact_id_seq restart with 19');
     }
 
     /**
@@ -125,6 +163,7 @@ class m251215_121238_create_person_tables extends Migration
     public function safeDown()
     {
         $this->dropTable('{{%contact}}');
+        $this->dropTable('{{%person_relation}}');
         $this->dropTable('{{%person}}');
     }
 }

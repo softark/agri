@@ -1,6 +1,6 @@
 <?php
 
-use app\models\Forest;
+use app\models\IsgForest;
 use yii\bootstrap5\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -8,7 +8,7 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 
 /** @var yii\web\View $this */
-/** @var app\models\ForestSearch $searchModel */
+/** @var app\models\IsgForestSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = '山林';
@@ -46,7 +46,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                             'class' => ActionColumn::class,
                             'template' => '{view} {update}',
-                            'urlCreator' => function ($action, Forest $model, $key, $index, $column) {
+                            'urlCreator' => function ($action, IsgForest $model, $key, $index, $column) {
                                 return Url::toRoute([$action, 'id' => $model->id]);
                             }
                     ],

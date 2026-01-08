@@ -41,6 +41,9 @@ $('#person-search-form').on('change', 'input', function(event){
 
     <div class="row">
         <div class="col-md-2 col-sm-3 col-5">
+            <?= $form->field($model, 'status')->dropDownList(Person::getStates(), ['prompt' => '']) ?>
+        </div>
+        <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'type')->dropDownList(Person::getTypes(), ['prompt' => '']) ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
@@ -53,7 +56,7 @@ $('#person-search-form').on('change', 'input', function(event){
             <?= $form->field($model, 'search_phone') ?>
         </div>
 
-        <div class="form-group search-buttons col-md-3 col-sm-3 col-4">
+        <div class="form-group search-buttons col-md-2 col-sm-3 col-4">
             <p class="text-nowrap pt-2">
                 <?= Html::submitButton(Icon::getBtnText('search'), ['class' => 'btn btn-primary btn-sm']) ?>
                 <?= Html::button(Icon::getBtnText('clear'), ['class' => 'btn btn-outline-secondary btn-sm', 'id' => 'clear-btn']) ?>

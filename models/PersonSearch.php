@@ -50,7 +50,7 @@ class PersonSearch extends Person
     public function rules()
     {
         return [
-            [['search_name', 'search_address', 'search_phone', 'note', 'type'], 'safe'],
+            [['search_name', 'search_address', 'search_phone', 'note', 'type', 'status'], 'safe'],
         ];
     }
 
@@ -73,7 +73,7 @@ class PersonSearch extends Person
      */
     public function search($params, $pageSize = 20)
     {
-        $query = Person::find()->leftJoin('contact', 'person.id = contact.person_id');
+        $query = Person::find()->leftJoin('contact', 'person.id = contact.person_id')->distinct();
 
         // add conditions that should always apply here
 
@@ -85,6 +85,7 @@ class PersonSearch extends Person
             'sort' => [
                 'defaultOrder' => ['name' => SORT_ASC],
                 'attributes' => [
+                    'status',
                     'name' => [
                         'asc' => ['name' => SORT_ASC, 'type' => SORT_ASC],
                         'desc' => ['name' => SORT_DESC, 'type' => SORT_ASC],
@@ -115,6 +116,7 @@ class PersonSearch extends Person
         $query->andFilterWhere([
             'id' => $this->id,
             'type' => $this->type,
+            'status' => $this->status,
             'created_at' => $this->created_at,
             'created_by' => $this->created_by,
             'updated_at' => $this->updated_at,

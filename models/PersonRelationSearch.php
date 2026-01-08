@@ -4,23 +4,21 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use app\models\PersonRelation;
 
 /**
- * TanadaSearch represents the model behind the search form of `app\models\Tanada`.
+ * PersonRelationSearch represents the model behind the search form of `app\models\PersonRelation`.
  */
-class TanadaSearch extends Tanada
+class PersonRelationSearch extends PersonRelation
 {
-    use LoadParamsTrait;
-
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id'], 'integer'],
-            [['geom', 'p_no', 'owner', 'cultivator', 'usage'], 'safe'],
-            [['area'], 'number'],
+            [['id', 'from_person_id', 'to_person_id', 'created_by', 'updated_by'], 'integer'],
+            [['note', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -43,7 +41,7 @@ class TanadaSearch extends Tanada
      */
     public function search($params, $formName = null)
     {
-        $query = Tanada::find();
+        $query = PersonRelation::find();
 
         // add conditions that should always apply here
 
@@ -51,8 +49,7 @@ class TanadaSearch extends Tanada
             'query' => $query,
         ]);
 
-        $this->loadAndRememberParams($this, $dataProvider, $params);
-        // $this->load($params, $formName);
+        $this->load($params, $formName);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -63,14 +60,15 @@ class TanadaSearch extends Tanada
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'area' => $this->area,
+            'from_person_id' => $this->from_person_id,
+            'to_person_id' => $this->to_person_id,
+            'created_at' => $this->created_at,
+            'created_by' => $this->created_by,
+            'updated_at' => $this->updated_at,
+            'updated_by' => $this->updated_by,
         ]);
 
-        $query->andFilterWhere(['ilike', 'geom', $this->geom])
-            ->andFilterWhere(['ilike', 'p_no', $this->p_no])
-            ->andFilterWhere(['ilike', 'owner', $this->owner])
-            ->andFilterWhere(['ilike', 'cultivator', $this->cultivator])
-            ->andFilterWhere(['ilike', 'usage', $this->usage]);
+        $query->andFilterWhere(['ilike', 'note', $this->note]);
 
         return $dataProvider;
     }

@@ -22,7 +22,7 @@ class m251213_121230_setup_rbac_for_tanada extends Migration
         $auth = $this->getAuthManager();
 
         // 'tanada' のルート
-        $routeAll = $auth->createPermission('/tanada/*');
+        $routeAll = $auth->createPermission('/isg-tanada/*');
         $auth->add($routeAll);
 
         // 'admin' ロール
@@ -37,7 +37,7 @@ class m251213_121230_setup_rbac_for_tanada extends Migration
         $auth = $this->getAuthManager();
 
         // 'tanada' のルートを削除
-        $routeAll = $auth->getPermission('/tanada/*');
+        $routeAll = $auth->getPermission('/isg-tanada/*');
         $auth->remove($routeAll);
 
         // 親子関係とロール割当ては自動的に削除される

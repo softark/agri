@@ -50,11 +50,14 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
     ];
     if (!Yii::$app->user->isGuest) {
         $items[] = ['label' => Icon::getIconAndLabel('person'), 'url' => ['/person'], 'encode' => false];
+        if (Yii::$app->user->can('editor')) {
+            $items[] = ['label' => Icon::getIconAndLabel('succeed'), 'url' => ['/person-relation'], 'encode' => false];
+        }
         if (Yii::$app->user->can('admin')) {
             $items[] = ['label' => Icon::getIconAndLabel('contact'), 'url' => ['/contact'], 'encode' => false];
             $items[] = ['label' => '名簿ワーク', 'url' => ['/person-work'], 'encode' => false];
-            $items[] = ['label' => '棚田', 'url' => ['/tanada'], 'encode' => false];
-            $items[] = ['label' => '山林', 'url' => ['/forest'], 'encode' => false];
+            $items[] = ['label' => '棚田', 'url' => ['/isg-tanada'], 'encode' => false];
+            $items[] = ['label' => '山林', 'url' => ['/isg-forest'], 'encode' => false];
         }
     }
     echo Nav::widget([

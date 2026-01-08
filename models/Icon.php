@@ -50,6 +50,7 @@ class Icon
         'plus-c' => ['label' => '新規登録','class' => 'fa-solid fa-circle-plus'],
         'plus-s' => ['label' => '新規登録','class' => 'fa-solid fa-square-plus'],
         'plus' => ['label' => '追加','class' => 'fa-solid fa-plus'],
+        'succeed' => ['label' => '引継','class' => 'fa-solid fa-user-group'],
     ];
 
     /**

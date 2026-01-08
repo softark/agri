@@ -97,7 +97,7 @@ class PersonWork extends \yii\db\ActiveRecord
     public static function importFromTanada() : int
     {
         $count = 0;
-        $tanadas = Tanada::find()->select(['owner'])->distinct()->all();
+        $tanadas = IsgTanada::find()->select(['owner'])->distinct()->all();
         foreach ($tanadas as $tanada) {
             if ($tanada->owner != '') {
                 if (self::find()->where(['name' => $tanada->owner, 'src' => PersonWork::SRC_TANADA_OWNER])->count() == 0) {
@@ -109,7 +109,7 @@ class PersonWork extends \yii\db\ActiveRecord
                 }
             }
         }
-        $tanadas = Tanada::find()->select(['cultivator'])->distinct()->all();
+        $tanadas = IsgTanada::find()->select(['cultivator'])->distinct()->all();
         foreach ($tanadas as $tanada) {
             if (self::find()->where(['name' => $tanada->cultivator, 'src' => PersonWork::SRC_TANADA_CULTIVATOR])->count() == 0) {
                 if ($tanada->cultivator != '') {
@@ -127,7 +127,7 @@ class PersonWork extends \yii\db\ActiveRecord
     public static function importFromForest() : int
     {
         $count = 0;
-        $forests = Forest::find()->select(['owner', 'o_addr'])->distinct()->all();
+        $forests = IsgForest::find()->select(['owner', 'o_addr'])->distinct()->all();
         foreach ($forests as $forest) {
             if (self::find()->where(['name' => $forest->owner, 'address' => $forest->o_addr, 'src' => PersonWork::SRC_FOREST_OWNER])->count() == 0) {
                 if ($forest->owner != '') {
@@ -140,7 +140,7 @@ class PersonWork extends \yii\db\ActiveRecord
                 }
             }
         }
-        $forests = Forest::find()->select(['manager', 'm_addr'])->distinct()->all();
+        $forests = IsgForest::find()->select(['manager', 'm_addr'])->distinct()->all();
         foreach ($forests as $forest) {
             if (self::find()->where(['name' => $forest->manager, 'address' => $forest->m_addr, 'src' => PersonWork::SRC_FOREST_MANAGER])->count() == 0) {
                 if ($forest->manager != '') {

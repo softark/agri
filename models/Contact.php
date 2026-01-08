@@ -125,7 +125,6 @@ class Contact extends \yii\db\ActiveRecord
             [['person_id'], 'exist', 'skipOnError' => true, 'targetClass' => Person::class, 'targetAttribute' => ['person_id' => 'id']],
             [['person_id', 'order', 'created_by', 'updated_by'], 'integer'],
             [['name1', 'name2'], 'string', 'max' => 30],
-            ['name1', 'required'],
             [['order'], 'default', 'value' => 1],
             [['role'], 'string', 'max' => 30],
             [['zip'], 'string', 'max' => 10],

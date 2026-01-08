@@ -34,38 +34,22 @@ $this->params['breadcrumbs'][] = $this->title;
             'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
                     [
+                            'attribute' => 'status',
+                            'value' => 'statusText',
+                    ],
+                    [
                             'attribute' => 'type',
                             'value' => 'typeText',
                     ],
                     [
                             'attribute' => 'name',
-                            'value' => 'dispname'
-                    ],
-                    [
-                            'label' => '連絡先',
-                            'value' => function ($model) {
-                                if (count($model->contacts) > 0) {
-                                    return $model->contacts[0]->fullname;
-                                } else {
-                                    return '';
-                                }
-                            }
+                            'value' => 'fullname'
                     ],
                     [
                             'label' => '住所',
                             'value' => function ($model) {
                                 if (count($model->contacts) > 0) {
                                     return $model->contacts[0]->shortAddress;
-                                } else {
-                                    return '';
-                                }
-                            }
-                    ],
-                    [
-                            'label' => '電話',
-                            'value' => function ($model) {
-                                if (count($model->contacts) > 0) {
-                                    return $model->contacts[0]->phones;
                                 } else {
                                     return '';
                                 }

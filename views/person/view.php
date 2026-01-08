@@ -22,6 +22,12 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php
             $attributes = [
                     [
+                            'attribute' => 'status',
+                            'value' => function ($model) {
+                                return $model->statusText;
+                            },
+                    ],
+                    [
                             'attribute' => 'type',
                             'value' => function ($model) {
                                 return $model->typeText;

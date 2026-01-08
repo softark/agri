@@ -2,6 +2,7 @@
 
 /* @var $this yii\web\View */
 /* @var $personIdInput string */
+/* @var $personNameInput string|null */
 
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
@@ -97,8 +98,8 @@ $('#person-select-modal').on('click', '.person-row', function(e){
   $('.person-row.is-selected').removeClass('is-selected');
   $(this).addClass('is-selected');
 
-  const id = $(this).data('person-id');
-  $('#$personIdInput').val(id); // hidden or input
+  $('#$personIdInput').val($(this).data('person-id'));
+  $('#$personNameInput').val($(this).data('person-name'));
   $('#modal-ok').removeClass('disabled');
 });
 $('#modal-ok').on('click', function(event){

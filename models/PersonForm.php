@@ -49,8 +49,6 @@ class PersonForm extends Model
     {
         return [
             [['name1'], 'required'],
-            ['contact_name1', 'required', 'when' => function ($model) {return $model->has_contact;},
-                'whenClient' => "function (attribute, value) {return $('#has-contact').is(':checked');}"],
             ['type', 'integer'],
             ['type', 'in', 'range' => array_keys(Person::getTypes())],
             [['name1', 'name2', 'yomi1', 'yomi2', 'role', 'contact_name1', 'contact_name2'], 'string', 'max' => 30],
@@ -119,7 +117,10 @@ class PersonForm extends Model
             $this->person->yomi1 = $this->yomi1;
             $this->person->yomi2 = $this->yomi2;
             $this->person->note = $this->person_note;
-            $this->person->save();
+            if (!$this->person->save()) {
+                Yii::error(['person_save_failed', $this->person->errors], __METHOD__);
+                throw new \RuntimeException('Person save failed');
+            }
 
             if ($this->has_contact) {
                 if ($this->contact == null) {
@@ -136,17 +137,20 @@ class PersonForm extends Model
                 $this->contact->phone1 = $this->phone1;
                 $this->contact->phone2 = $this->phone2;
                 $this->contact->note = $this->contact_note;
-                $this->contact->save();
+                if (!$this->contact->save()) {
+                    Yii::error(['contact_save_failed', $this->contact->errors], __METHOD__);
+                    throw new \RuntimeException('Contact save failed');
+                }
             }
 
             $transaction->commit();
             return true;
         } catch (\Exception $e) {
             $transaction->rollBack();
-            Yii::error($e->getMessage());
+            Yii::error($e, __METHOD__);   // message だけより e 丸ごとが有益
         } catch (\Throwable $e) {
             $transaction->rollBack();
-            Yii::error($e->getMessage());
+            Yii::error($e, __METHOD__);   // message だけより e 丸ごとが有益
         }
         return false;
     }
