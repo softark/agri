@@ -97,7 +97,7 @@ class m251215_121238_create_person_tables extends Migration
         }
         fclose($fp);
 
-        $this->execute('alter sequence person_id_seq restart with 63');
+        $this->execute('alter sequence person_id_seq restart with 76');
     }
 
     public function seedContacts()
@@ -116,7 +116,7 @@ class m251215_121238_create_person_tables extends Migration
             $this->insert('{{%contact}}', $assoc);
         }
         fclose($fp);
-        $this->execute('alter sequence contact_id_seq restart with 77');
+        $this->execute('alter sequence contact_id_seq restart with 93');
     }
 
     /**
