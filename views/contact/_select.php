@@ -37,9 +37,9 @@ use yii\widgets\Pjax;
     'id' => 'select-contact-list',
     'columns' => [
         ['class' => 'yii\grid\SerialColumn'],
-        'role',
         [
-            'attribute' => 'dispname',
+            'attribute' => 'name',
+            'value' => 'contactname',
         ],
         [
             'attribute' => 'address1',

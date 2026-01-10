@@ -155,4 +155,20 @@ class PersonWork extends \yii\db\ActiveRecord
         }
         return $count;
     }
+
+    public static function optimizeContactNames() : int
+    {
+        $count = 0;
+        $contacts = Contact::find()->all();
+        foreach ($contacts as $contact) {
+            if ($contact->role == '' && $contact->name == $contact->person->name) {
+                $contact->name1 = '';
+                $contact->name2 = '';
+                $contact->save();
+                $count++;
+            }
+        }
+        return $count;
+    }
+
 }

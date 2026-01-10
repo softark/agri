@@ -101,19 +101,22 @@ $('#address1').autocomplete({
 <div class="contact-form" id="contact-form">
     <div class="row">
         <div class="col-lg-5">
+            <?php
+            $attributes = [
+                    [
+                            'attribute' => 'type',
+                            'value' => function ($model) {
+                                return $model->typeText;
+                            },
+                    ],
+                    'dispname',
+                    'yomigana',
+            ];
+            if ($model->person->note != '') $attributes[] = 'note';
+            ?>
             <?= DetailView::widget([
                     'model' => $model->person,
-                    'attributes' => [
-                            [
-                                    'attribute' => 'type',
-                                    'value' => function ($model) {
-                                        return $model->typeText;
-                                    },
-                            ],
-                            'dispname',
-                            'yomigana',
-                            'note',
-                    ],
+                    'attributes' => $attributes
             ]) ?>
             <p><?= Html::button(Icon::getIcon('contact') . ' 既存の連絡先をコピー', ['id' => 'btn-contact-select', 'class' => 'btn btn-outline-secondary']) ?></p>
             <?php $form = ActiveForm::begin([
@@ -124,7 +127,8 @@ $('#address1').autocomplete({
                             'options' => ['class' => 'mb-3']
                     ],
             ]); ?>
-            <?= $form->field($model, 'order')->textInput(['disabled' => true]); ?>
+            <p>名簿と連絡先の名前が同じ場合は、組織名・役割・肩書、宛名（前半）、宛名（後半）は入力する必要はありません</p>
+            <?= $form->field($model, 'order')->textInput(['disabled' => true]) ?>
             <?= $form->field($model, 'role')->textInput(['maxlength' => true, 'id' => 'role']) ?>
             <?= $form->field($model, 'name1')->textInput(['maxlength' => true, 'id' => 'contact-name1']) ?>
             <?= $form->field($model, 'name2')->textInput(['maxlength' => true, 'id' => 'contact-name2']) ?>
@@ -148,5 +152,12 @@ $('#address1').autocomplete({
             <?php ActiveForm::end(); ?>
             <?= $this->render('_select_modal.php', []); ?>
         </div>
+        <?php if (count($model->person->contacts) > 1): ?>
+            <p>※ 連絡先の優先順位の変更は、名簿の閲覧画面で行うことが出来ます。
+                <?= Html::a(Icon::getIcon('view') . ' ' . $model->person->dispname,
+                        ['/person/view', 'id' => $model->person->id],
+                        ['class' => 'btn btn-outline-primary']) ?>
+            </p>
+        <?php endif; ?>
     </div>
 </div>

@@ -4,7 +4,7 @@ Yii::setAlias('@common', dirname(__DIR__) . '/common');
 
 $config = [
     'id' => 'agri',
-    'name' => '岩座神農会',
+    'name' => '岩座神農林',
     'language' => 'ja-JP',
     'basePath' => dirname(__DIR__),
     'bootstrap' => [

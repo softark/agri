@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use function PHPUnit\Framework\isEmpty;
 
 /**
  * This is the model class for table "contact".
@@ -41,6 +42,7 @@ class Contact extends \yii\db\ActiveRecord
     }
 
     private $_dispname = null;
+
     public function getDispName()
     {
         if ($this->_dispname === null) {
@@ -50,6 +52,7 @@ class Contact extends \yii\db\ActiveRecord
     }
 
     private $_fullname = null;
+
     public function getFullName()
     {
         if ($this->_fullname === null) {
@@ -58,7 +61,26 @@ class Contact extends \yii\db\ActiveRecord
         return $this->_fullname;
     }
 
+    private $_contact_name = null;
+
+    public function getContactName()
+    {
+        if ($this->_contact_name === null) {
+            $this->_contact_name = $this->getFullName();
+            $person_name = $this->person->dispname;
+            if ($this->_contact_name == '') {
+                $this->_contact_name = $person_name;
+            } else {
+                if ($this->_contact_name != $person_name) {
+                    $this->_contact_name = $person_name . ' / ' . $this->_contact_name;
+                }
+            }
+        }
+        return $this->_contact_name;
+    }
+
     private $_fulladdress = null;
+
     public function getFullAddress()
     {
         if ($this->_fulladdress === null) {
@@ -68,6 +90,7 @@ class Contact extends \yii\db\ActiveRecord
     }
 
     private $_phones = null;
+
     public function getPhones()
     {
         if ($this->_phones === null) {
@@ -94,6 +117,7 @@ class Contact extends \yii\db\ActiveRecord
     }
 
     private $_shortaddress = null;
+
     public function getShortAddress()
     {
         if ($this->_shortaddress === null) {
@@ -122,7 +146,7 @@ class Contact extends \yii\db\ActiveRecord
             [['created_by', 'updated_by'], 'default', 'value' => null],
             [['created_by', 'updated_by'], 'integer'],
             [['person_id'], 'required'],
-            [['person_id'], 'exist', 'skipOnError' => true, 'targetClass' => Person::class, 'targetAttribute' => ['person_id' => 'id']],
+            [['person_id'], 'exist', 'targetClass' => Person::class, 'targetAttribute' => ['person_id' => 'id']],
             [['person_id', 'order', 'created_by', 'updated_by'], 'integer'],
             [['name1', 'name2'], 'string', 'max' => 30],
             [['order'], 'default', 'value' => 1],
@@ -132,25 +156,40 @@ class Contact extends \yii\db\ActiveRecord
             [['mail'], 'email'],
             [['phone1', 'phone2'], 'string', 'max' => 20],
             [['note'], 'string', 'max' => 50],
+            [['role', 'name1', 'name2', 'zip', 'address1', 'address2', 'phone1', 'phone2', 'mail', 'note'], 'default', 'value' => ''],
+            ['note', 'required',
+                'when' => function ($model) {
+                    return ($model->role == '' && $model->name1 == '' && $model->name2 == ''
+                        && $model->zip == '' && $model->address1 == '' && $model->address2 == ''
+                        && $model->phone1 == '' && $model->phone2 == '' && $model->mail == '');
+                },
+                'whenClient' => "function (attribute, value) {
+                    return (!$('#role').val().length && !$('#contact-name1').val().length && !$('#contact-name2').val().length
+                    && !$('#zip').val().length && !$('#address1').val().length && !$('#address2').val().length
+                    && !$('#phone1').val().length && !$('#phone2').val().length && !$('#mail').val().length);
+                }",
+                'message' => '全項目が空白です。どれも必須ではありませんが、一つは入力して下さい。'
+            ],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['created_by' => 'id']],
-            [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['updated_by' => 'id']],
-        ];
+            [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['updated_by' => 'id']],];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public
+    function attributeLabels()
     {
         return [
             'id' => 'ID',
             'person_id' => '名簿',
-            'order' => '優先順',
-            'name1' => '姓（名前前半）',
-            'name2' => '名（名前後半）',
-            'name' => '名前',
-            'dispname' => '名前',
-            'fullname' => '名前',
+            'order' => '優先順位',
+            'name1' => '宛名（前半）',
+            'name2' => '宛名（後半）',
+            'name' => '宛名',
+            'dispname' => '宛名',
+            'fullname' => '宛名',
+            'contactname' => '宛名',
             'role' => '組織名・役割・肩書',
             'zip' => '郵便番号',
             'address' => '住所',
@@ -174,7 +213,8 @@ class Contact extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getPerson()
+    public
+    function getPerson()
     {
         return $this->hasOne(Person::class, ['id' => 'person_id']);
     }
@@ -184,7 +224,8 @@ class Contact extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCreatedBy()
+    public
+    function getCreatedBy()
     {
         return $this->hasOne(User::class, ['id' => 'created_by']);
     }
@@ -194,7 +235,8 @@ class Contact extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getUpdatedBy()
+    public
+    function getUpdatedBy()
     {
         return $this->hasOne(User::class, ['id' => 'updated_by']);
     }
@@ -203,7 +245,8 @@ class Contact extends \yii\db\ActiveRecord
      * @param bool $insert
      * @return bool
      */
-    public function beforeSave($insert)
+    public
+    function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
             $user_id = (Yii::$app->user->isGuest) ? 1 : Yii::$app->user->id;

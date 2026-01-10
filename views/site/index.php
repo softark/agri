@@ -5,13 +5,13 @@
 use app\models\Icon;
 use yii\bootstrap5\Html;
 
-$this->title = '岩座神農会';
+$this->title = '岩座神農林';
 ?>
 <div class="site-index">
 
     <div class="jumbotron text-center bg-transparent mt-5 mb-5">
         <h1 class="display-4"><?= Html::img('/favicon-96x96.png', ['width' => 56, 'height' => 56, 'style' => 'margin-top:-10px;']) ?>
-            岩座神農会</h1>
+            岩座神農林</h1>
         <p class="lead">岩座神の農地と山林のデータベース</p>
     </div>
 
@@ -24,15 +24,15 @@ $this->title = '岩座神農会';
                 <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
                     <p><?= Html::a(Icon::getIconAndLabel('person'), ['/person'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
                 </div>
-                <?php if (Yii::$app->user->can('admin')): ?>
+                <?php if (Yii::$app->user->can('editor')): ?>
+                    <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
+                        <p><?= Html::a(Icon::getIconAndLabel('contact'), ['/contact'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
+                    </div>
                     <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
                         <p><?= Html::a(Icon::getIconAndLabel('succeed'), ['/person-relation'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
                     </div>
                 <?php endif; ?>
                 <?php if (Yii::$app->user->can('admin')): ?>
-                    <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
-                        <p><?= Html::a(Icon::getIconAndLabel('contact'), ['/contact'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
-                    </div>
                     <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
                         <p><?= Html::a('名簿ワーク', ['/person-work'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
                     </div>

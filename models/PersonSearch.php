@@ -87,8 +87,8 @@ class PersonSearch extends Person
                 'attributes' => [
                     'status',
                     'name' => [
-                        'asc' => ['name' => SORT_ASC, 'type' => SORT_ASC],
-                        'desc' => ['name' => SORT_DESC, 'type' => SORT_ASC],
+                        'asc' => ['yomi' => SORT_ASC, 'type' => SORT_ASC],
+                        'desc' => ['yomi' => SORT_DESC, 'type' => SORT_ASC],
                     ],
                     'yomi',
                     'note' => [

@@ -71,6 +71,35 @@ class PersonForm extends Model
                         . $this->name2 . '" という組み合わせは既に登録されています。');
                 }
             }],
+            [['role', 'contact_name1', 'contact_name2', 'zip', 'address1', 'address2', 'phone1', 'phone2', 'mail', 'contact_note'],
+                'default', 'value' => ''],
+            ['contact_note', 'required',
+                'when' => function ($model) {
+                    return ($model->has_contact && $model->role == '' && $model->contact_name1 == '' && $model->contact_name2 == ''
+                        && $model->zip == '' && $model->address1 == '' && $model->address2 == ''
+                        && $model->phone1 == '' && $model->phone2 == '' && $model->mail == '');
+                },
+                'whenClient' => "function (attribute, value) {
+                    return ($('#has-contact').prop('checked') && !$('#role').val().length 
+                    && !$('#contact-name1').val().length && !$('#contact-name2').val().length
+                    && !$('#zip').val().length && !$('#address1').val().length && !$('#address2').val().length
+                    && !$('#phone1').val().length && !$('#phone2').val().length && !$('#mail').val().length);
+                }",
+                'message' => '連絡先の全項目が空白です。どれも必須ではありませんが、一つは入力して下さい。'
+            ],
+            ['has_contact', 'required', 'requiredValue' => true,
+                'when' => function ($model) {
+                    return ($model->role != '' || $model->contact_name1 != '' || $model->contact_name2 != ''
+                        || $model->zip != '' || $model->address1 != '' || $model->address2 != ''
+                        || $model->phone1 != '' || $model->phone2 != '' || $model->mail != '' || $model->contact_note != '');
+                },
+                'whenClient' => "function (attribute, value) {
+                    return ($('#role').val().length || $('#contact-name1').val().length || $('#contact-name2').val().length
+                    || $('#zip').val().length || $('#address1').val().length || $('#address2').val().length
+                    || $('#phone1').val().length || $('#phone2').val().length || $('#mail').val().length);
+                }",
+                'message' => '連絡先の項目が入力されています。「連絡先を登録・更新する」にチェックを入れて下さい。'
+            ],
         ];
     }
 
@@ -86,7 +115,7 @@ class PersonForm extends Model
             'yomi2' => 'よみがな（名）',
             'type' => 'タイプ',
             'person_note' => 'メモ',
-            'has_contact' => '連絡先も登録',
+            'has_contact' => '連絡先を登録・更新する',
             'role' => '組織名・役割・肩書',
             'contact_name1' => '連絡先名前半',
             'contact_name2' => '連絡先名後半',
@@ -170,8 +199,8 @@ class PersonForm extends Model
         $this->person_note = $this->person->note;
 
         if (count($this->person->contacts) > 0) {
-            $this->contact = $this->person->contacts[0];
             $this->has_contact = true;
+            $this->contact = $this->person->contacts[0];
             $this->role = $this->contact->role;
             $this->contact_name1 = $this->contact->name1;
             $this->contact_name2 = $this->contact->name2;
@@ -181,6 +210,8 @@ class PersonForm extends Model
             $this->phone1 = $this->contact->phone1;
             $this->phone2 = $this->contact->phone2;
             $this->contact_note = $this->contact->note;
+        } else {
+            $this->has_contact = false;
         }
     }
 }

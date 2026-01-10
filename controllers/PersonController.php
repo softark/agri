@@ -176,8 +176,6 @@ class PersonController extends Controller
         $contact = new Contact();
         $contact->person_id = $model->id;
         $contact->order = count($model->contacts) + 1;
-        $contact->name1 = $model->name1;
-        $contact->name2 = $model->name2;
 
         if ($this->request->isPost && $contact->load($this->request->post()) && $contact->save()) {
             return $this->redirect(['view', 'id' => $id]);

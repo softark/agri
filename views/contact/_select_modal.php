@@ -41,16 +41,13 @@ Modal::begin([
 ]); ?>
     <div class="row">
         <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($searchModel, 'name') ?>
+            <?= $form->field($searchModel, 'search_name') ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($searchModel, 'address1') ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($searchModel, 'search_phone') ?>
-        </div>
-        <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($searchModel, 'note') ?>
         </div>
         <div class="form-group col-md-2 col-sm-2">
             <?= Html::submitButton(Icon::getBtnText('search'), ['class' => 'btn btn-primary btn-sm d-block']) ?>

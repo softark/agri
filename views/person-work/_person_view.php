@@ -24,78 +24,108 @@ use yii\widgets\DetailView;
         ]) ?>
     </p>
     <h3>名簿</h3>
+    <?php
+    $attributes = [
+            [
+                    'attribute' => 'type',
+                    'value' => function ($model) {
+                        return $model->typeText;
+                    }
+            ],
+            'dispname',
+            'yomigana',
+    ];
+    if ($model->person->note != '') {
+        $attributes[] = 'note';
+    }
+    if (count($model->person->ancestors) > 0) {
+        $items = [];
+        foreach ($model->person->ancestors as $person) {
+            $items[] = Html::a($person->dispname, ['/person/view', 'id' => $person->id], ['class' => 'btn btn-outline-secondary btn-sm']);
+        }
+        $attributes[] = [
+                'label' => '引継元',
+                'format' => 'raw',
+                'value' => implode(' ', $items),
+        ];
+    }
+    if (count($model->person->descendants) > 0) {
+        $items = [];
+        foreach ($model->person->descendants as $person) {
+            $items[] = Html::a($person->dispname, ['/person/view', 'id' => $person->id], ['class' => 'btn btn-outline-secondary btn-sm']);
+        }
+        $attributes[] = [
+                'label' => '引継先',
+                'format' => 'raw',
+                'value' => implode(' ', $items),
+        ];
+    }
+    $attributes[] = [
+            'label' => '操作',
+            'format' => 'raw',
+            'value' => function ($model) use ($pw_id) {
+                return Html::a(Icon::getIconAndLabel('update'),
+                                ['update-person', 'id' => $pw_id, 'person_id' => $model->id],
+                                ['class' => 'btn btn-primary btn-sm']) . ' ' .
+                        Html::button(Icon::getIconAndLabel('delete'),
+                                ['class' => 'btn btn-danger btn-sm delete-person',
+                                        'data-person-id' => $model->id]);
+            }
+    ];
+    ?>
     <?= DetailView::widget([
             'model' => $model->person,
-            'attributes' => [
-                    [
-                            'attribute' => 'type',
-                            'value' => function ($model) {
-                                return $model->typeText;
-                            }
-                    ],
-                    'dispname',
-                    'yomigana',
-                    'note',
-                    [
-                            'label' => '操作',
-                            'format' => 'raw',
-                            'value' => function ($model) use ($pw_id) {
-                                return Html::a(Icon::getIconAndLabel('update'),
-                                                ['update-person', 'id' => $pw_id, 'person_id' => $model->id],
-                                                ['class' => 'btn btn-primary btn-sm']) . ' ' .
-                                        Html::button(Icon::getIconAndLabel('delete'),
-                                                ['class' => 'btn btn-danger btn-sm delete-person',
-                                                        'data-person-id' => $model->id]);
-
-                            }
-                    ]
-            ],
+            'attributes' => $attributes,
     ]) ?>
     <?php $contact_count = count($model->person->contacts); ?>
     <?php if ($contact_count > 0): ?>
         <?php foreach ($model->person->contacts as $contact): ?>
             <h4>連絡先<?= ($contact->order > 1) ? " #" . $contact->order : '' ?></h4>
+            <?php
+            $attributes = [];
+            if ($contact->fullname != '' && $contact->fullname != $model->person->dispname) $attributes[] = 'fullname';
+            if ($contact->fulladdress != '') $attributes[] = 'fulladdress';
+            if ($contact->phones != '') $attributes[] = 'phones';
+            if ($contact->mail != '') $attributes[] = 'mail';
+            if ($contact->note != '') $attributes[] = 'note';
+            $attributes[] = [
+                    'label' => '操作',
+                    'format' => 'raw',
+                    'value' => function ($model) use ($contact_count, $pw_id) {
+                        $buttons = [
+                                Html::a(Icon::getIconAndLabel('update'),
+                                        ['update-contact', 'id' => $pw_id, 'contact_id' => $model->id],
+                                        ['class' => 'btn btn-primary btn-sm']),
+                                Html::button(Icon::getIconAndLabel('delete'),
+                                        ['class' => 'btn btn-danger btn-sm delete-contact',
+                                                'data-contact-id' => $model->id])
+                        ];
+                        if ($contact_count > 1) {
+                            $buttons[] = ' &nbsp;&nbsp;&nbsp; 優先順位 :';
+                            if ($model->order > 1) {
+                                $buttons[] = Html::button(Icon::getIconAndLabel('up'),
+                                        ['class' => 'btn btn-primary btn-sm reorder-contact',
+                                                'data-contact-id' => $model->id, 'data-direction' => 'up']);
+                            } else {
+                                $buttons[] = Html::button(Icon::getIconAndLabel('up'),
+                                        ['class' => 'btn btn-secondary btn-sm disabled']);
+                            }
+                            if ($model->order < $contact_count) {
+                                $buttons[] = Html::button(Icon::getIconAndLabel('down'),
+                                        ['class' => 'btn btn-primary btn-sm reorder-contact',
+                                                'data-contact-id' => $model->id, 'data-direction' => 'down']);
+                            } else {
+                                $buttons[] = Html::button(Icon::getIconAndLabel('down'),
+                                        ['class' => 'btn btn-secondary btn-sm disabled']);
+                            }
+                        }
+                        return implode(' ', $buttons);
+                    }
+            ];
+            ?>
             <?= DetailView::widget([
                     'model' => $contact,
-                    'attributes' => [
-                            'fullname',
-                            'fulladdress',
-                            'phones',
-                            'mail',
-                            'note',
-                            [
-                                    'label' => '操作',
-                                    'format' => 'raw',
-                                    'value' => function ($model) use ($contact_count, $pw_id) {
-                                        $buttons = [
-                                                Html::a(Icon::getIconAndLabel('update'),
-                                                        ['update-contact', 'id' => $pw_id, 'contact_id' => $model->id],
-                                                        ['class' => 'btn btn-primary btn-sm']),
-                                                Html::button(Icon::getIconAndLabel('delete'),
-                                                        ['class' => 'btn btn-danger btn-sm delete-contact',
-                                                                'data-contact-id' => $model->id]),
-                                                ' &nbsp;&nbsp;&nbsp; 優先順位 :'
-                                        ];
-                                        if ($model->order > 1) {
-                                            $buttons[] = Html::button(Icon::getIconAndLabel('up'),
-                                                    ['class' => 'btn btn-primary btn-sm reorder-contact',
-                                                            'data-contact-id' => $model->id, 'data-direction' => 'up']);
-                                        } else {
-                                            $buttons[] = Html::button(Icon::getIconAndLabel('up'),
-                                                    ['class' => 'btn btn-secondary btn-sm disabled']);
-                                        }
-                                        if ($model->order < $contact_count) {
-                                            $buttons[] = Html::button(Icon::getIconAndLabel('down'),
-                                                    ['class' => 'btn btn-primary btn-sm reorder-contact',
-                                                            'data-contact-id' => $model->id, 'data-direction' => 'down']);
-                                        } else {
-                                            $buttons[] = Html::button(Icon::getIconAndLabel('down'),
-                                                    ['class' => 'btn btn-secondary btn-sm disabled']);
-                                        }
-                                        return implode(' ', $buttons);
-                                    }
-                            ]
-                    ],
+                    'attributes' => $attributes,
             ]) ?>
         <?php endforeach; ?>
     <?php else: ?>
@@ -104,14 +134,14 @@ use yii\widgets\DetailView;
     <?php endif; ?>
     <p>
         <?php if (\yii::$app->user->can('contact.create')): ?>
-            <?= Html::a(Icon::getIcon('plus-s') . ' 連絡先を追加',
+            <?= Html::a(Icon::getIcon('plus') . ' 連絡先を追加',
                     ['create-contact', 'id' => $model->id],
                     ['class' => 'btn btn-success']) ?>
         <?php endif; ?>
     </p>
 <?php else : ?>
     <p>
-        <?= Html::a(Icon::getIcon('plus-s') . ' 名簿を新規登録',
+        <?= Html::a(Icon::getIcon('plus') . ' 名簿を新規登録',
                 ['register', 'id' => $model->id, 'route' => ['view', 'id' => $model->id]],
                 ['class' => 'btn btn-success']) ?>
         <?= Html::button(Icon::getIcon('link') . ' 名簿へのリンクを選択',

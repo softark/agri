@@ -13,15 +13,14 @@ use yii\widgets\DetailView;
 <?php $contact_count = count($model->contacts); ?>
 <?php if ($contact_count > 0): ?>
     <?php foreach ($model->contacts as $contact): ?>
-        <h4>連絡先<?= ($contact->order > 1) ? " #" . $contact->order : '' ?></h4>
+        <h2 class="h4">連絡先<?= ($contact->order > 1) ? " #" . $contact->order : '' ?></h2>
         <?php
-        $attributes = [
-                'fullname',
-                'fulladdress',
-                'phones',
-                'mail',
-                'note',
-        ];
+        $attributes = [];
+        if ($contact->fullname != '' && $contact->fullname != $model->dispname) $attributes[] = 'fullname';
+        if ($contact->fulladdress != '') $attributes[] = 'fulladdress';
+        if ($contact->phones != '') $attributes[] = 'phones';
+        if ($contact->mail != '') $attributes[] = 'mail';
+        if ($contact->note != '') $attributes[] = 'note';
         if (Yii::$app->user->can('admin')) {
             $attributes = ArrayHelper::merge($attributes, [
                     [
@@ -88,7 +87,7 @@ use yii\widgets\DetailView;
 <?php endif; ?>
 <p>
     <?php if (\yii::$app->user->can('contact.create')): ?>
-        <?= Html::a(Icon::getIcon('plus-s') . ' 連絡先を追加',
+        <?= Html::a(Icon::getIcon('plus') . ' 連絡先を追加',
                 ['create-contact', 'id' => $model->id],
                 ['class' => 'btn btn-success']) ?>
     <?php endif; ?>

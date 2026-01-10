@@ -34,6 +34,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             'method' => 'post',
                     ],
             ]) ?>
+            <?= Html::a('連絡先の宛名を最適化', ['optimize-contact-names'], [
+                    'class' => 'btn btn-warning',
+                    'data' => [
+                            'confirm' => '連絡先の宛名から不要な文字列を削除しますか？',
+                            'method' => 'post',
+                    ],
+            ]) ?>
         </p>
 
         <?php echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -86,13 +93,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                                 'attribute' => 'person_id',
-                                'label' => '名簿・連絡先',
+                                'label' => '名簿',
                                 'format' => 'raw',
                                 'contentOptions' => ['class' => 'col-link-person'],
                                 'value' => function ($model) {
                                     if ($model->person_id !== null) {
                                         $label = $model->person->fullname;
-                                        return Html::a($label, ['/person/view', 'id' => $model->person_id], []);
+                                        return Html::a($label, ['/person/view', 'id' => $model->person_id], ['class' => 'btn btn-outline-primary btn-sm']);
                                     } else {
                                         return '&nbsp;';
                                     }

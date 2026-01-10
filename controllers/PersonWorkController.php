@@ -38,6 +38,7 @@ class PersonWorkController extends Controller
                         'delete-person' => ['POST'],
                         'reorder-contact' => ['POST'],
                         'delete-contact' => ['POST'],
+                        'optimize-contact-names' => ['POST'],
                     ],
                 ],
             ]
@@ -114,6 +115,17 @@ class PersonWorkController extends Controller
             Yii::$app->session->setFlash('success', "$count 件の名簿ワークエントリを追加しました。");
         } else {
             Yii::$app->session->setFlash('warning', "0 件の名簿ワークエントリを追加しました。");
+        }
+        return $this->redirect(['index']);
+    }
+
+    public function actionOptimizeContactNames()
+    {
+        $count = PersonWork::optimizeContactNames();
+        if ($count > 0) {
+            Yii::$app->session->setFlash('success', "$count 件の連絡先の名前を修正しました。");
+        } else {
+            Yii::$app->session->setFlash('warning', "0 件の連絡先の名前を修正しました。");
         }
         return $this->redirect(['index']);
     }

@@ -23,8 +23,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a(Icon::getIcon('plus') . ' 引継の登録', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
+    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
             'dataProvider' => $dataProvider,

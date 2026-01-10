@@ -8,7 +8,7 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var app\models\Contact $model */
 
-$this->title = '名簿 : ' . $model->person->dispname . ' / 連絡先 : ' . $model->fullname;
+$this->title = '連絡先 : ' . $model->contactname;
 $this->params['breadcrumbs'][] = ['label' => '連絡先', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -18,30 +18,35 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="row">
         <div class="col-lg-6 col-md-8">
+            <h2 class="h4">名簿</h2>
+            <?php
+            $attributes = [
+                    [
+                            'attribute' => 'type',
+                            'value' => function ($model) {
+                                return $model->typeText;
+                            },
+                    ],
+                    'dispname',
+                    'yomigana',
+            ];
+            if ($model->person->note != '') {
+                $attributes[] = 'note';
+            }
+            ?>
             <?= DetailView::widget([
                     'model' => $model->person,
-                    'attributes' => [
-                            [
-                                    'attribute' => 'type',
-                                    'value' => function ($model) {
-                                        return $model->typeText;
-                                    },
-                            ],
-                            'dispname',
-                            'yomigana',
-                            'note',
-                    ],
+                    'attributes' => $attributes
             ]) ?>
 
-            <?php $attributes = [
-                    'order',
-                    'role',
-                    'dispname',
-                    'fulladdress',
-                    'phones',
-                    'mail',
-                    'note',
-            ];
+            <h2 class="h4">連絡先</h2>
+            <?php $attributes = [];
+            if (count($model->person->contacts) > 1) $attributes[] = 'order';
+            if ($model->fullname != '' && $model->fullname != $model->person->dispname) $attributes[] = 'fullname';
+            if ($model->fulladdress != '') $attributes[] = 'fulladdress';
+            if ($model->phones != '') $attributes[] = 'phones';
+            if ($model->mail != '') $attributes[] = 'mail';
+            if ($model->note != '') $attributes[] = 'note';
             if (Yii::$app->user->can('admin')) {
                 $attributes = ArrayHelper::merge($attributes, [
                         [
@@ -82,5 +87,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= Html::a(Icon::getIconAndLabel('go-back'), ['index'], ['class' => 'btn btn-outline-secondary']) ?>
             </p>
         </div>
+        <?php if (count($model->person->contacts) > 1): ?>
+            <p>※ 連絡先の優先順位の変更は、名簿の閲覧画面で行うことが出来ます。
+                <?= Html::a(Icon::getIcon('view') . ' ' . $model->person->dispname,
+                        ['/person/view', 'id' => $model->person->id],
+                        ['class' => 'btn btn-outline-primary']) ?>
+            </p>
+        <?php endif; ?>
     </div>
 </div>

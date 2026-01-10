@@ -1,6 +1,7 @@
 <?php
 
 /** @var yii\web\View $this */
+
 /** @var string $content */
 
 use app\assets\AppAsset;
@@ -28,12 +29,12 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
 <html lang="<?= Yii::$app->language ?>" class="h-100">
 <head>
     <title><?= Html::encode($this->title) ?></title>
-    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-title" content="農会" />
-    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96"/>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+    <link rel="shortcut icon" href="/favicon.ico"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
+    <meta name="apple-mobile-web-app-title" content="農会"/>
+    <link rel="manifest" href="/site.webmanifest"/>
     <?php $this->head() ?>
 </head>
 <body class="d-flex flex-column h-100">
@@ -42,19 +43,19 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
 <header id="header">
     <?php
     NavBar::begin([
-        'brandLabel' => Html::img('/favicon-96x96.png', ['width' => 24, 'height' => 24, 'style' => 'margin-top:-8px;']) . ' ' . Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
+            'brandLabel' => Html::img('/favicon-96x96.png', ['width' => 24, 'height' => 24, 'style' => 'margin-top:-8px;']) . ' ' . Yii::$app->name,
+            'brandUrl' => Yii::$app->homeUrl,
+            'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
     ]);
     $items = [
     ];
     if (!Yii::$app->user->isGuest) {
         $items[] = ['label' => Icon::getIconAndLabel('person'), 'url' => ['/person'], 'encode' => false];
         if (Yii::$app->user->can('editor')) {
+            $items[] = ['label' => Icon::getIconAndLabel('contact'), 'url' => ['/contact'], 'encode' => false];
             $items[] = ['label' => Icon::getIconAndLabel('succeed'), 'url' => ['/person-relation'], 'encode' => false];
         }
         if (Yii::$app->user->can('admin')) {
-            $items[] = ['label' => Icon::getIconAndLabel('contact'), 'url' => ['/contact'], 'encode' => false];
             $items[] = ['label' => '名簿ワーク', 'url' => ['/person-work'], 'encode' => false];
             $items[] = ['label' => '棚田', 'url' => ['/isg-tanada'], 'encode' => false];
             $items[] = ['label' => '山林', 'url' => ['/isg-forest'], 'encode' => false];

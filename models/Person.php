@@ -26,6 +26,8 @@ use Yii;
  * @property PersonRelation[] toPersonRelations
  * @property Person[] fromPersons
  * @property Person[] toPersons
+ * @property Person[] ancestors
+ * @property Person[] descendants
  * @property Contact[] $contacts
  * @property Contact $priorContact
  * @property User $createdBy
@@ -104,9 +106,9 @@ class Person extends \yii\db\ActiveRecord
     public function getFullName()
     {
         if ($this->_fullname === null) {
-            if (count($this->toPersons) > 0) {
+            if (count($this->descendants) > 0) {
                 $dispnames = [];
-                foreach ($this->toPersons as $person) {
+                foreach ($this->descendants as $person) {
                     $dispnames[] = $person->getDispName();
                 }
                 $this->_fullname = $this->dispname . ' > ' . implode(', ', $dispnames);
@@ -122,6 +124,106 @@ class Person extends \yii\db\ActiveRecord
             }
         }
         return $this->_fullname;
+    }
+
+    /**
+     * @return int[] 子孫 person_id の配列（重複なし）
+     */
+    public function getDescendantsIds(): array
+    {
+        if ($this->id === null) {
+            return [];
+        }
+
+        $sql = <<<SQL
+WITH RECURSIVE descendants AS (
+    SELECT
+        pr.to_person_id,
+        ARRAY[pr.from_person_id, pr.to_person_id] AS path
+    FROM person_relation pr
+    WHERE pr.from_person_id = :person_id
+
+    UNION ALL
+
+    SELECT
+        pr.to_person_id,
+        d.path || pr.to_person_id
+    FROM person_relation pr
+    JOIN descendants d
+      ON pr.from_person_id = d.to_person_id
+    WHERE NOT pr.to_person_id = ANY(d.path)
+)
+SELECT DISTINCT to_person_id
+FROM descendants
+SQL;
+
+        $rows = Yii::$app->db->createCommand($sql, [':person_id' => (int)$this->id])->queryColumn();
+
+        // queryColumn() は文字列で返ることがあるので int に寄せる
+        return array_map('intval', $rows);
+    }
+
+    private $_descendants = null;
+    /**
+     * @return Person[]
+     */
+    public function getDescendants(): array
+    {
+        if ($this->_descendants === null) {
+            $ids = $this->getDescendantsIds();
+            $this->_descendants = empty($ids) ? [] : Person::find()->where(['id' => $ids])->all();
+        }
+        return $this->_descendants;
+    }
+
+    /**
+     * @return int[] 子孫 person_id の配列（重複なし）
+     */
+    public function getAncestorsIds(): array
+    {
+        if ($this->id === null) {
+            return [];
+        }
+
+        $sql = <<<SQL
+WITH RECURSIVE ancestors AS (
+    SELECT
+        pr.from_person_id,
+        ARRAY[pr.to_person_id, pr.from_person_id] AS path
+    FROM person_relation pr
+    WHERE pr.to_person_id = :person_id
+
+    UNION ALL
+
+    SELECT
+        pr.from_person_id,
+        d.path || pr.from_person_id
+    FROM person_relation pr
+    JOIN ancestors d
+      ON pr.to_person_id = d.from_person_id
+    WHERE NOT pr.from_person_id = ANY(d.path)
+)
+SELECT DISTINCT from_person_id
+FROM ancestors
+SQL;
+
+        $rows = Yii::$app->db->createCommand($sql, [':person_id' => (int)$this->id])->queryColumn();
+
+        // queryColumn() は文字列で返ることがあるので int に寄せる
+        return array_map('intval', $rows);
+    }
+
+    private $_ancestors = null;
+    /**
+     * @return Person[]
+     */
+    public function getAncestors(): array
+    {
+        if ($this->_ancestors === null) {
+            $ids = $this->getAncestorsIds();
+            $this->_ancestors = empty($ids) ? [] : Person::find()->where(['id' => $ids])->all();
+        }
+        return $this->_ancestors;
     }
 
     /**

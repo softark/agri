@@ -154,7 +154,7 @@ class m251215_121238_create_person_tables extends Migration
             $this->insert('{{%person_relation}}', $assoc);
         }
         fclose($fp);
-        $this->execute('alter sequence contact_id_seq restart with 19');
+        $this->execute('alter sequence person_relation_id_seq restart with 19');
     }
 
     /**

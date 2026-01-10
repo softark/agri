@@ -35,8 +35,32 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     'dispname',
                     'yomigana',
-                    'note',
             ];
+            if ($model->note != '') {
+                $attributes[] = 'note';
+            }
+            if (count($model->ancestors) > 0) {
+                $items = [];
+                foreach ($model->ancestors as $person) {
+                    $items[] = Html::a($person->dispname, ['view', 'id' => $person->id], ['class' => 'btn btn-outline-primary btn-sm']);
+                }
+                $attributes[] = [
+                        'label' => '引継元',
+                        'format' => 'raw',
+                        'value' => implode(' ', $items),
+                ];
+            }
+            if (count($model->descendants) > 0) {
+                $items = [];
+                foreach ($model->descendants as $person) {
+                    $items[] = Html::a($person->dispname, ['view', 'id' => $person->id], ['class' => 'btn btn-outline-primary btn-sm']);
+                }
+                $attributes[] = [
+                        'label' => '引継先',
+                        'format' => 'raw',
+                        'value' => implode(' ', $items),
+                ];
+            }
             if (Yii::$app->user->can('admin')) {
                 $attributes = ArrayHelper::merge($attributes, [
                         [

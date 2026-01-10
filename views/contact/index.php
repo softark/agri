@@ -29,12 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
                     [
-                            'attribute' => 'person_id',
-                            'value' => 'person.dispname'
-                    ],
-                    [
                             'attribute' => 'name',
-                            'value' => 'fullname'
+                            'value' => 'contactname'
                     ],
                     [
                             'attribute' => 'address1',
@@ -45,6 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'label' => '電話',
                             'value' => 'phones'
                     ],
+                    'note',
                     [
                             'class' => ActionColumn::className(),
                             'urlCreator' => function ($action, Contact $model, $key, $index, $column) {

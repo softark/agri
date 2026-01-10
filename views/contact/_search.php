@@ -40,7 +40,7 @@ $('#contact-search-form').on('change', 'input', function(event){
 
     <div class="row">
         <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($model, 'name') ?>
+            <?= $form->field($model, 'search_name') ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'address1') ?>

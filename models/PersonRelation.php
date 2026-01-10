@@ -56,8 +56,8 @@ class PersonRelation extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'from_person_id' => 'From',
-            'to_person_id' => 'To',
+            'from_person_id' => '引継元',
+            'to_person_id' => '引継先',
             'note' => 'メモ',
             'created_at' => '登録日時',
             'created_by' => '登録者',

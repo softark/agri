@@ -5,12 +5,28 @@ namespace app\models;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\PersonRelation;
+use yii\helpers\ArrayHelper;
 
 /**
  * PersonRelationSearch represents the model behind the search form of `app\models\PersonRelation`.
  */
 class PersonRelationSearch extends PersonRelation
 {
+    use LoadParamsTrait;
+
+    public $from_name;
+    public $to_name;
+
+    public function attributeLabels()
+    {
+        return ArrayHelper::merge(
+            parent::attributeLabels(),
+            [
+                'from_name' => '引継元',
+                'to_name' => '引継先',
+            ]);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -18,7 +34,7 @@ class PersonRelationSearch extends PersonRelation
     {
         return [
             [['id', 'from_person_id', 'to_person_id', 'created_by', 'updated_by'], 'integer'],
-            [['note', 'created_at', 'updated_at'], 'safe'],
+            [['note', 'from_name', 'to_name', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -39,17 +55,40 @@ class PersonRelationSearch extends PersonRelation
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $formName = null)
+    public function search($params, $pageSize = 20)
     {
-        $query = PersonRelation::find();
+        $query = PersonRelation::find()
+            ->leftJoin('person pf', 'pf.id=person_relation.from_person_id')
+            ->leftJoin('person pt', 'pt.id=person_relation.to_person_id');
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => $pageSize,
+            ],
+            'sort' => [
+                'defaultOrder' => ['from_person_id' => SORT_ASC],
+                'attributes' => [
+                    'from_person_id' => [
+                        'asc' => ['pf.yomi' => SORT_ASC, 'pt.yomi' => SORT_ASC],
+                        'desc' => ['pf.yomi' => SORT_DESC, 'pt.yomi' => SORT_DESC],
+                    ],
+                    'to_person_id' => [
+                        'asc' => ['pt.yomi' => SORT_ASC, 'pf.yomi' => SORT_ASC],
+                        'desc' => ['pt.yomi' => SORT_DESC, 'pf.yomi' => SORT_DESC],
+                    ],
+                    'note' => [
+                        'asc' => ['note' => SORT_ASC, 'pf.yomi' => SORT_ASC, 'pt.yomi' => SORT_ASC],
+                        'desc' => ['note' => SORT_DESC, 'pf.yomi' => SORT_ASC, 'pt.yomi' => SORT_ASC],
+                    ],
+                ],
+            ],
         ]);
 
-        $this->load($params, $formName);
+        $this->loadAndRememberParams($this, $dataProvider, $params);
+        // $this->load($params, $formName);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -68,7 +107,15 @@ class PersonRelationSearch extends PersonRelation
             'updated_by' => $this->updated_by,
         ]);
 
-        $query->andFilterWhere(['ilike', 'note', $this->note]);
+        $query->andFilterWhere(['ilike', 'person_relation.note', $this->note]);
+        $query->andFilterWhere(['or',
+            ['ilike', 'pf.name', $this->from_name],
+            ['ilike', 'pf.yomi', $this->from_name]
+        ]);
+        $query->andFilterWhere(['or',
+            ['ilike', 'pt.name', $this->to_name],
+            ['ilike', 'pt.yomi', $this->to_name]
+        ]);
 
         return $dataProvider;
     }

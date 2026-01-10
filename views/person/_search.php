@@ -52,9 +52,6 @@ $('#person-search-form').on('change', 'input', function(event){
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'search_address') ?>
         </div>
-        <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($model, 'search_phone') ?>
-        </div>
 
         <div class="form-group search-buttons col-md-2 col-sm-3 col-4">
             <p class="text-nowrap pt-2">
