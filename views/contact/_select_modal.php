@@ -7,7 +7,7 @@ use app\models\Icon;
 use app\models\ContactSearch;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Modal;
-use yii\widgets\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 
 $this->registerCss("
 .contact-row.is-selected td {

@@ -8,9 +8,12 @@ use app\models\PersonForm;
 use app\models\PersonSearch;
 use app\models\PersonWork;
 use Yii;
+use yii\base\UserException;
+use yii\db\IntegrityException;
 use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -149,7 +152,19 @@ class PersonController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        if (!Yii::$app->user->can('person.delete')) {
+            throw new ForbiddenHttpException('この名簿を削除する権限がありません。');
+        }
+
+        /* @var Person $person */
+        $person = $this->findModel($id);
+
+        try {
+            $person->delete();
+        }
+        catch (IntegrityException $e) {
+            throw new UserException('この名簿を参照しているデータが存在するため、削除することが出来ません。');
+        }
 
         return $this->redirect(['index']);
     }

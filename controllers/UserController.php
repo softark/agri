@@ -217,7 +217,8 @@ class UserController extends Controller
             $user->delete();
         }
         catch (IntegrityException $e) {
-            throw new UserException('このユーザを参照しているデータが存在するため、削除することが出来ません。');
+            Yii::$app->session->setFlash('error', 'このユーザを参照しているデータが存在するため、削除することが出来ません。');
+            // throw new UserException('このユーザを参照しているデータが存在するため、削除することが出来ません。');
         }
 
         return $this->redirect(['index']);

@@ -10,11 +10,12 @@ use yii\bootstrap5\Html;
 $this->title = '引継 : ' . $model->fromPerson->dispname . ' > ' . $model->toPerson->dispname . ' - 編集';
 $this->params['breadcrumbs'][] = ['label' => '引継', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->fromPerson->dispname . ' > ' . $model->toPerson->dispname, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = '編集';
 ?>
 <div class="person-relation-update">
 
-    <h1><?= Icon::getIcon('update') . ' ' . Html::encode($this->title) ?></h1>
+    <h1><?= Icon::getIcon('succeed') . ' 引継 : ' . $model->fromPerson->dispname . ' > ' . $model->toPerson->dispname
+        . ' - ' . Icon::getIconAndLabel('update') ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,

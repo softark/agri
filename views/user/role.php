@@ -19,11 +19,12 @@ $label = $user->longName;
 $this->params['breadcrumbs'][] = ['label' => 'ユーザ', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $label, 'url' => ['view', 'id' => $user->id]];
 $this->params['breadcrumbs'][] = '権限';
-$this->title = $label . ' - 権限設定';
+$this->title = $label . ' - 権限';
 ?>
 <div class="user-update">
     <div class="h-100 p-3">
-        <h1><?= Icon::getIcon('role') . ' ' . Html::encode($this->title) ?></h1>
+        <h1><?= Icon::getIconAndLabel('user') . ' : ' . Html::encode($user->longname)
+            . ' - ' . Icon::getIconAndLabel('role') ?></h1>
     </div>
     <div class="body-content">
         <div class="user-form">

@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = '編集';
 ?>
 <div class="user-update">
 
-    <h1><?= Icon::getIcon('update') . ' ' . Html::encode($this->title) ?></h1>
+    <h1><?= Icon::getIcon('user') . ' ' . Html::encode($model->longname) . ' - ' . Icon::getIconAndLabel('update') ?></h1>
 
     <?= $this->render('_form', [
         'model' => $model,

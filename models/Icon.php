@@ -51,6 +51,10 @@ class Icon
         'plus-s' => ['label' => '新規登録','class' => 'fa-solid fa-square-plus'],
         'plus' => ['label' => '追加','class' => 'fa-solid fa-plus'],
         'succeed' => ['label' => '引継','class' => 'fa-solid fa-user-group'],
+        'mountain' => ['label' => '山林','class' => 'fa-solid fa-mountain'],
+        'tree' => ['label' => '山林','class' => 'fa-solid fa-tree'],
+        'field' => ['label' => '農地','class' => 'fa-solid fa-seeding'],
+        'map-location' => ['label' => '地図','class' => 'fa-solid fa-location-dot'],
     ];
 
     /**

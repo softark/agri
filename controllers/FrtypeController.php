@@ -2,18 +2,18 @@
 
 namespace app\controllers;
 
-use app\models\Contact;
-use app\models\ContactSearch;
+use app\models\Frtype;
+use app\models\FrtypeSearch;
 use Yii;
-use yii\web\BadRequestHttpException;
+use yii\db\IntegrityException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * ContactController implements the CRUD actions for Contact model.
+ * FrtypeController implements the CRUD actions for Frtype model.
  */
-class ContactController extends Controller
+class FrtypeController extends Controller
 {
     /**
      * @inheritDoc
@@ -34,42 +34,23 @@ class ContactController extends Controller
     }
 
     /**
-     * Lists all Contact models.
+     * Lists all Frtype models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new ContactSearch();
+        $searchModel = new FrtypeSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
-        if (Yii::$app->request->isPjax) {
-            return $this->renderPartial('index', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]);
-        } else {
-            return $this->render('index', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]);
-        }
-    }
-
-    public function actionSelect()
-    {
-        if (Yii::$app->request->isPjax) {
-            $searchModel = new ContactSearch(['_form_name' => 'csel']);
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, 10);
-            return $this->renderPartial('_select', [
-                'dataProvider' => $dataProvider,
-            ]);
-        }
-        throw new BadRequestHttpException();
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**
-     * Displays a single Contact model.
+     * Displays a single Frtype model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -82,7 +63,30 @@ class ContactController extends Controller
     }
 
     /**
-     * Updates an existing Contact model.
+     * Creates a new Frtype model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return string|\yii\web\Response
+     */
+    public function actionCreate()
+    {
+        $model = new Frtype();
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('create', [
+            'model' => $model,
+            'ret_route' => ['index'],
+        ]);
+    }
+
+    /**
+     * Updates an existing Frtype model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -90,10 +94,10 @@ class ContactController extends Controller
      */
     public function actionUpdate($id, $ret_route = null)
     {
+        $model = $this->findModel($id);
         if ($ret_route === null) {
             $ret_route = ['index'];
         }
-        $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect($ret_route);
@@ -106,7 +110,7 @@ class ContactController extends Controller
     }
 
     /**
-     * Deletes an existing Contact model.
+     * Deletes an existing Frtype model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -114,21 +118,28 @@ class ContactController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        /* @var Frtype $model */
+        $model = $this->findModel($id);
 
+        try {
+            $model->delete();
+        }
+        catch (IntegrityException $e) {
+            Yii::$app->session->setFlash('error', 'この山林タイプを参照しているデータが存在するため、削除することが出来ません。');
+        }
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Contact model based on its primary key value.
+     * Finds the Frtype model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Contact the loaded model
+     * @return Frtype the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Contact::findOne(['id' => $id])) !== null) {
+        if (($model = Frtype::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
