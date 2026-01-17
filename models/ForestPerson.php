@@ -64,7 +64,8 @@ class ForestPerson extends \yii\db\ActiveRecord
             [['role', 'forest_id', 'person_id', 'created_by', 'updated_by'], 'default', 'value' => null],
             [['role', 'forest_id', 'person_id', 'created_by', 'updated_by'], 'integer'],
             [['forest_id', 'person_id', 'valid_from'], 'required'],
-            [['valid_from', 'valid_to', 'created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at'], 'safe'],
+            [['valid_from', 'valid_to'], 'date'],
             [['note'], 'string', 'max' => 80],
             [['forest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Forest::class, 'targetAttribute' => ['forest_id' => 'id']],
             [['person_id'], 'exist', 'skipOnError' => true, 'targetClass' => Person::class, 'targetAttribute' => ['person_id' => 'id']],
@@ -155,20 +156,18 @@ class ForestPerson extends \yii\db\ActiveRecord
 
     public function addHistory($forest)
     {
-        $date = date('Y-m-d');
         $latest = ForestPerson::find()
             ->where(['forest_id' => $this->forest_id, 'role' => $this->role, 'valid_to' => null])
             ->one();
         $transaction = yii::$app->db->beginTransaction();
         try {
             if ($latest) {
-                $latest->valid_to = $date;
+                $latest->valid_to = $this->valid_from;
                 if (!$latest->save()) {
                     Yii::error(['addHistory_failed_1', $latest->errors], __METHOD__);
                     throw new UserException("Failed to update the latest history.\n" . print_r($latest->errors, true));
                 }
             }
-            $this->valid_from = $date;
             if (!$this->save()) {
                 Yii::error(['addHistory_failed_2', $this->errors], __METHOD__);
                 throw new UserException("Failed to add the new history.\n" . print_r($this->errors, true));

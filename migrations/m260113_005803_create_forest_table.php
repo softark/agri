@@ -18,8 +18,8 @@ class m260113_005803_create_forest_table extends Migration
         $this->createTable('{{%forest}}', [
             'id' => $this->primaryKey(),
             'geom' => 'public.geometry(MultiPolygon,2447) NOT NULL',
-            'p_no' => $this->string(30)->defaultValue(''),
             'aza_id' => $this->integer()->defaultValue(null),
+            'p_no' => $this->string(30)->defaultValue(''),
             'type_id' => $this->integer()->defaultValue(null),
             'area' => $this->double()->defaultValue(0.0),
             'note' => $this->string(80)->defaultValue(''),
@@ -65,7 +65,7 @@ class m260113_005803_create_forest_table extends Migration
         $this->addForeignKey('fk_forest_person_created_by_user_id', '{{%forest_person}}', 'created_by', '{{%user}}', 'id', 'RESTRICT', 'RESTRICT');
         $this->addForeignKey('fk_forest_person_updated_by_user_id', '{{%forest_person}}', 'updated_by', '{{%user}}', 'id', 'RESTRICT', 'RESTRICT');
         // 制約 ... role, forest_id が valid_to が null のときにユニーク
-$sql = <<< INDEX_SQL
+        $sql = <<< INDEX_SQL
 CREATE UNIQUE INDEX forest_person_current_unique
 ON forest_person (forest_id, role)
 WHERE valid_to IS NULL
@@ -73,7 +73,7 @@ INDEX_SQL;
         $this->execute($sql);
 
         // QGIS, qwc2 表示用ビュー
-        $this->execute( <<< VIEW_SQL
+        $this->execute(<<< VIEW_SQL
 CREATE VIEW v_forest AS
 SELECT
   f.id,
@@ -95,9 +95,10 @@ LEFT JOIN person p2 ON p2.id = fp2.person_id
 VIEW_SQL
         );
 
-        $this->seedForest();
+        // $this->seedForest();
+        $this->seedForestCsv();
     }
-    
+
     public function seedForest()
     {
         $rows = (new \yii\db\Query())
@@ -117,22 +118,26 @@ VIEW_SQL
             if ($row['memo'] != '') {
                 $cols['note'] = $row['memo'];
             }
-            if ($row['ko_aza'] != '') {
-                $aza = (new \yii\db\Query())
-                    ->select(['id'])
-                    ->from('aza')
-                    ->where(['name' => $row['ko_aza']])
-                    ->one();
-                $cols['aza_id'] = (int)$aza['id'];
+            $ko_aza = $row['ko_aza'];
+            if ($ko_aza == '') {
+                $ko_aza = '----';
             }
-            if ($row['type'] != '') {
-                $type = (new \yii\db\Query())
-                    ->select(['id'])
-                    ->from('frtype')
-                    ->where(['name' => $row['type']])
-                    ->one();
-                $cols['type_id'] = (int)$type['id'];
+            $aza = (new \yii\db\Query())
+                ->select(['id'])
+                ->from('aza')
+                ->where(['name' => $ko_aza])
+                ->one();
+            $cols['aza_id'] = (int)$aza['id'];
+            $type = $row['type'];
+            if ($type == '') {
+                $type = '----';
             }
+            $frtype = (new \yii\db\Query())
+                ->select(['id'])
+                ->from('frtype')
+                ->where(['name' => $type])
+                ->one();
+            $cols['type_id'] = (int)$frtype['id'];
             $this->insert('forest', $cols);
 
             $forest_id = (new \yii\db\Query())
@@ -169,6 +174,48 @@ VIEW_SQL
                 $this->insert('forest_person', $m_cols);
             }
         }
+    }
+
+    public function seedForestCsv()
+    {
+        // forest
+        $path = Yii::getAlias('@app/migrations/data/forest.csv');
+        $fp = fopen($path, 'r');
+        if (!$fp) throw new \RuntimeException('Cannot open: $path');
+
+        $cols = ["id", "geom", "aza_id", "p_no", "type_id", "area", "note"];
+        $keys = array_flip($cols);
+
+        $header = fgetcsv($fp);               // 1行目を列名にする想定
+        while (($row = fgetcsv($fp)) !== false) {
+            $assoc = array_combine($header, $row);
+            $assoc = array_intersect_key($assoc, $keys);
+            $this->insert('{{%forest}}', $assoc);
+        }
+        fclose($fp);
+
+        $this->execute('alter sequence forest_id_seq restart with 146');
+
+        // forest_person
+        $path = Yii::getAlias('@app/migrations/data/forest_person.csv');
+        $fp = fopen($path, 'r');
+        if (!$fp) throw new \RuntimeException('Cannot open: $path');
+
+        $cols = ["id", "role", "forest_id", "person_id", "valid_from", "valid_to", "note"];
+        $keys = array_flip($cols);
+
+        $header = fgetcsv($fp);               // 1行目を列名にする想定
+        while (($row = fgetcsv($fp)) !== false) {
+            $assoc = array_combine($header, $row);
+            $assoc = array_intersect_key($assoc, $keys);
+            if($assoc['valid_to'] == 'NULL'){
+                $assoc['valid_to'] = '';
+            }
+            $this->insert('{{%forest_person}}', $assoc);
+        }
+        fclose($fp);
+
+        $this->execute('alter sequence forest_person_id_seq restart with 271');
     }
 
     /**

@@ -46,6 +46,7 @@ class m260113_002552_create_master_tables extends Migration
 
     public function seedAza()
     {
+        /*
         $rows = (new \yii\db\Query())
             ->select(['ko_aza'])
             ->from('isg.forest')
@@ -56,6 +57,21 @@ class m260113_002552_create_master_tables extends Migration
         foreach ($rows as $row) {
             $this->insert('aza', ['name' => $row['ko_aza']]);
         }
+        */
+        $path = Yii::getAlias('@app/migrations/data/aza.csv');
+        $fp = fopen($path, 'r');
+        if (!$fp) throw new \RuntimeException("Cannot open: $path");
+
+        $cols = ['name'];
+        $keys = array_flip($cols);
+
+        $header = fgetcsv($fp);               // 1行目を列名にする想定
+        while (($row = fgetcsv($fp)) !== false) {
+            $assoc = array_combine($header, $row);
+            $assoc = array_intersect_key($assoc, $keys);
+            $this->insert('{{%aza}}', $assoc);
+        }
+        fclose($fp);
     }
 
     public function seedFrType()

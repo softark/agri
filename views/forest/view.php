@@ -68,7 +68,7 @@ $this->params['breadcrumbs'][] = $model->title;
                         $buttons = [];
                         if (yii::$app->user->can('forest.edit')) {
                             $buttons[] = Html::a(Icon::getIconAndLabel('update'),
-                                    ['update', 'id' => $model->id],
+                                    ['update', 'id' => $model->id, 'ret_route' => ['view', 'id' => $model->id]],
                                     ['class' => 'btn btn-sm btn-primary']);
                         }
                         $buttons[] = Html::a(Icon::getIcon('map-location') . ' i-GIS で見る', $model->mapurl,
@@ -90,7 +90,7 @@ $this->params['breadcrumbs'][] = $model->title;
                     （未設定）
                     <?php if (\yii::$app->user->can('forest.edit')) : ?>
                         <?= Html::a(Icon::getIcon('plus') . ' 所有者を登録',
-                                ['add-fp', 'id' => $model->id, 'role' => ForestPerson::ROLE_OWNER],
+                                ['add-forest-person', 'id' => $model->id, 'role' => ForestPerson::ROLE_OWNER],
                                 ['class' => 'btn btn-sm btn-primary']) ?>
                     <?php endif; ?>
                 </p>
@@ -145,46 +145,47 @@ $this->params['breadcrumbs'][] = $model->title;
                                 ['class' => 'btn btn-sm btn-primary']) ?>
                     <?php endif; ?>
                 </p>
-            <?php endif; ?>
-            <?php foreach ($model->managerForestPersons as $mfp): ?>
-                <?php
-                $attributes = [
-                        [
-                                'label' => '名前',
-                                'value' => function ($model) {
-                                    return $model->person->dispname;
-                                },
-                        ],
-                        [
-                                'label' => '期間',
-                                'value' => function ($model) {
-                                    return $model->valid_from_text . ' ～ ' . $model->valid_to_text;
-                                }
-                        ],
-                ];
-                if ($mfp->note != '') {
-                    $attributes[] = 'note';
-                }
-                if (\yii::$app->user->can('forest.edit')) {
-                    $attributes[] = [
-                            'label' => '操作',
-                            'format' => 'raw',
-                            'value' => function ($model) {
-                                return Html::a(Icon::getIconAndLabel('update'),
-                                        ['update-forest-person', 'id' => $model->id],
-                                        ['class' => 'btn btn-sm btn-primary']);
-                            }
+            <?php else: ?>
+                <?php foreach ($model->managerForestPersons as $mfp): ?>
+                    <?php
+                    $attributes = [
+                            [
+                                    'label' => '名前',
+                                    'value' => function ($model) {
+                                        return $model->person->dispname;
+                                    },
+                            ],
+                            [
+                                    'label' => '期間',
+                                    'value' => function ($model) {
+                                        return $model->valid_from_text . ' ～ ' . $model->valid_to_text;
+                                    }
+                            ],
                     ];
-                }
-                ?>
-                <?= DetailView::widget(['model' => $mfp, 'attributes' => $attributes]) ?>
-            <?php endforeach; ?>
-            <?php if (\yii::$app->user->can('forest.edit')) : ?>
-                <p>
-                    <?= Html::a(Icon::getIcon('plus') . ' 新しい管理者を登録',
-                            ['add-forest-person', 'id' => $model->id, 'role' => ForestPerson::ROLE_MANAGER],
-                            ['class' => 'btn btn-sm btn-primary']) ?>
-                </p>
+                    if ($mfp->note != '') {
+                        $attributes[] = 'note';
+                    }
+                    if (\yii::$app->user->can('forest.edit')) {
+                        $attributes[] = [
+                                'label' => '操作',
+                                'format' => 'raw',
+                                'value' => function ($model) {
+                                    return Html::a(Icon::getIconAndLabel('update'),
+                                            ['update-forest-person', 'id' => $model->id],
+                                            ['class' => 'btn btn-sm btn-primary']);
+                                }
+                        ];
+                    }
+                    ?>
+                    <?= DetailView::widget(['model' => $mfp, 'attributes' => $attributes]) ?>
+                <?php endforeach; ?>
+                <?php if (\yii::$app->user->can('forest.edit')) : ?>
+                    <p>
+                        <?= Html::a(Icon::getIcon('plus') . ' 新しい管理者を登録',
+                                ['add-forest-person', 'id' => $model->id, 'role' => ForestPerson::ROLE_MANAGER],
+                                ['class' => 'btn btn-sm btn-primary']) ?>
+                    </p>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
         <div class="col-lg-8 col-md-6">

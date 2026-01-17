@@ -4,6 +4,7 @@ use app\models\Aza;
 use app\models\ForestPerson;
 use app\models\Frtype;
 use app\models\Icon;
+use kartik\date\DatePicker;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 use yii\widgets\DetailView;
@@ -59,14 +60,45 @@ use yii\widgets\DetailView;
                 ]); ?>
                 <?php $role_text = $model->role == ForestPerson::ROLE_OWNER ? '所有者' : '管理者'; ?>
                 <h2 class="h4"><?= $role_text ?></h2>
-                <?php if ($model->role == ForestPerson::ROLE_OWNER): ?>
-                    <?php foreach ($model->owners as $owner): ?>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <?php foreach ($model->owners as $owner): ?>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                <table class="table table-bordered table-sm">
+                    <thead>
+                    <th>期間</th>
+                    <th><?= $role_text ?></th>
+                    </thead>
+                    <tbody>
+                    <?php if ($model->role == ForestPerson::ROLE_OWNER): ?>
+                        <?php if (count($model->forest->ownerForestPersons) == 0) : ?>
+                            <tr>
+                                <td>現在</td>
+                                <td>未設定</td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($model->forest->ownerForestPersons as $ownerFp): ?>
+                                <tr>
+                                    <td><?= $ownerFp->valid_from_text ?> ～ <?= $ownerFp->valid_to_text ?></td>
+                                    <td><?= $ownerFp->person->name ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <?php if (count($model->forest->managerForestPersons) == 0) : ?>
+                            <tr>
+                                <td>現在</td>
+                                <td>未設定</td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($model->forest->managerForestPersons as $managerFp): ?>
+                                <tr>
+                                    <td><?= $managerFp->valid_from_text ?> ～ <?= $managerFp->valid_to_text ?></td>
+                                    <td><?= $managerFp->person->name ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    </tbody>
+                </table>
 
+                <?= $form->field($model, 'valid_from')->widget(DatePicker::class) ?>
                 <div class="row">
                     <div class="col-3">
                         <?= $form->field($model, 'person_id')
