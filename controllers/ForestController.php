@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Forest;
+use app\models\ForestPerson;
 use app\models\ForestSearch;
 use Yii;
 use yii\web\Controller;
@@ -88,5 +89,44 @@ class ForestController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionUpdateForestPerson($id)
+    {
+        $model = ForestPerson::findOne($id);
+        if (!$model) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+
+        $ret_route = ['view', 'id' => $model->forest->id];
+
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            return $this->redirect($ret_route);
+        }
+
+        return $this->render('update-forest-person', [
+            'model' => $model,
+            'forest' => $model->forest,
+            'ret_route' => $ret_route,
+        ]);
+    }
+    public function actionAddForestPerson($id, $role)
+    {
+        $forest = $this->findModel($id);
+        $model = new ForestPerson();
+        $model->forest_id = $forest->id;
+        $model->role = $role;
+
+        $ret_route = ['view', 'id' => $id];
+
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->addHistory($forest)) {
+            return $this->redirect($ret_route);
+        }
+
+        return $this->render('add-forest-person', [
+            'model' => $model,
+            'forest' => $forest,
+            'ret_route' => $ret_route,
+        ]);
     }
 }

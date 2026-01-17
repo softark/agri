@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\base\UserException;
 use yii\db\Query;
 
 /**
@@ -13,8 +14,6 @@ use yii\db\Query;
  * @property string|null $p_no
  * @property int|null $aza_id
  * @property int|null $type_id
- * @property int|null $owner_id
- * @property int|null $manager_id
  * @property float|null $area
  * @property string|null $note
  * @property string $created_at
@@ -23,10 +22,16 @@ use yii\db\Query;
  * @property int $updated_by
  *
  * @property Aza $aza
- * @property User $createdBy
- * @property Person $manager
+ * @property ForestPerson $ownerForestPerson
  * @property Person $owner
+ * @property ForestPerson $managerForestPerson
+ * @property Person $manager
+ * @property ForestPerson[] $ownerForestPersons
+ * @property Person[] $owners
+ * @property ForestPerson[] $managerForestPersons
+ * @property Person[] $managers
  * @property Frtype $type
+ * @property User $createdBy
  * @property User $updatedBy
  */
 class Forest extends \yii\db\ActiveRecord
@@ -34,14 +39,14 @@ class Forest extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'forest';
     }
 
-    private $_title = null;
+    private ?string $_title = null;
 
-    public function getTitle()
+    public function getTitle(): string
     {
         if ($this->_title === null) {
             if ($this->p_no != '') {
@@ -53,9 +58,9 @@ class Forest extends \yii\db\ActiveRecord
         return $this->_title;
     }
 
-    private $_aza_name = null;
+    private ?string $_aza_name = null;
 
-    public function getAza_Name()
+    public function getAza_Name(): string
     {
         if ($this->_aza_name === null) {
             if ($this->aza_id) {
@@ -67,9 +72,9 @@ class Forest extends \yii\db\ActiveRecord
         return $this->_aza_name;
     }
 
-    private $_type_name = null;
+    private ?string $_type_name = null;
 
-    public function getType_Name()
+    public function getType_Name(): string
     {
         if ($this->_type_name === null) {
             if ($this->type_id) {
@@ -81,12 +86,12 @@ class Forest extends \yii\db\ActiveRecord
         return $this->_type_name;
     }
 
-    private $_owner_name = null;
+    private ?string $_owner_name = null;
 
     public function getOwner_Name()
     {
         if ($this->_owner_name === null) {
-            if ($this->owner_id) {
+            if ($this->owner) {
                 $this->_owner_name = $this->owner->dispname;
             } else {
                 $this->_owner_name = '';
@@ -95,12 +100,12 @@ class Forest extends \yii\db\ActiveRecord
         return $this->_owner_name;
     }
 
-    private $_manager_name = null;
+    private ?string $_manager_name = null;
 
     public function getManager_Name()
     {
         if ($this->_manager_name === null) {
-            if ($this->manager_id) {
+            if ($this->manager) {
                 $this->_manager_name = $this->manager->dispname;
             } else {
                 $this->_manager_name = '';
@@ -112,25 +117,23 @@ class Forest extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['aza_id', 'type_id', 'owner_id', 'manager_id'], 'default', 'value' => null],
+            [['aza_id', 'type_id'], 'default', 'value' => null],
             [['note'], 'default', 'value' => ''],
             [['area'], 'default', 'value' => 0],
             [['updated_by'], 'default', 'value' => 1],
             [['geom'], 'required'],
             [['geom'], 'string'],
-            [['aza_id', 'type_id', 'owner_id', 'manager_id', 'created_by', 'updated_by'], 'default', 'value' => null],
-            [['aza_id', 'type_id', 'owner_id', 'manager_id', 'created_by', 'updated_by'], 'integer'],
+            [['aza_id', 'type_id', 'created_by', 'updated_by'], 'default', 'value' => null],
+            [['aza_id', 'type_id', 'created_by', 'updated_by'], 'integer'],
             [['area'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['p_no'], 'string', 'max' => 30],
             [['note'], 'string', 'max' => 80],
             [['aza_id'], 'exist', 'skipOnError' => true, 'targetClass' => Aza::class, 'targetAttribute' => ['aza_id' => 'id']],
             [['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => Frtype::class, 'targetAttribute' => ['type_id' => 'id']],
-            [['owner_id'], 'exist', 'skipOnError' => true, 'targetClass' => Person::class, 'targetAttribute' => ['owner_id' => 'id']],
-            [['manager_id'], 'exist', 'skipOnError' => true, 'targetClass' => Person::class, 'targetAttribute' => ['manager_id' => 'id']],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['created_by' => 'id']],
             [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['updated_by' => 'id']],
         ];
@@ -139,7 +142,7 @@ class Forest extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -147,8 +150,8 @@ class Forest extends \yii\db\ActiveRecord
             'p_no' => '番地',
             'aza_id' => '字（あざ）',
             'type_id' => 'タイプ',
-            'owner_id' => '所有者',
-            'manager_id' => '管理者',
+            'owner' => '所有者',
+            'manager' => '管理者',
             'area' => '面積',
             'note' => 'メモ',
             'created_at' => '登録日時',
@@ -163,39 +166,108 @@ class Forest extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getAza()
+    public function getAza(): \yii\db\ActiveQuery
     {
         return $this->hasOne(Aza::class, ['id' => 'aza_id']);
     }
 
-    /**
-     * Gets query for [[CreatedBy]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCreatedBy()
+    private $_owner_fps = null;
+
+    public function getOwnerForestPersons()
     {
-        return $this->hasOne(User::class, ['id' => 'created_by']);
+        if ($this->_owner_fps === null) {
+            $this->_owner_fps = ForestPerson::find()
+                ->where('forest_id = :id and role = :role')
+                ->params([':id' => $this->id, ':role' => ForestPerson::ROLE_OWNER])
+                ->orderBy('created_at ASC')
+                ->all();
+        }
+        return $this->_owner_fps;
     }
 
-    /**
-     * Gets query for [[Manager]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getManager()
+    private $_owner_fp = false;
+    public function getOwnerForestPerson()
     {
-        return $this->hasOne(Person::class, ['id' => 'manager_id']);
+        if ($this->_owner_fp === false) {
+            $this->_owner_fp = ForestPerson::find()
+                ->where('forest_id = :id and role = :role and valid_to is null')
+                ->params([':id' => $this->id, ':role' => ForestPerson::ROLE_OWNER])
+                ->one();
+        }
+        return $this->_owner_fp;
     }
 
-    /**
-     * Gets query for [[Owner]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
+    public function getOwners()
+    {
+        $owners = [];
+        foreach ($this->getOwnerForestPersons() as $ofp) {
+            $owners[] = $ofp->person;
+        }
+        return $owners;
+    }
+
     public function getOwner()
     {
-        return $this->hasOne(Person::class, ['id' => 'owner_id']);
+        return $this->getOwnerForestPerson() ? $this->getOwnerForestPerson()->person : null;
+    }
+
+    private $_owner_id = -1;
+    public function getOwner_id()
+    {
+        if ($this->_owner_id == -1) {
+            $this->_owner_id = $this->getOwner() ? $this->getOwner()->id : null;
+        }
+        return $this->_owner_id;
+    }
+
+    private $_manager_fps = null;
+
+    public function getManagerForestPersons()
+    {
+        if ($this->_manager_fps === null) {
+            $this->_manager_fps = ForestPerson::find()
+                ->where('forest_id = :id and role = :role')
+                ->params([':id' => $this->id, ':role' => ForestPerson::ROLE_MANAGER])
+                ->orderBy('created_at ASC')
+                ->all();
+        }
+        return $this->_manager_fps;
+    }
+
+    private $_manager_fp = false;
+    public function getManagerForestPerson()
+    {
+        if ($this->_manager_fp === false) {
+            $this->_manager_fp = ForestPerson::find()
+                ->where('forest_id = :id and role = :role and valid_to is null')
+                ->params([':id' => $this->id, ':role' => ForestPerson::ROLE_MANAGER])
+                ->one();
+        }
+        return $this->_manager_fp;
+    }
+
+    public function getManagers()
+    {
+        $managers = [];
+        foreach ($this->getManagerForestPersons() as $ofp) {
+            $managers[] = $ofp->person;
+        }
+        return $managers;
+    }
+
+    public function getManager()
+    {
+        return $this->getManagerForestPerson() ? $this->getManagerForestPerson()->person : null;
+    }
+
+    private $_manager_id = -1;
+
+    public function getManager_id()
+    {
+        if ($this->_manager_id == -1) {
+            $this->_manager_id = $this->getManager() ? $this->getManager()->id : null;
+        }
+        return $this->_manager_id;
     }
 
     /**
@@ -203,9 +275,19 @@ class Forest extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getType()
+    public function getType(): \yii\db\ActiveQuery
     {
         return $this->hasOne(Frtype::class, ['id' => 'type_id']);
+    }
+
+    /**
+     * Gets query for [[CreatedBy]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCreatedBy(): \yii\db\ActiveQuery
+    {
+        return $this->hasOne(User::class, ['id' => 'created_by']);
     }
 
     /**
@@ -213,7 +295,7 @@ class Forest extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getUpdatedBy()
+    public function getUpdatedBy(): \yii\db\ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'updated_by']);
     }
@@ -221,9 +303,9 @@ class Forest extends \yii\db\ActiveRecord
     public const MAP_URL =
         'https://gis.isarigami.net/?t=isg-agfr&l=forest,p_no!,agri!,bld!,road,water,isarigami!,sh355!,sh35!,sh79~,sh125!,sh172!,ir355!,ir35!,ir79~,ir125!,ir172!,contour~,cs!,dem-shade!,dsm-shade!,dem!,dsm!&bl=g-sat';
 
-    private $_map_url = null;
+    private ?string $_map_url = null;
 
-    public function getMapUrl()
+    public function getMapUrl(): ?string
     {
         if ($this->_map_url === null) {
             $sql = <<< SQL
@@ -251,4 +333,25 @@ SQL2;
         }
         return $this->_map_url;
     }
+
+    /**
+     * @param bool $insert
+     * @return bool
+     */
+    public function beforeSave($insert): bool
+    {
+        if (parent::beforeSave($insert)) {
+            $user_id = (Yii::$app->user->isGuest) ? 1 : Yii::$app->user->id;
+            if ($insert) {
+                $this->created_by = $user_id;
+            }
+            $this->updated_by = $user_id;
+            $dt = new \DateTimeImmutable("now", new \DateTimeZone("UTC"));
+            $this->updated_at = $dt->format("Y-m-d H:i:s T");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

@@ -12,25 +12,25 @@ use yii\helpers\ArrayHelper;
  */
 class ForestSearch extends Forest
 {
-    public $_form_name = 'fs';
+    public string $_form_name = 'fs';
 
     use LoadParamsTrait;
 
-    public $search_name;
+    public ?string $search_name = null;
 
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            [['id', 'aza_id', 'type_id', 'owner_id', 'manager_id', 'created_by', 'updated_by'], 'integer'],
+            [['id', 'aza_id', 'type_id', 'created_by', 'updated_by'], 'integer'],
             [['geom', 'p_no', 'note', 'search_name', 'created_at', 'updated_at'], 'safe'],
             [['area'], 'number'],
         ];
     }
 
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return ArrayHelper::merge(
             parent::attributeLabels(),
@@ -61,8 +61,10 @@ class ForestSearch extends Forest
         $query = Forest::find()
             ->leftJoin('aza a', 'a.id = forest.aza_id')
             ->leftJoin('frtype ft', 'ft.id = forest.type_id')
-            ->leftJoin('person po', 'po.id = forest.owner_id')
-            ->leftJoin('person pm', 'pm.id = forest.manager_id');
+            ->leftJoin('forest_person fpo', 'fpo.forest_id = forest.id and fpo.role = 1 and fpo.valid_to IS null')
+            ->leftJoin('person po', 'po.id = fpo.person_id')
+            ->leftJoin('forest_person fpm', 'fpm.forest_id = forest.id and fpm.role = 2 and fpm.valid_to IS null')
+            ->leftJoin('person pm', 'pm.id = fpm.person_id');
 
         // add conditions that should always apply here
 
@@ -80,11 +82,11 @@ class ForestSearch extends Forest
                         'asc' => ['ft.order' => SORT_ASC, 'p_no' => SORT_ASC],
                         'desc' => ['ft.order' => SORT_DESC, 'p_no' => SORT_ASC],
                     ],
-                    'owner_id' => [
+                    'owner' => [
                         'asc' => ['po.yomi' => SORT_ASC, 'p_no' => SORT_ASC],
                         'desc' => ['po.yomi' => SORT_DESC, 'p_no' => SORT_ASC],
                     ],
-                    'manager_id' => [
+                    'manager' => [
                         'asc' => ['pm.yomi' => SORT_ASC, 'p_no' => SORT_ASC],
                         'desc' => ['pm.yomi' => SORT_DESC, 'p_no' => SORT_ASC],
                     ],
@@ -108,8 +110,6 @@ class ForestSearch extends Forest
             'id' => $this->id,
             'aza_id' => $this->aza_id,
             'type_id' => $this->type_id,
-            'owner_id' => $this->owner_id,
-            'manager_id' => $this->manager_id,
             'area' => $this->area,
             'created_at' => $this->created_at,
             'created_by' => $this->created_by,

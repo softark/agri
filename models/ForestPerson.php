@@ -1,0 +1,205 @@
+<?php
+
+namespace app\models;
+
+use Yii;
+use yii\base\UserException;
+
+/**
+ * This is the model class for table "forest_person".
+ *
+ * @property int $id
+ * @property int $role
+ * @property int $forest_id
+ * @property int $person_id
+ * @property string $valid_from
+ * @property string|null $valid_to
+ * @property string|null $note
+ * @property string $created_at
+ * @property int $created_by
+ * @property string $updated_at
+ * @property int $updated_by
+ *
+ * @property User $createdBy
+ * @property Forest $forest
+ * @property Person $person
+ * @property User $updatedBy
+ */
+class ForestPerson extends \yii\db\ActiveRecord
+{
+
+    const ROLE_OWNER = 1;
+    const ROLE_MANAGER = 2;
+
+    public static function getRoleList()
+    {
+        return [
+            self::ROLE_OWNER => '所有者',
+            self::ROLE_MANAGER => '管理者',
+        ];
+    }
+
+    public function getRoleName()
+    {
+        return self::getRoleList()[$this->role];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return 'forest_person';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['valid_to'], 'default', 'value' => null],
+            [['updated_by'], 'default', 'value' => 1],
+            [['note'], 'default', 'value' => ''],
+            [['role', 'forest_id', 'person_id', 'created_by', 'updated_by'], 'default', 'value' => null],
+            [['role', 'forest_id', 'person_id', 'created_by', 'updated_by'], 'integer'],
+            [['forest_id', 'person_id', 'valid_from'], 'required'],
+            [['valid_from', 'valid_to', 'created_at', 'updated_at'], 'safe'],
+            [['note'], 'string', 'max' => 80],
+            [['forest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Forest::class, 'targetAttribute' => ['forest_id' => 'id']],
+            [['person_id'], 'exist', 'skipOnError' => true, 'targetClass' => Person::class, 'targetAttribute' => ['person_id' => 'id']],
+            [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['created_by' => 'id']],
+            [['updated_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['updated_by' => 'id']],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'role' => '役割',
+            'forest_id' => '山林',
+            'person_id' => '名簿',
+            'valid_from' => 'FROM',
+            'valid_from_text' => 'FROM',
+            'valid_to' => 'TO',
+            'valid_to_text' => 'TO',
+            'note' => 'メモ',
+            'created_at' => '登録日時',
+            'created_by' => '登録者',
+            'updated_at' => '更新日時',
+            'updated_by' => '更新者',
+        ];
+    }
+
+    public function getValid_from_text()
+    {
+        if ($this->valid_from == '1900-01-01') {
+            return '****';
+        } else {
+            return $this->valid_from;
+        }
+    }
+
+    public function getValid_to_text()
+    {
+        if ($this->valid_to == '') {
+            return '現在';
+        } else {
+            return $this->valid_to;
+        }
+    }
+
+    /**
+     * Gets query for [[CreatedBy]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCreatedBy()
+    {
+        return $this->hasOne(User::class, ['id' => 'created_by']);
+    }
+
+    /**
+     * Gets query for [[Forest]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getForest()
+    {
+        return $this->hasOne(Forest::class, ['id' => 'forest_id']);
+    }
+
+    /**
+     * Gets query for [[Person]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPerson()
+    {
+        return $this->hasOne(Person::class, ['id' => 'person_id']);
+    }
+
+    /**
+     * Gets query for [[UpdatedBy]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUpdatedBy()
+    {
+        return $this->hasOne(User::class, ['id' => 'updated_by']);
+    }
+
+    public function addHistory($forest)
+    {
+        $date = date('Y-m-d');
+        $latest = ForestPerson::find()
+            ->where(['forest_id' => $this->forest_id, 'role' => $this->role, 'valid_to' => null])
+            ->one();
+        $transaction = yii::$app->db->beginTransaction();
+        try {
+            if ($latest) {
+                $latest->valid_to = $date;
+                if (!$latest->save()) {
+                    Yii::error(['addHistory_failed_1', $latest->errors], __METHOD__);
+                    throw new UserException("Failed to update the latest history.\n" . print_r($latest->errors, true));
+                }
+            }
+            $this->valid_from = $date;
+            if (!$this->save()) {
+                Yii::error(['addHistory_failed_2', $this->errors], __METHOD__);
+                throw new UserException("Failed to add the new history.\n" . print_r($this->errors, true));
+            }
+            $transaction->commit();
+        }
+        catch (UserException $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
+        return true;
+    }
+
+    /**
+     * @param bool $insert
+     * @return bool
+     */
+    public
+    function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $user_id = (Yii::$app->user->isGuest) ? 1 : Yii::$app->user->id;
+            if ($insert) {
+                $this->created_by = $user_id;
+            }
+            $this->updated_by = $user_id;
+            $dt = new \DateTimeImmutable("now", new \DateTimeZone("UTC"));
+            $this->updated_at = $dt->format("Y-m-d H:i:s T");
+            return true;
+        } else {
+            return false;
+        }
+    }
+}

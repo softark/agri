@@ -72,7 +72,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attributes' => $attributes,
             ]) ?>
             <p>
-                <?php if (\yii::$app->user->can('contact.edit', ['id' => $model->id])) : ?>
+                <?php if (\yii::$app->user->can('contact.edit')) : ?>
                     <?= Html::a(Icon::getIconAndLabel('update'), ['update', 'id' => $model->id, 'ret_route' => ['view', 'id' => $model->id]], ['class' => 'btn btn-primary']) ?>
                 <?php endif; ?>
                 <?php if (\yii::$app->user->can('contact.delete')) : ?>

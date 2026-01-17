@@ -44,13 +44,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             }
                     ],
                     [
-                            'attribute' => 'owner_id',
+                            'attribute' => 'owner',
                             'value' => function ($model) {
                                 return $model->owner_name;
                             }
                     ],
                     [
-                            'attribute' => 'manager_id',
+                            'attribute' => 'manager',
                             'value' => function ($model) {
                                 return $model->manager_name;
                             }

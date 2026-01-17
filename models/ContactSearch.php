@@ -154,4 +154,25 @@ class ContactSearch extends Contact
         }
         return $dataProvider;
     }
+
+    /**
+     * @param bool $insert
+     * @return bool
+     */
+    public
+    function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $user_id = (Yii::$app->user->isGuest) ? 1 : Yii::$app->user->id;
+            if ($insert) {
+                $this->created_by = $user_id;
+            }
+            $this->updated_by = $user_id;
+            $dt = new \DateTimeImmutable("now", new \DateTimeZone("UTC"));
+            $this->updated_at = $dt->format("Y-m-d H:i:s T");
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

@@ -31,6 +31,10 @@ class m260113_104237_setup_rbac_for_forest extends Migration
         $auth->add($routeView);
         $routeUpdate = $auth->createPermission('/forest/update');
         $auth->add($routeUpdate);
+        $routeAddFp = $auth->createPermission('/forest/add-forest-person');
+        $auth->add($routeAddFp);
+        $routeUpdateFp = $auth->createPermission('/forest/update-forest-person');
+        $auth->add($routeUpdateFp);
 
         // 'forest.list' 許可
         $forestList = $auth->createPermission('forest.list');
@@ -52,6 +56,8 @@ class m260113_104237_setup_rbac_for_forest extends Migration
         $auth->add($forestEdit);
 
         $auth->addChild($forestEdit, $routeUpdate);
+        $auth->addChild($forestEdit, $routeAddFp);
+        $auth->addChild($forestEdit, $routeUpdateFp);
 
         // 'user' ロール
         $user = $auth->getRole("user");
@@ -93,6 +99,10 @@ class m260113_104237_setup_rbac_for_forest extends Migration
         $auth->remove($routeView);
         $routeUpdate = $auth->getPermission('/forest/update');
         $auth->remove($routeUpdate);
+        $routeAddFp = $auth->getPermission('/forest/add-forest-person');
+        $auth->remove($routeAddFp);
+        $routeUpdateFp = $auth->getPermission('/forest/update-forest-person');
+        $auth->remove($routeUpdateFp);
 
         // 'forest.list' 許可を削除
         $forestList = $auth->getPermission('forest.list');
