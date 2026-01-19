@@ -15,7 +15,7 @@ use yii\bootstrap5\ActiveForm;
         <div class="col-lg-6">
             <?php $form = ActiveForm::begin([
                     'id' => 'isg-forest-edit-form',
-                    'enableAjaxValidation' => true,
+                    'enableAjaxValidation' => false,
                     'fieldConfig' => [
                             'options' => ['class' => 'mb-3']
                     ]

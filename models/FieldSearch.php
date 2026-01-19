@@ -4,13 +4,13 @@ namespace app\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Forest;
+use app\models\Field;
 use yii\helpers\ArrayHelper;
 
 /**
- * ForestSearch represents the model behind the search form of `app\models\Forest`.
+ * FieldSearch represents the model behind the search form of `app\models\Field`.
  */
-class ForestSearch extends Forest
+class FieldSearch extends Field
 {
     public string $_form_name = 'fs';
 
@@ -18,15 +18,17 @@ class ForestSearch extends Forest
 
     public ?string $search_name = null;
 
+    public $search_usage = null;
+
     /**
      * {@inheritdoc}
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            [['id', 'aza_id', 'type_id', 'created_by', 'updated_by'], 'integer'],
-            [['p_no', 'note', 'search_name', 'created_at', 'updated_at'], 'safe'],
-            [['area'], 'number'],
+            [['id', 'aza_id', 'created_by', 'updated_by'], 'integer'],
+            [['p_no', 'note', 'search_name', 'search_usage', 'created_at', 'updated_at'], 'safe'],
+            [['c_area', 'f_area'], 'number'],
         ];
     }
 
@@ -35,7 +37,8 @@ class ForestSearch extends Forest
         return ArrayHelper::merge(
             parent::attributeLabels(),
             [
-                'search_name' => '所有者・管理者',
+                'search_name' => '所有者・耕作者',
+                'search_usage' => '農地利用状況',
             ]);
     }
 
@@ -56,15 +59,16 @@ class ForestSearch extends Forest
      *
      * @return ActiveDataProvider
      */
-    public function search($params,  $pageSize = 20)
+    public function search($params, $pageSize = 20)
     {
-        $query = Forest::find()
-            ->leftJoin('aza a', 'a.id = forest.aza_id')
-            ->leftJoin('frtype ft', 'ft.id = forest.type_id')
-            ->leftJoin('forest_person fpo', 'fpo.forest_id = forest.id and fpo.role = 1 and fpo.valid_to IS null')
+        $query = Field::find()
+            ->leftJoin('aza a', 'a.id = field.aza_id')
+            ->leftJoin('field_person fpo', 'fpo.field_id = field.id and fpo.role = 1 and fpo.valid_to IS null')
             ->leftJoin('person po', 'po.id = fpo.person_id')
-            ->leftJoin('forest_person fpm', 'fpm.forest_id = forest.id and fpm.role = 2 and fpm.valid_to IS null')
-            ->leftJoin('person pm', 'pm.id = fpm.person_id');
+            ->leftJoin('field_person fpc', 'fpc.field_id = field.id and fpc.role = 2 and fpc.valid_to IS null')
+            ->leftJoin('person pc', 'pc.id = fpc.person_id')
+            ->leftJoin('field_usage fu', 'fu.field_id = field.id and fu.valid_to IS null')
+            ->leftJoin('usage u', 'u.id = fu.usage_id');
 
         // add conditions that should always apply here
 
@@ -78,26 +82,27 @@ class ForestSearch extends Forest
                         'desc' => ['a.name' => SORT_DESC, 'p_no' => SORT_ASC],
                     ],
                     'p_no',
-                    'type_id' => [
-                        'asc' => ['ft.order' => SORT_ASC, 'p_no' => SORT_ASC],
-                        'desc' => ['ft.order' => SORT_DESC, 'p_no' => SORT_ASC],
-                    ],
                     'owner' => [
                         'asc' => ['po.yomi' => SORT_ASC, 'p_no' => SORT_ASC],
                         'desc' => ['po.yomi' => SORT_DESC, 'p_no' => SORT_ASC],
                     ],
-                    'manager' => [
-                        'asc' => ['pm.yomi' => SORT_ASC, 'p_no' => SORT_ASC],
-                        'desc' => ['pm.yomi' => SORT_DESC, 'p_no' => SORT_ASC],
+                    'cultivator' => [
+                        'asc' => ['pc.yomi' => SORT_ASC, 'p_no' => SORT_ASC],
+                        'desc' => ['pc.yomi' => SORT_DESC, 'p_no' => SORT_ASC],
                     ],
-                    'area',
+                    'usage' => [
+                        'asc' => ['u.type' => SORT_ASC, 'u.order' => SORT_ASC, 'p_no' => SORT_ASC],
+                        'desc' => ['u.type' => SORT_DESC, 'u.order' => SORT_DESC, 'p_no' => SORT_ASC],
+                    ],
+                    'c_area',
+                    'f_area',
                     'note',
                 ]
             ]
         ]);
 
         $this->loadAndRememberParams($this, $dataProvider, $params);
-        // $this->load($params, $formName);
+        // $this->load($params);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -109,8 +114,8 @@ class ForestSearch extends Forest
         $query->andFilterWhere([
             'id' => $this->id,
             'aza_id' => $this->aza_id,
-            'type_id' => $this->type_id,
-            'area' => $this->area,
+            'c_area' => $this->c_area,
+            'f_area' => $this->f_area,
             'created_at' => $this->created_at,
             'created_by' => $this->created_by,
             'updated_at' => $this->updated_at,
@@ -123,18 +128,34 @@ class ForestSearch extends Forest
         if ($this->search_name != '') {
             $query->andWhere(['or',
                 ['ilike', 'po.name', $this->search_name],
-                ['ilike', 'pm.name', $this->search_name],
+                ['ilike', 'pc.name', $this->search_name],
                 ['ilike', 'po.yomi', $this->search_name],
-                ['ilike', 'pm.yomi', $this->search_name]
+                ['ilike', 'pc.yomi', $this->search_name]
             ]);
         }
 
-        return $dataProvider;
-    }
+        if ($this->search_usage != '') {
+            if (sscanf($this->search_usage, 'T%d', $val) !== 0) {
+                $query->andWhere(['u.type' => $val]);
+            } else {
+                $query->andWhere(['u.id' => $this->search_usage]);
+            }
+        }
 
-    public static function getAreaTotal($dataProvider)
-    {
-        $query = clone($dataProvider->query);
-        return $query->limit(-1)->offset(-1)->orderBy([])->sum('area');
+            return $dataProvider;
+        }
+
+        public
+        static function getFAreaTotal($dataProvider)
+        {
+            $query = clone($dataProvider->query);
+            return $query->limit(-1)->offset(-1)->orderBy([])->sum('f_area');
+        }
+
+        public
+        static function getCAreaTotal($dataProvider)
+        {
+            $query = clone($dataProvider->query);
+            return $query->limit(-1)->offset(-1)->orderBy([])->sum('c_area');
+        }
     }
-}

@@ -38,21 +38,21 @@ class m260113_104237_setup_rbac_for_forest extends Migration
 
         // 'forest.list' 許可
         $forestList = $auth->createPermission('forest.list');
-        $forestList->description = '森林一覧';
+        $forestList->description = '山林一覧';
         $auth->add($forestList);
 
         $auth->addChild($forestList, $routeIndex);
 
         // 'forest.view' 許可
         $forestView = $auth->createPermission('forest.view');
-        $forestView->description = '森林閲覧';
+        $forestView->description = '山林閲覧';
         $auth->add($forestView);
 
         $auth->addChild($forestView, $routeView);
 
         // 'forest.edit' 許可
         $forestEdit = $auth->createPermission('forest.edit');
-        $forestEdit->description = '森林編集';
+        $forestEdit->description = '山林編集';
         $auth->add($forestEdit);
 
         $auth->addChild($forestEdit, $routeUpdate);

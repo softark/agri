@@ -1,8 +1,6 @@
 <?php
 
-use app\models\Aza;
-use app\models\ForestPerson;
-use app\models\Frtype;
+use app\models\FieldPerson;
 use app\models\Icon;
 use kartik\date\DatePicker;
 use yii\bootstrap5\Html;
@@ -10,12 +8,12 @@ use yii\bootstrap5\ActiveForm;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
-/** @var app\models\ForestPerson $model */
-/** @var app\models\Forest $forest */
+/** @var app\models\FieldPerson $model */
+/** @var app\models\Field $field */
 /** @var yii\bootstrap5\ActiveForm $form */
 /** @var string|array $ret_route */
 ?>
-    <div class="forest-person-form">
+    <div class="field-person-form">
         <div class="row">
             <div class="col-lg-4 col-md-6">
                 <?php
@@ -29,36 +27,30 @@ use yii\widgets\DetailView;
                         ],
                         'p_no',
                         [
-                                'attribute' => 'type_id',
+                                'attribute' => 'f_area',
                                 'value' => function ($model) {
-                                    return $model->type_name;
-                                },
-                        ],
-                        [
-                                'attribute' => 'area',
-                                'value' => function ($model) {
-                                    return number_format($model->area, 2);
+                                    return number_format($model->f_area, 2);
                                 },
                         ],
                 ];
-                if ($forest->note != '') {
+                if ($field->note != '') {
                     $attributes[] = 'note';
                 }
                 ?>
                 <?= DetailView::widget([
-                        'model' => $forest,
+                        'model' => $field,
                         'attributes' => $attributes,
                 ]) ?>
 
                 <?php $form = ActiveForm::begin([
-                        'id' => 'forest-person-edit-form',
+                        'id' => 'field-person-edit-form',
                         'enableAjaxValidation' => false,
                         'options' => ['autocomplete' => 'off'],
                         'fieldConfig' => [
                                 'options' => ['class' => 'mb-3']
                         ],
                 ]); ?>
-                <?php $role_text = $model->role == ForestPerson::ROLE_OWNER ? '所有者' : '管理者'; ?>
+                <?php $role_text = $model->role == FieldPerson::ROLE_OWNER ? '所有者' : '耕作者'; ?>
                 <h2 class="h4"><?= $role_text ?></h2>
                 <table class="table table-bordered table-sm">
                     <thead>
@@ -66,14 +58,14 @@ use yii\widgets\DetailView;
                     <th><?= $role_text ?></th>
                     </thead>
                     <tbody>
-                    <?php if ($model->role == ForestPerson::ROLE_OWNER): ?>
-                        <?php if (count($model->forest->ownerForestPersons) == 0) : ?>
+                    <?php if ($model->role == FieldPerson::ROLE_OWNER): ?>
+                        <?php if (count($model->field->ownerFieldPersons) == 0) : ?>
                             <tr>
                                 <td>現在</td>
                                 <td>未設定</td>
                             </tr>
                         <?php else: ?>
-                            <?php foreach ($model->forest->ownerForestPersons as $ownerFp): ?>
+                            <?php foreach ($model->field->ownerFieldPersons as $ownerFp): ?>
                                 <tr>
                                     <td><?= $ownerFp->valid_from_text ?> ～ <?= $ownerFp->valid_to_text ?></td>
                                     <td><?= $ownerFp->person->name ?></td>
@@ -81,16 +73,16 @@ use yii\widgets\DetailView;
                             <?php endforeach; ?>
                         <?php endif; ?>
                     <?php else: ?>
-                        <?php if (count($model->forest->managerForestPersons) == 0) : ?>
+                        <?php if (count($model->field->cultivatorFieldPersons) == 0) : ?>
                             <tr>
                                 <td>現在</td>
                                 <td>未設定</td>
                             </tr>
                         <?php else: ?>
-                            <?php foreach ($model->forest->managerForestPersons as $managerFp): ?>
+                            <?php foreach ($model->field->cultivatorFieldPersons as $cultivatorFp): ?>
                                 <tr>
-                                    <td><?= $managerFp->valid_from_text ?> ～ <?= $managerFp->valid_to_text ?></td>
-                                    <td><?= $managerFp->person->name ?></td>
+                                    <td><?= $cultivatorFp->valid_from_text ?> ～ <?= $cultivatorFp->valid_to_text ?></td>
+                                    <td><?= $cultivatorFp->person->name ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -134,7 +126,7 @@ use yii\widgets\DetailView;
                 <?php ActiveForm::end(); ?>
             </div>
             <div class="col-lg-8 col-md-6">
-                <iframe src="<?= $forest->mapurl ?>" style="width:100%; height:75vh;"></iframe>
+                <iframe src="<?= $field->mapurl ?>" style="width:100%; height:75vh;"></iframe>
             </div>
         </div>
 

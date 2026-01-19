@@ -2,27 +2,46 @@
 
 namespace app\controllers;
 
-use app\models\Forest;
-use app\models\ForestPerson;
-use app\models\ForestSearch;
+use app\models\Field;
+use app\models\FieldPerson;
+use app\models\FieldSearch;
+use app\models\FieldUsage;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * ForestController implements the CRUD actions for Forest model.
+ * FieldController implements the CRUD actions for Field model.
  */
-class ForestController extends Controller
+class FieldController extends Controller
 {
     /**
-     * Lists all Forest models.
+     * @inheritDoc
+     */
+    public function behaviors()
+    {
+        return array_merge(
+            parent::behaviors(),
+            [
+                'verbs' => [
+                    'class' => VerbFilter::className(),
+                    'actions' => [
+                        'delete' => ['POST'],
+                    ],
+                ],
+            ]
+        );
+    }
+
+    /**
+     * Lists all Field models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new ForestSearch();
+        $searchModel = new FieldSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         if (Yii::$app->request->isPjax) {
@@ -39,7 +58,7 @@ class ForestController extends Controller
     }
 
     /**
-     * Displays a single Forest model.
+     * Displays a single Field model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -52,7 +71,7 @@ class ForestController extends Controller
     }
 
     /**
-     * Updates an existing Forest model.
+     * Updates an existing Field model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -76,45 +95,45 @@ class ForestController extends Controller
     }
 
     /**
-     * Finds the Forest model based on its primary key value.
+     * Finds the Field model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return Forest the loaded model
+     * @return Field the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Forest::findOne(['id' => $id])) !== null) {
+        if (($model = Field::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function actionUpdateForestPerson($id)
+    public function actionUpdateFieldPerson($id)
     {
-        $model = ForestPerson::findOne($id);
+        $model = FieldPerson::findOne($id);
         if (!$model) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
 
-        $ret_route = ['view', 'id' => $model->forest->id];
+        $ret_route = ['view', 'id' => $model->field->id];
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect($ret_route);
         }
 
-        return $this->render('update-forest-person', [
+        return $this->render('update-field-person', [
             'model' => $model,
-            'forest' => $model->forest,
+            'field' => $model->field,
             'ret_route' => $ret_route,
         ]);
     }
-    public function actionAddForestPerson($id, $role)
+    public function actionAddFieldPerson($id, $role)
     {
-        $forest = $this->findModel($id);
-        $model = new ForestPerson();
-        $model->forest_id = $forest->id;
+        $field = $this->findModel($id);
+        $model = new FieldPerson();
+        $model->field_id = $field->id;
         $model->role = $role;
 
         $ret_route = ['view', 'id' => $id];
@@ -123,9 +142,47 @@ class ForestController extends Controller
             return $this->redirect($ret_route);
         }
 
-        return $this->render('add-forest-person', [
+        return $this->render('add-field-person', [
             'model' => $model,
-            'forest' => $forest,
+            'field' => $field,
+            'ret_route' => $ret_route,
+        ]);
+    }
+
+    public function actionUpdateFieldUsage($id)
+    {
+        $model = FieldUsage::findOne($id);
+        if (!$model) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+
+        $ret_route = ['view', 'id' => $model->field->id];
+
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            return $this->redirect($ret_route);
+        }
+
+        return $this->render('update-field-usage', [
+            'model' => $model,
+            'field' => $model->field,
+            'ret_route' => $ret_route,
+        ]);
+    }
+    public function actionAddFieldUsage($id)
+    {
+        $field = $this->findModel($id);
+        $model = new FieldUsage();
+        $model->field_id = $field->id;
+
+        $ret_route = ['view', 'id' => $id];
+
+        if ($this->request->isPost && $model->load($this->request->post()) && $model->addHistory()) {
+            return $this->redirect($ret_route);
+        }
+
+        return $this->render('add-field-usage', [
+            'model' => $model,
+            'field' => $field,
             'ret_route' => $ret_route,
         ]);
     }

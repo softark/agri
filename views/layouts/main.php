@@ -50,6 +50,7 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
     $items = [
     ];
     if (!Yii::$app->user->isGuest) {
+        $items[] = ['label' => Icon::getIconAndLabel('field'), 'url' => ['/field'], 'encode' => false];
         $items[] = ['label' => Icon::getIconAndLabel('tree'), 'url' => ['/forest'], 'encode' => false];
         $items[] = ['label' => Icon::getIconAndLabel('person'), 'url' => ['/person'], 'encode' => false];
         if (Yii::$app->user->can('editor')) {
@@ -62,6 +63,7 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
                     'items' => [
                             ['label' => '字（あざ）', 'url' => ['/aza'], 'encode' => false],
                             ['label' => '山林タイプ', 'url' => ['/frtype'], 'encode' => false],
+                            ['label' => '農地利用状況', 'url' => ['/usage'], 'encode' => false],
                     ]
             ];
             $items[] = [

@@ -1,0 +1,28 @@
+<?php
+
+use app\models\FieldPerson;
+use app\models\Icon;
+use yii\bootstrap5\ActiveForm;use yii\bootstrap5\Html;
+
+/** @var yii\web\View $this */
+/** @var app\models\FieldPerson $model */
+/** @var app\models\Field $field */
+/** @var string|array $ret_route */
+
+$role_text = $model->role == FieldPerson::ROLE_OWNER ? '所有者' : '耕作者';
+$name = ' [' . $model->person->dispname . '] ';
+$this->title = '農地 : ' . $field->p_no . ' - ' . $role_text . $name . 'メモ編集';
+$this->params['breadcrumbs'][] = ['label' => '農地', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => $field->p_no, 'url' => ['view', 'id' => $field->id]];
+$this->params['breadcrumbs'][] = $role_text . $name . 'メモ編集';
+?>
+<div class="field-update">
+
+    <h1><?= Icon::getIconAndLabel('field') . ' : ' . $field->p_no . ' - ' .
+        Icon::getIcon('update') .  ' ' . $role_text . $name . 'メモ編集'?></h1>
+
+    <?= $this->render('_fp_form', [
+            'model' => $model,
+            'field' => $field,
+            'ret_route' => $ret_route]
+            ) ?>

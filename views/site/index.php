@@ -22,6 +22,9 @@ $this->title = '岩座神農林';
         <?php else: ?>
             <div class="row">
                 <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
+                    <p><?= Html::a(Icon::getIconAndLabel('field'), ['/field'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
+                </div>
+                <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
                     <p><?= Html::a(Icon::getIconAndLabel('tree'), ['/forest'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
                 </div>
                 <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
@@ -41,6 +44,9 @@ $this->title = '岩座神農林';
                     </div>
                     <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
                         <p><?= Html::a('森林タイプ', ['/frtype'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
+                    </div>
+                    <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
+                        <p><?= Html::a('農地利用状況', ['/usage'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
                     </div>
                     <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
                         <p><?= Html::a('名簿ワーク', ['/person-work'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
