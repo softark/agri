@@ -68,7 +68,16 @@ class FieldSearch extends Field
             ->leftJoin('field_person fpc', 'fpc.field_id = field.id and fpc.role = 2 and fpc.valid_to IS null')
             ->leftJoin('person pc', 'pc.id = fpc.person_id')
             ->leftJoin('field_usage fu', 'fu.field_id = field.id and fu.valid_to IS null')
-            ->leftJoin('usage u', 'u.id = fu.usage_id');
+            ->leftJoin('usage u', 'u.id = fu.usage_id')
+            ->with([
+                'aza',
+                'ownerFieldPerson',
+                'ownerFieldPerson.person',
+                'cultivatorFieldPerson',
+                'cultivatorFieldPerson.person',
+                'fieldUsage',
+                'fieldUsage.usage',
+            ]);
 
         // add conditions that should always apply here
 
@@ -78,25 +87,31 @@ class FieldSearch extends Field
                 'defaultOrder' => ['p_no' => SORT_ASC],
                 'attributes' => [
                     'aza_id' => [
-                        'asc' => ['a.name' => SORT_ASC, 'p_no' => SORT_ASC],
-                        'desc' => ['a.name' => SORT_DESC, 'p_no' => SORT_ASC],
+                        'asc' => ['a.name' => SORT_ASC, 'p_no_sort' => SORT_ASC],
+                        'desc' => ['a.name' => SORT_DESC, 'p_no_sort' => SORT_ASC],
                     ],
-                    'p_no',
+                    'p_no' => [
+                        'asc' => ['p_no_sort' => SORT_ASC, 'a.name' => SORT_ASC],
+                        'desc' => ['p_no_sort' => SORT_DESC, 'a.name' => SORT_ASC],
+                    ],
                     'owner' => [
-                        'asc' => ['po.yomi' => SORT_ASC, 'p_no' => SORT_ASC],
-                        'desc' => ['po.yomi' => SORT_DESC, 'p_no' => SORT_ASC],
+                        'asc' => ['po.yomi' => SORT_ASC, 'p_no_sort' => SORT_ASC],
+                        'desc' => ['po.yomi' => SORT_DESC, 'p_no_sort' => SORT_ASC],
                     ],
                     'cultivator' => [
-                        'asc' => ['pc.yomi' => SORT_ASC, 'p_no' => SORT_ASC],
-                        'desc' => ['pc.yomi' => SORT_DESC, 'p_no' => SORT_ASC],
+                        'asc' => ['pc.yomi' => SORT_ASC, 'p_no_sort' => SORT_ASC],
+                        'desc' => ['pc.yomi' => SORT_DESC, 'p_no_sort' => SORT_ASC],
                     ],
                     'usage' => [
-                        'asc' => ['u.type' => SORT_ASC, 'u.order' => SORT_ASC, 'p_no' => SORT_ASC],
-                        'desc' => ['u.type' => SORT_DESC, 'u.order' => SORT_DESC, 'p_no' => SORT_ASC],
+                        'asc' => ['u.type' => SORT_ASC, 'u.order' => SORT_ASC, 'p_no_sort' => SORT_ASC],
+                        'desc' => ['u.type' => SORT_DESC, 'u.order' => SORT_DESC, 'p_no_sort' => SORT_ASC],
                     ],
                     'c_area',
                     'f_area',
-                    'note',
+                    'note' => [
+                        'asc' => ['note' => SORT_ASC, 'p_no_sort' => SORT_ASC],
+                        'desc' => ['note' => SORT_DESC, 'p_no_sort' => SORT_ASC],
+                    ],
                 ]
             ]
         ]);
@@ -142,20 +157,20 @@ class FieldSearch extends Field
             }
         }
 
-            return $dataProvider;
-        }
-
-        public
-        static function getFAreaTotal($dataProvider)
-        {
-            $query = clone($dataProvider->query);
-            return $query->limit(-1)->offset(-1)->orderBy([])->sum('f_area');
-        }
-
-        public
-        static function getCAreaTotal($dataProvider)
-        {
-            $query = clone($dataProvider->query);
-            return $query->limit(-1)->offset(-1)->orderBy([])->sum('c_area');
-        }
+        return $dataProvider;
     }
+
+    public
+    static function getFAreaTotal($dataProvider)
+    {
+        $query = clone($dataProvider->query);
+        return $query->limit(-1)->offset(-1)->orderBy([])->sum('f_area');
+    }
+
+    public
+    static function getCAreaTotal($dataProvider)
+    {
+        $query = clone($dataProvider->query);
+        return $query->limit(-1)->offset(-1)->orderBy([])->sum('c_area');
+    }
+}

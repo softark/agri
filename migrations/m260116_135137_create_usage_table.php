@@ -52,7 +52,7 @@ class m260116_135137_create_usage_table extends Migration
         $fp = fopen($path, 'r');
         if (!$fp) throw new \RuntimeException("Cannot open: $path");
 
-        $cols = ["type","order","name"];
+        $cols = ["id","type","order","name"];
         $keys = array_flip($cols);
 
         $header = fgetcsv($fp);               // 1行目を列名にする想定
@@ -62,6 +62,7 @@ class m260116_135137_create_usage_table extends Migration
             $this->insert('{{%usage}}', $assoc);
         }
         fclose($fp);
+        $this->execute('alter sequence usage_id_seq restart with 12');
 
     }
 

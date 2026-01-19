@@ -91,7 +91,7 @@ use yii\widgets\DetailView;
                 </table>
 
                 <?= $form->field($model, 'valid_from')->widget(DatePicker::class,
-                        ['type' => DatePicker::TYPE_COMPONENT_APPEND]) ?>
+                        ['type' => DatePicker::TYPE_COMPONENT_APPEND, 'pluginOptions' => ['format' => 'yyyy-MM-dd']]) ?>
                 <div class="row">
                     <div class="col-3">
                         <?= $form->field($model, 'person_id')
@@ -102,11 +102,7 @@ use yii\widgets\DetailView;
                            id="person-name" disabled><?= $model->person_id ? $model->person->dispname : '&nbsp;'; ?></p>
                     </div>
                     <div class="col-3 pt-4">
-                        <?php if ($model->isNewRecord): ?>
-                            <?= Html::button('選択 ...', ['class' => 'btn btn-primary mt-2', 'id' => 'btn-person']) ?>
-                        <?php else: ?>
-                            <?= Html::button('選択 ...', ['class' => 'btn btn-secondary mt-2', 'disabled' => true, 'id' => 'btn-person']) ?>
-                        <?php endif; ?>
+                        <?= Html::button('選択 ...', ['class' => 'btn btn-primary mt-2', 'id' => 'btn-person']) ?>
                     </div>
                 </div>
                 <?= $form->field($model, 'note')->textInput(['maxlength' => true]) ?>

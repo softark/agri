@@ -12,6 +12,7 @@ use yii\db\Query;
  * @property int $id
  * @property string $geom
  * @property string|null $p_no
+ * @property int|null $p_no_sort
  * @property int|null $aza_id
  * @property int|null $type_id
  * @property float|null $area
@@ -171,93 +172,78 @@ class Forest extends \yii\db\ActiveRecord
         return $this->hasOne(Aza::class, ['id' => 'aza_id']);
     }
 
-    private $_owner_fps = null;
-
     public function getOwnerForestPersons()
     {
-        if ($this->_owner_fps === null) {
-            $this->_owner_fps = ForestPerson::find()
-                ->where('forest_id = :id and role = :role')
-                ->params([':id' => $this->id, ':role' => ForestPerson::ROLE_OWNER])
-                ->orderBy('created_at ASC')
-                ->all();
-        }
-        return $this->_owner_fps;
+        return $this->hasMany(ForestPerson::class, ['forest_id' => 'id'])
+            ->andOnCondition(['forest_person.role' => ForestPerson::ROLE_OWNER])
+            ->orderBy(['forest_person.valid_from' => SORT_ASC]);
     }
 
-    private $_owner_fp = false;
     public function getOwnerForestPerson()
     {
-        if ($this->_owner_fp === false) {
-            $this->_owner_fp = ForestPerson::find()
-                ->where('forest_id = :id and role = :role and valid_to is null')
-                ->params([':id' => $this->id, ':role' => ForestPerson::ROLE_OWNER])
-                ->one();
-        }
-        return $this->_owner_fp;
+        return $this->hasOne(ForestPerson::class, ['forest_id' => 'id'])
+            ->andOnCondition(['forest_person.role' => ForestPerson::ROLE_OWNER])
+            ->andOnCondition(['forest_person.valid_to' => null]);
     }
+
+    private $_owners = null;
 
     public function getOwners()
     {
-        $owners = [];
-        foreach ($this->getOwnerForestPersons() as $ofp) {
-            $owners[] = $ofp->person;
+        if ($this->_owners === null) {
+            $this->_owners = [];
+            foreach ($this->ownerForestPersons as $fp) {
+                $this->_owners[] = $fp->person;
+            }
         }
-        return $owners;
+        return $this->_owners;
     }
 
     public function getOwner()
     {
-        return $this->getOwnerForestPerson() ? $this->getOwnerForestPerson()->person : null;
+        return $this->ownerForestPerson ? $this->ownerForestPerson->person : null;
     }
 
     private $_owner_id = -1;
+
     public function getOwner_id()
     {
         if ($this->_owner_id == -1) {
-            $this->_owner_id = $this->getOwner() ? $this->getOwner()->id : null;
+            $this->_owner_id = $this->owner ? $this->owner->id : null;
         }
         return $this->_owner_id;
     }
 
-    private $_manager_fps = null;
-
     public function getManagerForestPersons()
     {
-        if ($this->_manager_fps === null) {
-            $this->_manager_fps = ForestPerson::find()
-                ->where('forest_id = :id and role = :role')
-                ->params([':id' => $this->id, ':role' => ForestPerson::ROLE_MANAGER])
-                ->orderBy('created_at ASC')
-                ->all();
-        }
-        return $this->_manager_fps;
+        return $this->hasMany(ForestPerson::class, ['forest_id' => 'id'])
+            ->andOnCondition(['forest_person.role' => ForestPerson::ROLE_MANAGER])
+            ->orderBy(['forest_person.valid_from' => SORT_ASC]);
     }
 
-    private $_manager_fp = false;
     public function getManagerForestPerson()
     {
-        if ($this->_manager_fp === false) {
-            $this->_manager_fp = ForestPerson::find()
-                ->where('forest_id = :id and role = :role and valid_to is null')
-                ->params([':id' => $this->id, ':role' => ForestPerson::ROLE_MANAGER])
-                ->one();
-        }
-        return $this->_manager_fp;
+        return $this->hasOne(ForestPerson::class, ['forest_id' => 'id'])
+            ->andOnCondition(['forest_person.role' => ForestPerson::ROLE_MANAGER])
+            ->andOnCondition(['forest_person.valid_to' => null]);
     }
+
+    private $_managers = null;
 
     public function getManagers()
     {
-        $managers = [];
-        foreach ($this->getManagerForestPersons() as $ofp) {
-            $managers[] = $ofp->person;
+        if ($this->_managers === null) {
+            $this->_managers = [];
+            foreach ($this->managerForestPersons as $fp) {
+                $this->_managers[] = $fp->person;
+            }
         }
-        return $managers;
+        return $this->_managers;
     }
 
     public function getManager()
     {
-        return $this->getManagerForestPerson() ? $this->getManagerForestPerson()->person : null;
+        return $this->managerForestPerson ? $this->managerForestPerson->person : null;
     }
 
     private $_manager_id = -1;
@@ -265,7 +251,7 @@ class Forest extends \yii\db\ActiveRecord
     public function getManager_id()
     {
         if ($this->_manager_id == -1) {
-            $this->_manager_id = $this->getManager() ? $this->getManager()->id : null;
+            $this->_manager_id = $this->manager ? $this->manager->id : null;
         }
         return $this->_manager_id;
     }

@@ -1,5 +1,4 @@
 <?php
-
 namespace app\models;
 
 use Yii;
@@ -65,7 +64,7 @@ class ForestPerson extends \yii\db\ActiveRecord
             [['role', 'forest_id', 'person_id', 'created_by', 'updated_by'], 'integer'],
             [['forest_id', 'person_id', 'valid_from'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
-            [['valid_from', 'valid_to'], 'date'],
+            [['valid_from', 'valid_to'], 'date', 'format' => 'yyyy-MM-dd'],
             [['note'], 'string', 'max' => 80],
             [['forest_id'], 'exist', 'skipOnError' => true, 'targetClass' => Forest::class, 'targetAttribute' => ['forest_id' => 'id']],
             [['person_id'], 'exist', 'skipOnError' => true, 'targetClass' => Person::class, 'targetAttribute' => ['person_id' => 'id']],

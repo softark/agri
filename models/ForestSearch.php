@@ -64,7 +64,15 @@ class ForestSearch extends Forest
             ->leftJoin('forest_person fpo', 'fpo.forest_id = forest.id and fpo.role = 1 and fpo.valid_to IS null')
             ->leftJoin('person po', 'po.id = fpo.person_id')
             ->leftJoin('forest_person fpm', 'fpm.forest_id = forest.id and fpm.role = 2 and fpm.valid_to IS null')
-            ->leftJoin('person pm', 'pm.id = fpm.person_id');
+            ->leftJoin('person pm', 'pm.id = fpm.person_id')
+            ->with([
+                'aza',
+                'type',
+                'ownerForestPerson',
+                'ownerForestPerson.person',
+                'managerForestPerson',
+                'managerForestPerson.person',
+            ]);
 
         // add conditions that should always apply here
 
@@ -74,24 +82,30 @@ class ForestSearch extends Forest
                 'defaultOrder' => ['p_no' => SORT_ASC],
                 'attributes' => [
                     'aza_id' => [
-                        'asc' => ['a.name' => SORT_ASC, 'p_no' => SORT_ASC],
-                        'desc' => ['a.name' => SORT_DESC, 'p_no' => SORT_ASC],
+                        'asc' => ['a.name' => SORT_ASC, 'p_no_sort' => SORT_ASC],
+                        'desc' => ['a.name' => SORT_DESC, 'p_no_sort' => SORT_ASC],
                     ],
-                    'p_no',
+                    'p_no' => [
+                        'asc' => ['p_no_sort' => SORT_ASC],
+                        'desc' => ['p_no_sort' => SORT_DESC],
+                    ],
                     'type_id' => [
-                        'asc' => ['ft.order' => SORT_ASC, 'p_no' => SORT_ASC],
-                        'desc' => ['ft.order' => SORT_DESC, 'p_no' => SORT_ASC],
+                        'asc' => ['ft.order' => SORT_ASC, 'p_no_sort' => SORT_ASC],
+                        'desc' => ['ft.order' => SORT_DESC, 'p_no_sort' => SORT_ASC],
                     ],
                     'owner' => [
-                        'asc' => ['po.yomi' => SORT_ASC, 'p_no' => SORT_ASC],
-                        'desc' => ['po.yomi' => SORT_DESC, 'p_no' => SORT_ASC],
+                        'asc' => ['po.yomi' => SORT_ASC, 'p_no_sort' => SORT_ASC],
+                        'desc' => ['po.yomi' => SORT_DESC, 'p_no_sort' => SORT_ASC],
                     ],
                     'manager' => [
-                        'asc' => ['pm.yomi' => SORT_ASC, 'p_no' => SORT_ASC],
-                        'desc' => ['pm.yomi' => SORT_DESC, 'p_no' => SORT_ASC],
+                        'asc' => ['pm.yomi' => SORT_ASC, 'p_no_sort' => SORT_ASC],
+                        'desc' => ['pm.yomi' => SORT_DESC, 'p_no_sort' => SORT_ASC],
                     ],
                     'area',
-                    'note',
+                    'bite' => [
+                        'asc' => ['note' => SORT_ASC, 'p_no_sort' => SORT_ASC],
+                        'desc' => ['note' => SORT_DESC, 'p_no_sort' => SORT_ASC],
+                    ],
                 ]
             ]
         ]);

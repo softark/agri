@@ -123,8 +123,10 @@ LEFT JOIN usage u ON u.id = fu.usage_id
 VIEW_SQL
         );
 
-        $this->seedField();
-        // $this->seedFieldsCsv();
+        // $this->seedField();
+        $this->seedFieldCsv();
+        $this->seedFieldPersonCsv();
+        $this->seedFieldUsageCsv();
     }
 
     public function seedField()
@@ -196,6 +198,63 @@ VIEW_SQL
             ];
             $this->insert('field_usage', $fu_cols);
         }
+    }
+
+    public function seedFieldCsv()
+    {
+        $path = Yii::getAlias('@app/migrations/data/field.csv');
+        $fp = fopen($path, 'r');
+        if (!$fp) throw new \RuntimeException("Cannot open: $path");
+
+        $cols = ["id","geom","aza_id","p_no","c_area","f_area","note"];
+        $keys = array_flip($cols);
+
+        $header = fgetcsv($fp);               // 1行目を列名にする想定
+        while (($row = fgetcsv($fp)) !== false) {
+            $assoc = array_combine($header, $row);
+            $assoc = array_intersect_key($assoc, $keys);
+            $this->insert('{{%field}}', $assoc);
+        }
+        fclose($fp);
+        $this->execute('alter sequence field_id_seq restart with 350');
+    }
+
+    public function seedFieldPersonCsv()
+    {
+        $path = Yii::getAlias('@app/migrations/data/field_person.csv');
+        $fp = fopen($path, 'r');
+        if (!$fp) throw new \RuntimeException("Cannot open: $path");
+
+        $cols = ["id","role","field_id","person_id","valid_from","valid_to","note"];
+        $keys = array_flip($cols);
+
+        $header = fgetcsv($fp);               // 1行目を列名にする想定
+        while (($row = fgetcsv($fp)) !== false) {
+            $assoc = array_combine($header, $row);
+            $assoc = array_intersect_key($assoc, $keys);
+            $this->insert('{{%field_person}}', $assoc);
+        }
+        fclose($fp);
+        $this->execute('alter sequence field_person_id_seq restart with 641');
+    }
+
+    public function seedFieldUsageCsv()
+    {
+        $path = Yii::getAlias('@app/migrations/data/field_usage.csv');
+        $fp = fopen($path, 'r');
+        if (!$fp) throw new \RuntimeException("Cannot open: $path");
+
+        $cols = ["id","field_id","usage_id","valid_from","valid_to","note"];
+        $keys = array_flip($cols);
+
+        $header = fgetcsv($fp);               // 1行目を列名にする想定
+        while (($row = fgetcsv($fp)) !== false) {
+            $assoc = array_combine($header, $row);
+            $assoc = array_intersect_key($assoc, $keys);
+            $this->insert('{{%field_usage}}', $assoc);
+        }
+        fclose($fp);
+        $this->execute('alter sequence field_usage_id_seq restart with 350');
     }
 
     /**

@@ -99,7 +99,7 @@ use yii\widgets\DetailView;
                 </table>
 
                 <?= $form->field($model, 'valid_from')->widget(DatePicker::class,
-                        ['type' => DatePicker::TYPE_COMPONENT_APPEND]) ?>
+                        ['type' => DatePicker::TYPE_COMPONENT_APPEND, 'pluginOptions' => ['format' => 'yyyy-MM-dd']]) ?>
                 <div class="row">
                     <div class="col-3">
                         <?= $form->field($model, 'person_id')

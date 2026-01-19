@@ -1,5 +1,4 @@
 <?php
-
 namespace app\models;
 
 use Yii;
@@ -11,6 +10,7 @@ use Yii;
  * @property string $geom
  * @property int|null $aza_id
  * @property string|null $p_no
+ * @property int|null $p_no_sort
  * @property float|null $c_area
  * @property float|null $f_area
  * @property string|null $note
@@ -157,149 +157,121 @@ class Field extends \yii\db\ActiveRecord
         return $this->hasOne(Aza::class, ['id' => 'aza_id']);
     }
 
-    private $_owner_fps = null;
-
     public function getOwnerFieldPersons()
     {
-        if ($this->_owner_fps === null) {
-            $this->_owner_fps = FieldPerson::find()
-                ->where('field_id = :id and role = :role')
-                ->params([':id' => $this->id, ':role' => FieldPerson::ROLE_OWNER])
-                ->orderBy('created_at ASC')
-                ->all();
-        }
-        return $this->_owner_fps;
+        return $this->hasMany(FieldPerson::class, ['field_id' => 'id'])
+            ->andOnCondition(['field_person.role' => FieldPerson::ROLE_OWNER])
+            ->orderBy(['field_person.valid_from' => SORT_ASC]);
     }
 
-    private $_owner_fp = false;
     public function getOwnerFieldPerson()
     {
-        if ($this->_owner_fp === false) {
-            $this->_owner_fp = FieldPerson::find()
-                ->where('field_id = :id and role = :role and valid_to is null')
-                ->params([':id' => $this->id, ':role' => FieldPerson::ROLE_OWNER])
-                ->one();
-        }
-        return $this->_owner_fp;
+        return $this->hasOne(FieldPerson::class, ['field_id' => 'id'])
+            ->andOnCondition(['field_person.role' => FieldPerson::ROLE_OWNER])
+            ->andOnCondition(['field_person.valid_to' => null]);
     }
+
+    private $_owners = null;
 
     public function getOwners()
     {
-        $owners = [];
-        foreach ($this->getOwnerFieldPersons() as $ofp) {
-            $owners[] = $ofp->person;
+        if ($this->_owners === null) {
+            $this->_owners = [];
+            foreach ($this->ownerFieldPersons as $fp) {
+                $this->_owners[] = $fp->person;
+            }
         }
-        return $owners;
+        return $this->_owners;
     }
 
     public function getOwner()
     {
-        return $this->getOwnerFieldPerson() ? $this->getOwnerFieldPerson()->person : null;
+        return $this->ownerFieldPerson ? $this->ownerFieldPerson->person : null;
     }
 
     private $_owner_id = -1;
     public function getOwner_id()
     {
         if ($this->_owner_id == -1) {
-            $this->_owner_id = $this->getOwner() ? $this->getOwner()->id : null;
+            $this->_owner_id = $this->owner ? $this->owner->id : null;
         }
         return $this->_owner_id;
     }
 
-    private $_cultivator_fps = null;
-
     public function getCultivatorFieldPersons()
     {
-        if ($this->_cultivator_fps === null) {
-            $this->_cultivator_fps = FieldPerson::find()
-                ->where('field_id = :id and role = :role')
-                ->params([':id' => $this->id, ':role' => FieldPerson::ROLE_CULTIVATOR])
-                ->orderBy('created_at ASC')
-                ->all();
-        }
-        return $this->_cultivator_fps;
+        return $this->hasMany(FieldPerson::class, ['field_id' => 'id'])
+            ->andOnCondition(['field_person.role' => FieldPerson::ROLE_CULTIVATOR])
+            ->orderBy(['field_person.valid_from' => SORT_ASC]);
     }
 
-    private $_cultivator_fp = false;
     public function getCultivatorFieldPerson()
     {
-        if ($this->_cultivator_fp === false) {
-            $this->_cultivator_fp = FieldPerson::find()
-                ->where('field_id = :id and role = :role and valid_to is null')
-                ->params([':id' => $this->id, ':role' => FieldPerson::ROLE_CULTIVATOR])
-                ->one();
-        }
-        return $this->_cultivator_fp;
+        return $this->hasOne(FieldPerson::class, ['field_id' => 'id'])
+            ->andOnCondition(['field_person.role' => FieldPerson::ROLE_CULTIVATOR])
+            ->andOnCondition(['field_person.valid_to' => null]);
     }
 
+    private $_cultivators = null;
     public function getCultivators()
     {
-        $cultivators = [];
-        foreach ($this->getCultivatorFieldPersons() as $ofp) {
-            $cultivators[] = $ofp->person;
+        if ($this->_cultivators === null) {
+            $this->_cultivators = [];
+            foreach ($this->cultivatorFieldPersons as $fp) {
+                $this->_cultivators[] = $fp->person;
+            }
         }
-        return $cultivators;
+        return $this->_cultivators;
     }
 
     public function getCultivator()
     {
-        return $this->getCultivatorFieldPerson() ? $this->getCultivatorFieldPerson()->person : null;
+        return $this->cultivatorFieldPerson ? $this->cultivatorFieldPerson->person : null;
     }
 
     private $_cultivator_id = -1;
     public function getCultivator_id()
     {
         if ($this->_cultivator_id == -1) {
-            $this->_cultivator_id = $this->getCultivator() ? $this->getCultivator()->id : null;
+            $this->_cultivator_id = $this->cultivator ? $this->cultivator->id : null;
         }
         return $this->_cultivator_id;
     }
 
-    private $_fus = null;
-
     public function getFieldUsages()
     {
-        if ($this->_fus === null) {
-            $this->_fus = FieldUsage::find()
-                ->where('field_id = :id')
-                ->params([':id' => $this->id])
-                ->orderBy('created_at ASC')
-                ->all();
-        }
-        return $this->_fus;
+        return $this->hasMany(FieldUsage::class, ['field_id' => 'id'])
+            ->orderBy(['field_usage.valid_from' => SORT_ASC]);
     }
 
-    private $_fu = false;
     public function getFieldUsage()
     {
-        if ($this->_fu === false) {
-            $this->_fu = FieldUsage::find()
-                ->where('field_id = :id and valid_to is null')
-                ->params([':id' => $this->id])
-                ->one();
-        }
-        return $this->_fu;
+        return $this->hasOne(FieldUsage::class, ['field_id' => 'id'])
+            ->andOnCondition(['field_usage.valid_to' => null]);
     }
 
+    private $_usages = null;
     public function getUsages()
     {
-        $usages = [];
-        foreach ($this->getFieldUsages() as $fu) {
-            $usages[] = $fu->usage;
+        if ($this->_usages === null) {
+            $this->_usages = [];
+            foreach ($this->fieldUsages as $fu) {
+                $this->_usages[] = $fu->usage;
+            }
         }
-        return $usages;
+        return $this->_usages;
     }
 
     public function getUsage()
     {
-        return $this->getFieldUsage() ? $this->getFieldUsage()->usage : null;
+        return $this->fieldUsage ? $this->fieldUsage->usage : null;
     }
 
     private $_usage_id = -1;
     public function getUsage_id()
     {
         if ($this->_usage_id == -1) {
-            $this->_usage_id = $this->getUseage() ? $this->getUsage()->id : null;
+            $this->_usage_id = $this->useage ? $this->usage->id : null;
         }
         return $this->_usage_id;
     }
