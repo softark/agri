@@ -11,15 +11,15 @@ use yii\bootstrap5\ActiveForm;use yii\bootstrap5\Html;
 
 $role_text = $model->role == FieldPerson::ROLE_OWNER ? '所有者' : '耕作者';
 $name = ' [' . $model->person->dispname . '] ';
-$this->title = '農地 : ' . $field->p_no . ' - ' . $role_text . $name . 'メモ編集';
+$this->title = '農地 : ' . $field->p_no . ' / ' . $role_text . $name . ' - 編集';
 $this->params['breadcrumbs'][] = ['label' => '農地', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $field->p_no, 'url' => ['view', 'id' => $field->id]];
-$this->params['breadcrumbs'][] = $role_text . $name . 'メモ編集';
+$this->params['breadcrumbs'][] = $role_text . $name . ' - 編集';
 ?>
 <div class="field-update">
 
-    <h1><?= Icon::getIconAndLabel('field') . ' : ' . $field->p_no . ' - ' .
-        Icon::getIcon('update') .  ' ' . $role_text . $name . 'メモ編集'?></h1>
+    <h1><?= Icon::getIconAndLabel('field') . ' : ' . $field->p_no . ' / ' . $role_text . $name .
+        ' - ' . Icon::getIconAndLabel('update')?></h1>
 
     <?= $this->render('_fp_form', [
             'model' => $model,

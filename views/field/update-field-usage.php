@@ -9,16 +9,16 @@ use yii\bootstrap5\ActiveForm;use yii\bootstrap5\Html;
 /** @var app\models\Field $field */
 /** @var string|array $ret_route */
 
-$name = ' [' . $model->usage->name . '] ';
-$this->title = '農地 : ' . $field->p_no . ' - ' . $name . ' - 編集';
+$name = '利用状況 [' . $model->usage->name . ']';
+$this->title = '農地 : ' . $field->p_no . ' / ' . $name . ' - 編集';
 $this->params['breadcrumbs'][] = ['label' => '農地', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $field->p_no, 'url' => ['view', 'id' => $field->id]];
-$this->params['breadcrumbs'][] = $name . '編集';
+$this->params['breadcrumbs'][] = $name . ' - 編集';
 ?>
 <div class="field-update">
 
-    <h1><?= Icon::getIconAndLabel('field') . ' : ' . $field->p_no . ' - ' .
-        Icon::getIcon('update') .  ' ' . $name . ' - 編集'?></h1>
+    <h1><?= Icon::getIconAndLabel('field') . ' : ' . $field->p_no . ' / ' . $name .
+        ' - ' . Icon::getIconAndLabel('update')?></h1>
 
     <?= $this->render('_fu_form', [
             'model' => $model,

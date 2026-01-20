@@ -39,9 +39,9 @@ $('#field-search-form').on('change', 'input', function(event){
             'id' => 'field-search-form',
     ]); ?>
     <div class="row">
-        <!--    <div class="col-md-2 col-sm-3 col-5">-->
-        <!--        --><?php //= $form->field($model, 'aza_id')->dropDownList(Aza::getAzaList(), ['prompt' => ''])    ?>
-        <!--    </div>-->
+        <div class="col-md-2 col-sm-3 col-5">
+            <?= $form->field($model, 'aza_id')->dropDownList(Aza::getAzaList(), ['prompt' => '']) ?>
+        </div>
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'p_no') ?>
         </div>
@@ -50,6 +50,9 @@ $('#field-search-form').on('change', 'input', function(event){
         </div>
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'search_usage')->dropDownList(Usage::getTypeAndUsageList(), ['prompt' => '']) ?>
+        </div>
+        <div class="col-md-2 col-sm-3 col-5">
+            <?= $form->field($model, 'note') ?>
         </div>
 
         <div class="form-group search-buttons col-md-2 col-sm-3 col-4">

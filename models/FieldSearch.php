@@ -138,7 +138,7 @@ class FieldSearch extends Field
         ]);
 
         $query->andFilterWhere(['ilike', 'p_no', $this->p_no])
-            ->andFilterWhere(['ilike', 'note', $this->note]);
+            ->andFilterWhere(['ilike', 'field.note', $this->note]);
 
         if ($this->search_name != '') {
             $query->andWhere(['or',

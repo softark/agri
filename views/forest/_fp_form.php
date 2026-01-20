@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Aza;
+use app\models\Forest;
 use app\models\ForestPerson;
 use app\models\Frtype;
 use app\models\Icon;
@@ -20,7 +21,7 @@ use yii\widgets\DetailView;
             <div class="col-lg-4 col-md-6">
                 <?php
                 $attributes = [
-                        'id',
+                    // 'id',
                         [
                                 'attribute' => 'aza_id',
                                 'value' => function ($model) {
@@ -37,7 +38,7 @@ use yii\widgets\DetailView;
                         [
                                 'attribute' => 'area',
                                 'value' => function ($model) {
-                                    return number_format($model->area, 2);
+                                    return Forest::getAreaTextFull($model->area);
                                 },
                         ],
                 ];
@@ -62,35 +63,47 @@ use yii\widgets\DetailView;
                 <h2 class="h4"><?= $role_text ?></h2>
                 <table class="table table-bordered table-sm">
                     <thead>
+                    <th>#</th>
                     <th>期間</th>
                     <th><?= $role_text ?></th>
+                    <th>編集対象</th>
                     </thead>
                     <tbody>
                     <?php if ($model->role == ForestPerson::ROLE_OWNER): ?>
                         <?php if (count($model->forest->ownerForestPersons) == 0) : ?>
                             <tr>
+                                <td>1</td>
                                 <td>現在</td>
                                 <td>未設定</td>
+                                <td><?= Icon::getIcon('update') ?></td>
                             </tr>
                         <?php else: ?>
+                            <?php $i = 1; ?>
                             <?php foreach ($model->forest->ownerForestPersons as $ownerFp): ?>
                                 <tr>
+                                    <td><?= $i++ ?></td>
                                     <td><?= $ownerFp->valid_from_text ?> ～ <?= $ownerFp->valid_to_text ?></td>
                                     <td><?= $ownerFp->person->name ?></td>
+                                    <td><?= $ownerFp->id == $model->id ? Icon::getIcon('update') : '&nbsp;' ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     <?php else: ?>
                         <?php if (count($model->forest->managerForestPersons) == 0) : ?>
                             <tr>
+                                <td>1</td>
                                 <td>現在</td>
                                 <td>未設定</td>
+                                <td><?= Icon::getIcon('update') ?></td>
                             </tr>
                         <?php else: ?>
+                            <?php $i = 1; ?>
                             <?php foreach ($model->forest->managerForestPersons as $managerFp): ?>
                                 <tr>
+                                    <td><?= $i++ ?></td>
                                     <td><?= $managerFp->valid_from_text ?> ～ <?= $managerFp->valid_to_text ?></td>
                                     <td><?= $managerFp->person->name ?></td>
+                                    <td><?= $managerFp->id == $model->id ? Icon::getIcon('update') : '&nbsp;' ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -99,7 +112,8 @@ use yii\widgets\DetailView;
                 </table>
 
                 <?= $form->field($model, 'valid_from')->widget(DatePicker::class,
-                        ['type' => DatePicker::TYPE_COMPONENT_APPEND, 'pluginOptions' => ['format' => 'yyyy-MM-dd']]) ?>
+                        ['type' => DatePicker::TYPE_COMPONENT_APPEND, 'pluginOptions' => ['format' => 'yyyy-mm-dd']])
+                        ->label('FROM ... 不詳な最古の日付は "1900-01-01" を入力') ?>
                 <div class="row">
                     <div class="col-3">
                         <?= $form->field($model, 'person_id')
@@ -110,17 +124,10 @@ use yii\widgets\DetailView;
                            id="person-name" disabled><?= $model->person_id ? $model->person->dispname : '&nbsp;'; ?></p>
                     </div>
                     <div class="col-3 pt-4">
-                        <?php if ($model->isNewRecord): ?>
-                            <?= Html::button('選択 ...', ['class' => 'btn btn-primary mt-2', 'id' => 'btn-person']) ?>
-                        <?php else: ?>
-                            <?= Html::button('選択 ...', ['class' => 'btn btn-secondary mt-2', 'disabled' => true, 'id' => 'btn-person']) ?>
-                        <?php endif; ?>
+                        <?= Html::button('選択 ...', ['class' => 'btn btn-primary mt-2', 'id' => 'btn-person']) ?>
                     </div>
                 </div>
                 <?= $form->field($model, 'note')->textInput(['maxlength' => true]) ?>
-                <?php if (!$model->isNewRecord): ?>
-                    <p><?= "ここでは、メモ以外は編集出来ません。${role_text}を変更したい場合は、新しい${role_text}を登録して下さい。" ?></p>
-                <?php endif; ?>
 
                 <div class="form-group">
                     <?php if ($model->isNewRecord): ?>

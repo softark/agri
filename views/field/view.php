@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Field;
 use app\models\FieldPerson;
 use app\models\Icon;
 use yii\bootstrap5\Html;
@@ -21,7 +22,6 @@ $this->params['breadcrumbs'][] = $model->p_no;
         <div class="col-lg-4 col-md-6">
             <?php
             $attributes = [
-                    'id',
                     [
                             'attribute' => 'aza_id',
                             'value' => function ($model) {
@@ -32,7 +32,13 @@ $this->params['breadcrumbs'][] = $model->p_no;
                     [
                             'attribute' => 'f_area',
                             'value' => function ($model) {
-                                return number_format($model->f_area, 2);
+                                return Field::getAreaTextFull($model->f_area);
+                            },
+                    ],
+                    [
+                            'attribute' => 'c_area',
+                            'value' => function ($model) {
+                                return Field::getAreaTextFull($model->c_area);
                             },
                     ],
             ];

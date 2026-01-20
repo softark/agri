@@ -41,6 +41,13 @@ $this->params['breadcrumbs'][] = $this->title;
                             'method' => 'post',
                     ],
             ]) ?>
+            <?= Html::a('農地の面積を修正', ['modify-field-areas'], [
+                    'class' => 'btn btn-warning disabled',
+                    'data' => [
+                            'confirm' => '農地の面積を修正しますか？',
+                            'method' => 'post',
+                    ],
+            ]) ?>
         </p>
 
         <?php echo $this->render('_search', ['model' => $searchModel]); ?>

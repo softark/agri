@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Field;
 use app\models\FieldPerson;
 use app\models\Icon;
 use kartik\date\DatePicker;
@@ -18,7 +19,7 @@ use yii\widgets\DetailView;
             <div class="col-lg-4 col-md-6">
                 <?php
                 $attributes = [
-                        'id',
+                        // 'id',
                         [
                                 'attribute' => 'aza_id',
                                 'value' => function ($model) {
@@ -29,7 +30,13 @@ use yii\widgets\DetailView;
                         [
                                 'attribute' => 'f_area',
                                 'value' => function ($model) {
-                                    return number_format($model->f_area, 2);
+                                    return Field::getAreaTextFull($model->f_area);
+                                },
+                        ],
+                        [
+                                'attribute' => 'c_area',
+                                'value' => function ($model) {
+                                    return Field::getAreaTextFull($model->c_area);
                                 },
                         ],
                 ];
@@ -54,35 +61,47 @@ use yii\widgets\DetailView;
                 <h2 class="h4"><?= $role_text ?></h2>
                 <table class="table table-bordered table-sm">
                     <thead>
+                    <th>#</th>
                     <th>期間</th>
                     <th><?= $role_text ?></th>
+                    <th>編集対象</th>
                     </thead>
                     <tbody>
                     <?php if ($model->role == FieldPerson::ROLE_OWNER): ?>
                         <?php if (count($model->field->ownerFieldPersons) == 0) : ?>
                             <tr>
+                                <td>1</td>
                                 <td>現在</td>
                                 <td>未設定</td>
+                                <td><?= Icon::getIcon('update') ?></td>
                             </tr>
                         <?php else: ?>
+                            <?php $i = 1; ?>
                             <?php foreach ($model->field->ownerFieldPersons as $ownerFp): ?>
                                 <tr>
+                                    <td><?= $i++ ?></td>
                                     <td><?= $ownerFp->valid_from_text ?> ～ <?= $ownerFp->valid_to_text ?></td>
                                     <td><?= $ownerFp->person->name ?></td>
+                                    <td><?= $ownerFp->id == $model->id ? Icon::getIcon('update') : '&nbsp;' ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     <?php else: ?>
                         <?php if (count($model->field->cultivatorFieldPersons) == 0) : ?>
                             <tr>
+                                <td>1</td>
                                 <td>現在</td>
                                 <td>未設定</td>
+                                <td><?= Icon::getIcon('update') ?></td>
                             </tr>
                         <?php else: ?>
+                            <?php $i = 1; ?>
                             <?php foreach ($model->field->cultivatorFieldPersons as $cultivatorFp): ?>
                                 <tr>
+                                    <td><?= $i++ ?></td>
                                     <td><?= $cultivatorFp->valid_from_text ?> ～ <?= $cultivatorFp->valid_to_text ?></td>
                                     <td><?= $cultivatorFp->person->name ?></td>
+                                    <td><?= $cultivatorFp->id == $model->id ? Icon::getIcon('update') : '&nbsp;' ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -91,7 +110,8 @@ use yii\widgets\DetailView;
                 </table>
 
                 <?= $form->field($model, 'valid_from')->widget(DatePicker::class,
-                        ['type' => DatePicker::TYPE_COMPONENT_APPEND, 'pluginOptions' => ['format' => 'yyyy-MM-dd']]) ?>
+                        ['type' => DatePicker::TYPE_COMPONENT_APPEND, 'pluginOptions' => ['format' => 'yyyy-mm-dd']])
+                        ->label('FROM ... 不詳な最古の日付は "1900-01-01" を入力') ?>
                 <div class="row">
                     <div class="col-3">
                         <?= $form->field($model, 'person_id')
@@ -106,9 +126,6 @@ use yii\widgets\DetailView;
                     </div>
                 </div>
                 <?= $form->field($model, 'note')->textInput(['maxlength' => true]) ?>
-                <?php if (!$model->isNewRecord): ?>
-                    <p><?= "ここでは、メモ以外は編集出来ません。${role_text}を変更したい場合は、新しい${role_text}を登録して下さい。" ?></p>
-                <?php endif; ?>
 
                 <div class="form-group">
                     <?php if ($model->isNewRecord): ?>

@@ -11,14 +11,14 @@ use yii\bootstrap5\Html;
 /** @var string|array $ret_route */
 
 $role_text = $model->role == FieldPerson::ROLE_OWNER ? '所有者' : '耕作者';
-$this->title = '農地 : ' . $field->p_no . ' - ' . $role_text . '新規登録';
+$this->title = '農地 : ' . $field->p_no . ' / ' . $role_text . 'を新規登録';
 $this->params['breadcrumbs'][] = ['label' => '農地', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $field->p_no, 'url' => ['view', 'id' => $field->id]];
-$this->params['breadcrumbs'][] = $role_text . '新規編集';
+$this->params['breadcrumbs'][] = $role_text . 'を新規登録';
 ?>
 <div class="field-update">
 
-    <h1><?= Icon::getIconAndLabel('field') . ' : ' . $field->p_no . ' - ' . $role_text . '新規登録' ?></h1>
+    <h1><?= Icon::getIconAndLabel('field') . ' : ' . $field->p_no . ' / ' . $role_text . 'を新規登録' ?></h1>
 
     <?= $this->render('_fp_form', [
                     'model' => $model,

@@ -115,6 +115,35 @@ class Forest extends \yii\db\ActiveRecord
         return $this->_manager_name;
     }
 
+    public static function getAreaText($area, $mode = 'a')
+    {
+        if ($mode == 'a') {
+            if ($area < 10000.0) {
+                return number_format($area / 100.0, 2) . ' a';
+            } else {
+                return number_format($area / 10000.0, 2) . ' ha';
+            }
+        } else {
+            if ($area < 1000.0) {
+                return number_format($area / 100.0, 2) . ' 畝';
+            } elseif ($area < 10000.0) {
+                return number_format($area / 1000.0, 2) . ' 反';
+            } else {
+                return number_format($area / 10000.0, 2) . ' 町';
+            }
+        }
+    }
+
+    public static function getAreaTextFull($area, $mode = 'a')
+    {
+        return self::getAreaTextLong($area, $mode) . ' / ' . number_format($area, 0) . ' ㎡';
+    }
+
+    public static function getAreaTextLong($area)
+    {
+        return self::getAreaText($area, 'a') . ' / ' . self::getAreaText($area, 't');
+    }
+
     /**
      * {@inheritdoc}
      */

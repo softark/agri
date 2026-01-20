@@ -25,8 +25,8 @@ use yii\bootstrap5\ActiveForm;
 
             <?= $form->field($model, 'aza_id')->dropDownList(Aza::getAzaList(), ['prompt' => '']) ?>
             <?= $form->field($model, 'p_no')->textInput(['maxlength' => true]) ?>
-            <?= $form->field($model, 'c_area')->textInput(['disabled' => true]) ?>
-            <?= $form->field($model, 'f_area')->textInput() ?>
+            <?= $form->field($model, 'c_area')->textInput(['disabled' => true])->label('地図面積 - 単位は ㎡') ?>
+            <?= $form->field($model, 'f_area')->textInput()->label('公称面積 - ㎡ で入力') ?>
             <?= $form->field($model, 'note')->textInput(['maxlength' => true]) ?>
 
             <div class="form-group">

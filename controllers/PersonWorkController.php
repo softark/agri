@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Contact;
+use app\models\Field;
 use app\models\Person;
 use app\models\PersonWork;
 use app\models\PersonWorkForm;
@@ -39,6 +40,7 @@ class PersonWorkController extends Controller
                         'reorder-contact' => ['POST'],
                         'delete-contact' => ['POST'],
                         'optimize-contact-names' => ['POST'],
+                        'modify-field-areas' => ['POST'],
                     ],
                 ],
             ]
@@ -126,6 +128,17 @@ class PersonWorkController extends Controller
             Yii::$app->session->setFlash('success', "$count 件の連絡先の名前を修正しました。");
         } else {
             Yii::$app->session->setFlash('warning', "0 件の連絡先の名前を修正しました。");
+        }
+        return $this->redirect(['index']);
+    }
+
+    public function actionModifyFieldAreas()
+    {
+        $count = Field::modifyFieldAreas();
+        if ($count > 0) {
+            Yii::$app->session->setFlash('success', "$count 件の面積を修正しました。");
+        } else {
+            Yii::$app->session->setFlash('warning', "0 件の面積をを修正しました。");
         }
         return $this->redirect(['index']);
     }

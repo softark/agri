@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Forest;
 use app\models\ForestPerson;
 use app\models\Icon;
 use yii\bootstrap5\Html;
@@ -21,7 +22,7 @@ $this->params['breadcrumbs'][] = $model->title;
         <div class="col-lg-4 col-md-6">
             <?php
             $attributes = [
-                    'id',
+                // 'id',
                     [
                             'attribute' => 'aza_id',
                             'value' => function ($model) {
@@ -38,7 +39,7 @@ $this->params['breadcrumbs'][] = $model->title;
                     [
                             'attribute' => 'area',
                             'value' => function ($model) {
-                                return number_format($model->area, 2);
+                                return Forest::getAreaTextFull($model->area);
                             },
                     ],
             ];

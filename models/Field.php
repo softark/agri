@@ -1,4 +1,5 @@
 <?php
+
 namespace app\models;
 
 use Yii;
@@ -58,6 +59,7 @@ class Field extends \yii\db\ActiveRecord
         }
         return $this->_aza_name;
     }
+
     private ?string $_owner_name = null;
 
     public function getOwner_Name()
@@ -100,6 +102,28 @@ class Field extends \yii\db\ActiveRecord
         return $this->_usage_name;
     }
 
+    public static function getAreaText($area, $mode = 'a')
+    {
+        if ($mode == 'a') {
+            if ($area < 10000.0) {
+                return number_format($area / 100.0, 2) . ' a';
+            } else {
+                return number_format($area / 10000.0, 2) . ' ha';
+            }
+        } else {
+            if ($area < 1000.0) {
+                return number_format($area / 100.0, 2) . ' 畝';
+            } else {
+                return number_format($area / 1000.0, 2) . ' 反';
+            }
+        }
+    }
+
+    public static function getAreaTextFull($area)
+    {
+        return self::getAreaText($area, 'a') . ' / ' . self::getAreaText($area, 't') . ' / '. number_format($area, 0) . ' ㎡';
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -137,8 +161,8 @@ class Field extends \yii\db\ActiveRecord
             'owner' => '所有者',
             'cultivator' => '耕作者',
             'usage' => '農地利用状況',
-            'c_area' => '計算面積',
-            'f_area' => '面積',
+            'c_area' => '地図面積',
+            'f_area' => '公称面積',
             'note' => 'メモ',
             'created_at' => '登録日時',
             'created_by' => '登録者',
@@ -190,6 +214,7 @@ class Field extends \yii\db\ActiveRecord
     }
 
     private $_owner_id = -1;
+
     public function getOwner_id()
     {
         if ($this->_owner_id == -1) {
@@ -213,6 +238,7 @@ class Field extends \yii\db\ActiveRecord
     }
 
     private $_cultivators = null;
+
     public function getCultivators()
     {
         if ($this->_cultivators === null) {
@@ -230,6 +256,7 @@ class Field extends \yii\db\ActiveRecord
     }
 
     private $_cultivator_id = -1;
+
     public function getCultivator_id()
     {
         if ($this->_cultivator_id == -1) {
@@ -251,6 +278,7 @@ class Field extends \yii\db\ActiveRecord
     }
 
     private $_usages = null;
+
     public function getUsages()
     {
         if ($this->_usages === null) {
@@ -268,6 +296,7 @@ class Field extends \yii\db\ActiveRecord
     }
 
     private $_usage_id = -1;
+
     public function getUsage_id()
     {
         if ($this->_usage_id == -1) {
@@ -349,5 +378,40 @@ SQL2;
         } else {
             return false;
         }
+    }
+
+    public static function modifyFieldAreas()
+    {
+        $count = 0;
+//        $models = Field::find()->all();
+//        foreach ($models as $model) {
+//            $model->f_area = $model->c_area;
+//            $model->save();
+//            $count++;
+//        }
+//        return $count;
+
+        $path = Yii::getAlias('@app/migrations/data/sato_aza.csv');
+        $fp = fopen($path, 'r');
+        if (!$fp) throw new \RuntimeException("Cannot open: $path");
+
+        $header = fgetcsv($fp);               // 1行目を列名にする想定
+        while (($row = fgetcsv($fp)) !== false) {
+            $p_no = ((int)$row[2]) * 1000;
+            $p_no_next = $p_no + 1000;
+            $area = (double)$row[3] * 100;
+
+            $field = Field::find()
+                ->where('p_no_sort >= :p_no and p_no_sort < :p_no_next',
+                    [':p_no' => $p_no, ':p_no_next' => $p_no_next])
+                ->one();
+            if ($field) {
+                $field->f_area = $area;
+                $field->save();
+                $count++;
+            }
+        }
+        fclose($fp);
+        return $count;
     }
 }

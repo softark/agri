@@ -102,7 +102,7 @@ class ForestSearch extends Forest
                         'desc' => ['pm.yomi' => SORT_DESC, 'p_no_sort' => SORT_ASC],
                     ],
                     'area',
-                    'bite' => [
+                    'note' => [
                         'asc' => ['note' => SORT_ASC, 'p_no_sort' => SORT_ASC],
                         'desc' => ['note' => SORT_DESC, 'p_no_sort' => SORT_ASC],
                     ],
@@ -132,7 +132,7 @@ class ForestSearch extends Forest
         ]);
 
         $query->andFilterWhere(['ilike', 'p_no', $this->p_no])
-            ->andFilterWhere(['ilike', 'note', $this->note]);
+            ->andFilterWhere(['ilike', 'forest.note', $this->note]);
 
         if ($this->search_name != '') {
             $query->andWhere(['or',

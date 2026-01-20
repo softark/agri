@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Aza;
+use app\models\Field;
 use app\models\FieldPerson;
 use app\models\Icon;
 use app\models\Usage;
@@ -20,7 +21,7 @@ use yii\widgets\DetailView;
         <div class="col-lg-4 col-md-6">
             <?php
             $attributes = [
-                    'id',
+                // 'id',
                     [
                             'attribute' => 'aza_id',
                             'value' => function ($model) {
@@ -31,7 +32,13 @@ use yii\widgets\DetailView;
                     [
                             'attribute' => 'f_area',
                             'value' => function ($model) {
-                                return number_format($model->f_area, 2);
+                                return Field::getAreaTextFull($model->f_area);
+                            },
+                    ],
+                    [
+                            'attribute' => 'c_area',
+                            'value' => function ($model) {
+                                return Field::getAreaTextFull($model->c_area);
                             },
                     ],
             ];
@@ -55,27 +62,36 @@ use yii\widgets\DetailView;
             <h2 class="h4">農地利用状況</h2>
             <table class="table table-bordered table-sm">
                 <thead>
+                <th>#</th>
                 <th>期間</th>
-                <th>農地利用状況</th>
+                <th>利用状況</th>
+                <th>編集対象</th>
                 </thead>
                 <tbody>
                 <?php if (count($model->field->fieldUsages) == 0) : ?>
                     <tr>
+                        <td>1</td>
                         <td>現在</td>
                         <td>未設定</td>
+                        <td><?= Icon::getIcon('update') ?></td>
                     </tr>
                 <?php else: ?>
+                    <?php $i = 1; ?>
                     <?php foreach ($model->field->fieldUsages as $fu): ?>
                         <tr>
+                            <td><?= $i++ ?></td>
                             <td><?= $fu->valid_from_text ?> ～ <?= $fu->valid_to_text ?></td>
                             <td><?= $fu->usage->name ?></td>
+                            <td><?= $fu->id == $model->id ? Icon::getIcon('update') : '&nbsp;' ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
                 </tbody>
             </table>
 
-            <?= $form->field($model, 'valid_from')->widget(DatePicker::class, ['type' => DatePicker::TYPE_COMPONENT_APPEND]) ?>
+            <?= $form->field($model, 'valid_from')->widget(DatePicker::class,
+                    ['type' => DatePicker::TYPE_COMPONENT_APPEND, 'pluginOptions' => ['format' => 'yyyy-mm-dd']])
+                    ->label('FROM ... 不詳な最古の日付は "1900-01-01" を入力') ?>
             <?= $form->field($model, 'usage_id')->dropDownList(Usage::getUsageList()) ?>
             <?= $form->field($model, 'note')->textInput(['maxlength' => true]) ?>
 

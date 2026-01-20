@@ -16,75 +16,82 @@ use yii\widgets\Pjax;
 $this->title = '農地';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="field-index" id="field-index">
+    <div class="field-index" id="field-index">
 
-    <h1><?= Icon::getIconAndLabel('field') ?></h1>
+        <h1><?= Icon::getIconAndLabel('field') ?></h1>
 
-    <?php Pjax::begin(); ?>
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+        <?php Pjax::begin(); ?>
+        <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <?= GridView::widget([
-            'dataProvider' => $dataProvider,
-        // 'filterModel' => $searchModel,
-            'showFooter' => true,
-            'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
+        <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+            // 'filterModel' => $searchModel,
+                'showFooter' => true,
+                'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
 
-                    'aza_id',
-                    'p_no',
-                    [
-                            'attribute' => 'owner',
-                            'value' => function ($model) {
-                                return $model->owner_name;
-                            }
-                    ],
-                    [
-                            'attribute' => 'cultivator',
-                            'value' => function ($model) {
-                                return $model->cultivator_name;
-                            }
-                    ],
-                    [
-                            'attribute' => 'usage',
-                            'value' => function ($model) {
-                                return $model->usage_name;
-                            }
-                    ],
-                    [
-                            'attribute' => 'f_area',
-                            'value' => function ($model) {
-                                return number_format($model->c_area, 2);
-                            },
-                            'contentOptions' => ['class' => 'text-end'],
-                            'footer' => number_format(FieldSearch::getFAreaTotal($dataProvider), 2),
-                            'footerOptions' => ['class' => 'text-end'],
-                    ],
-                    'note',
-                    [
-                            'class' => ActionColumn::className(),
-                            'template' => '{view} {update}',
-                            'urlCreator' => function ($action, Field $model, $key, $index, $column) {
-                                return Url::toRoute([$action, 'id' => $model->id]);
-                            }
-                    ],
-                    [
-                            'label' => '地図',
-                            'format' => 'raw',
-                            'value' => function ($model) {
-                                return Html::button(Icon::getIconAndLabel('map-location'),
-                                                ['class' => 'btn-map-open btn btn-sm btn-primary', 'data-url' => $model->mapurl])
-                                        . ' ' .
-                                        Html::a(Icon::getIcon('map-location') . ' i-GIS で見る',
-                                                $model->mapurl,['class' => 'btn btn-sm btn-outline-primary', 'target' => '_blank']);
-                            }
-                    ],
-            ],
-    ]); ?>
+                        [
+                                'attribute' => 'aza_id',
+                                'value' => 'aza_name',
+                        ],
+                        'p_no',
+                        [
+                                'attribute' => 'owner',
+                                'value' => function ($model) {
+                                    return $model->owner_name;
+                                }
+                        ],
+                        [
+                                'attribute' => 'cultivator',
+                                'value' => function ($model) {
+                                    return $model->cultivator_name;
+                                }
+                        ],
+                        [
+                                'attribute' => 'usage',
+                                'value' => function ($model) {
+                                    return $model->usage_name;
+                                }
+                        ],
+                        [
+                                'attribute' => 'f_area',
+                                'value' => function ($model) {
+                                    return Field::getAreaText($model->f_area);
+                                },
+                                'contentOptions' => ['class' => 'text-end'],
+                                'footer' => Field::getAreaText(FieldSearch::getFAreaTotal($dataProvider)),
+                                'footerOptions' => ['class' => 'text-end'],
+                        ],
+                        [
+                                'attribute' => 'c_area',
+                                'value' => function ($model) {
+                                    return Field::getAreaText($model->c_area);
+                                },
+                                'contentOptions' => ['class' => 'text-end'],
+                                'footer' => Field::getAreaText(FieldSearch::getCAreaTotal($dataProvider)),
+                                'footerOptions' => ['class' => 'text-end'],
+                        ],
+                        'note',
+                        [
+                                'format' => 'raw',
+                                'value' => function ($model) {
+                                    return Html::a(Icon::getIconAndLabel('view'), ['view', 'id' => $model->id],
+                                                    ['class' => 'btn btn-sm btn-primary'])
+                                            . ' ' .
+                                            Html::button(Icon::getIconAndLabel('map-location'),
+                                                    ['class' => 'btn-map-open btn btn-sm btn-primary', 'data-url' => $model->mapurl])
+                                            . ' ' .
+                                            Html::a(Icon::getIcon('map-location') . ' i-GIS で見る', $model->mapurl,
+                                                    ['class' => 'btn btn-sm btn-outline-primary', 'target' => '_blank']);
+                                }
+                        ],
+                ],
+        ]); ?>
 
-    <?php Pjax::end(); ?>
-    <?= $this->render('/field/_map_modal') ?>
+        <?php Pjax::end(); ?>
+        <?= $this->render('/field/_map_modal') ?>
 
-</div>
+    </div>
 <?php
 
 $this->registerJs("

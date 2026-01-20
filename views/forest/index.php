@@ -16,80 +16,75 @@ use yii\widgets\Pjax;
 $this->title = '山林';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="forest-index" id="forest-index">
+    <div class="forest-index" id="forest-index">
 
-    <h1><?= Icon::getIconAndLabel('tree') ?></h1>
+        <h1><?= Icon::getIconAndLabel('tree') ?></h1>
 
-    <?php Pjax::begin(); ?>
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
+        <?php Pjax::begin(); ?>
+        <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <?= GridView::widget([
-            'dataProvider' => $dataProvider,
-        // 'filterModel' => $searchModel,
-            'showFooter' => true,
-            'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
+        <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+            // 'filterModel' => $searchModel,
+                'showFooter' => true,
+                'columns' => [
+                        ['class' => 'yii\grid\SerialColumn'],
 
-                    [
-                            'attribute' => 'aza_id',
-                            'value' => function ($model) {
-                                return $model->aza_name;
-                            }
-                    ],
-                    'p_no',
-                    [
-                            'attribute' => 'type_id',
-                            'value' => function ($model) {
-                                return $model->type_name;
-                            }
-                    ],
-                    [
-                            'attribute' => 'owner',
-                            'value' => function ($model) {
-                                return $model->owner_name;
-                            }
-                    ],
-                    [
-                            'attribute' => 'manager',
-                            'value' => function ($model) {
-                                return $model->manager_name;
-                            }
-                    ],
-                    [
-                            'attribute' => 'area',
-                            'value' => function ($model) {
-                                return number_format($model->area, 2);
-                            },
-                            'contentOptions' => ['class' => 'text-end'],
-                            'footer' => number_format(ForestSearch::getAreaTotal($dataProvider), 2),
-                            'footerOptions' => ['class' => 'text-end'],
-                    ],
-                    'note',
-                    [
-                            'class' => ActionColumn::className(),
-                            'template' => '{view} {update}',
-                            'urlCreator' => function ($action, Forest $model, $key, $index, $column) {
-                                return Url::toRoute([$action, 'id' => $model->id]);
-                            }
-                    ],
-                    [
-                            'label' => '地図',
-                            'format' => 'raw',
-                            'value' => function ($model) {
-                                return Html::button(Icon::getIconAndLabel('map-location'),
-                                        ['class' => 'btn-map-open btn btn-sm btn-primary', 'data-url' => $model->mapurl])
-                                        . ' ' .
-                                        Html::a(Icon::getIcon('map-location') . ' i-GIS で見る',
-                                                $model->mapurl,['class' => 'btn btn-sm btn-outline-primary', 'target' => '_blank']);
-                            }
-                    ],
-            ],
-    ]); ?>
+                        [
+                                'attribute' => 'aza_id',
+                                'value' => function ($model) {
+                                    return $model->aza_name;
+                                }
+                        ],
+                        'p_no',
+                        [
+                                'attribute' => 'type_id',
+                                'value' => function ($model) {
+                                    return $model->type_name;
+                                }
+                        ],
+                        [
+                                'attribute' => 'owner',
+                                'value' => function ($model) {
+                                    return $model->owner_name;
+                                }
+                        ],
+                        [
+                                'attribute' => 'manager',
+                                'value' => function ($model) {
+                                    return $model->manager_name;
+                                }
+                        ],
+                        [
+                                'attribute' => 'area',
+                                'value' => function ($model) {
+                                    return Forest::getAreaTextLong($model->area);
+                                },
+                                'contentOptions' => ['class' => 'text-end'],
+                                'footer' => Forest::getAreaTextLong(ForestSearch::getAreaTotal($dataProvider)),
+                                'footerOptions' => ['class' => 'text-end'],
+                        ],
+                        'note',
+                        [
+                                'format' => 'raw',
+                                'value' => function ($model) {
+                                    return Html::a(Icon::getIconAndLabel('view'), ['view', 'id' => $model->id],
+                                                    ['class' => 'btn btn-sm btn-primary'])
+                                            . ' ' .
+                                            Html::button(Icon::getIconAndLabel('map-location'),
+                                                    ['class' => 'btn-map-open btn btn-sm btn-primary', 'data-url' => $model->mapurl])
+                                            . ' ' .
+                                            Html::a(Icon::getIcon('map-location') . ' i-GIS で見る', $model->mapurl,
+                                                    ['class' => 'btn btn-sm btn-outline-primary', 'target' => '_blank']);
+                                }
+                        ],
+                ],
+        ]); ?>
 
-    <?php Pjax::end(); ?>
-    <?= $this->render('/forest/_map_modal') ?>
+        <?php Pjax::end(); ?>
+        <?= $this->render('/forest/_map_modal') ?>
 
-</div>
+    </div>
 
 <?php
 $this->registerJs("
