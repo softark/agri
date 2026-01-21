@@ -215,7 +215,7 @@ VIEW_SQL
         }
         fclose($fp);
 
-        $this->execute('alter sequence forest_person_id_seq restart with 271');
+        $this->execute('alter sequence forest_person_id_seq restart with 279');
     }
 
     /**
