@@ -21,43 +21,36 @@ $this->title = '岩座神農林';
             <p><?= Html::a(Icon::getIconAndLabel('login'), ['/site/login'], ['class' => "btn btn-lg btn-success"]) ?></p>
         <?php else: ?>
             <div class="row">
-                <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
-                    <p><?= Html::a(Icon::getIconAndLabel('field'), ['/field'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
-                </div>
-                <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
-                    <p><?= Html::a(Icon::getIconAndLabel('tree'), ['/forest'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
-                </div>
-                <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
-                    <p><?= Html::a(Icon::getIconAndLabel('person'), ['/person'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
-                </div>
+            <h2 class="h3">データベース</h2>
+            <p>
+                <?= Html::a(Icon::getIconAndLabel('field'), ['/field'], ['class' => 'btn btn-primary btn-lg']) ?>
+                <?= Html::a(Icon::getIconAndLabel('tree'), ['/forest'], ['class' => 'btn btn-primary btn-lg']) ?>
+                <?= Html::a(Icon::getIconAndLabel('person'), ['/person'], ['class' => 'btn btn-primary btn-lg']) ?>
                 <?php if (Yii::$app->user->can('editor')): ?>
-                    <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
-                        <p><?= Html::a(Icon::getIconAndLabel('contact'), ['/contact'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
-                    </div>
-                    <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
-                        <p><?= Html::a(Icon::getIconAndLabel('succeed'), ['/person-relation'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
-                    </div>
+                    <?= Html::a(Icon::getIconAndLabel('contact'), ['/contact'], ['class' => 'btn btn-primary btn-lg']) ?>
+                    <?= Html::a(Icon::getIconAndLabel('succeed'), ['/person-relation'], ['class' => 'btn btn-primary btn-lg']) ?>
                 <?php endif; ?>
+            </p>
+            <?php if (Yii::$app->user->can('editor')): ?>
+                </div>
+                <div class="row">
+                <h2 class="h4">マスター</h2>
+                <p>
+                    <?= Html::a('字（あざ）', ['/aza'], ['class' => 'btn btn-primary btn-lg']) ?>
+                    <?= Html::a('森林タイプ', ['/frtype'], ['class' => 'btn btn-primary btn-lg']) ?>
+                    <?= Html::a('農地利用状況', ['/usage'], ['class' => 'btn btn-primary btn-lg']) ?>
+                </p>
                 <?php if (Yii::$app->user->can('admin')): ?>
-                    <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
-                        <p><?= Html::a('字（あざ）', ['/aza'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
                     </div>
-                    <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
-                        <p><?= Html::a('森林タイプ', ['/frtype'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
-                    </div>
-                    <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
-                        <p><?= Html::a('農地利用状況', ['/usage'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
-                    </div>
-                    <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
-                        <p><?= Html::a('名簿ワーク', ['/person-work'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
-                    </div>
-                    <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
-                        <p><?= Html::a('棚田', ['/isg-tanada'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
-                    </div>
-                    <div class="col-sm-6 col-md-4 col-lg-3 col-xxl-2">
-                        <p><?= Html::a('山林', ['/isg-forest'], ['class' => 'btn btn-primary btn-lg d-block']) ?></p>
-                    </div>
+                    <div class="row">
+                    <h2 class="h4">保守作業</h2>
+                    <p>
+                        <?= Html::a('名簿ワーク', ['/person-work'], ['class' => 'btn btn-primary btn-lg']) ?>
+                        <?= Html::a('棚田', ['/isg-tanada'], ['class' => 'btn btn-primary btn-lg']) ?>
+                        <?= Html::a('山林', ['/isg-forest'], ['class' => 'btn btn-primary btn-lg']) ?>
+                    </p>
                 <?php endif; ?>
+            <?php endif; ?>
             </div>
             <!--            <p>-->
             <?php //= Html::a(Icon::getIcon('memo') . ' メモを見る', ['/memo/index'], ['class' => "btn btn-lg btn-success"]) ?><!--</p>-->
@@ -73,4 +66,3 @@ $this->title = '岩座神農林';
         <?php endif; ?>
 
     </div>
-</div>

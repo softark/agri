@@ -68,14 +68,19 @@ $this->params['breadcrumbs'][] = $this->title;
                         [
                                 'format' => 'raw',
                                 'value' => function ($model) {
-                                    return Html::a(Icon::getIconAndLabel('view'), ['view', 'id' => $model->id],
-                                                    ['class' => 'btn btn-sm btn-primary'])
-                                            . ' ' .
+                                    $buttons = [
+                                            Html::a(Icon::getIconAndLabel('view'), ['view', 'id' => $model->id],
+                                                    ['class' => 'btn btn-sm btn-primary']),
                                             Html::button(Icon::getIconAndLabel('map-location'),
-                                                    ['class' => 'btn-map-open btn btn-sm btn-primary', 'data-url' => $model->mapurl])
-                                            . ' ' .
+                                                    ['class' => 'btn-map-open btn btn-sm btn-primary', 'data-url' => $model->mapurl]),
                                             Html::a(Icon::getIcon('map-location') . ' i-GIS で見る', $model->mapurl,
-                                                    ['class' => 'btn btn-sm btn-outline-primary', 'target' => '_blank']);
+                                                    ['class' => 'btn btn-sm btn-outline-primary', 'target' => '_blank']),
+                                    ];
+                                    if (Yii::$app->user->can('forest.edit')) {
+                                        $buttons[] = Html::a(Icon::getIconAndLabel('update'), ['update', 'id' => $model->id],
+                                                ['class' => 'btn btn-sm btn-primary']);
+                                    }
+                                    return implode(' ', $buttons);
                                 }
                         ],
                 ],

@@ -43,9 +43,9 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
 <header id="header">
     <?php
     NavBar::begin([
-            'brandLabel' => Html::img('/favicon-96x96.png', ['width' => 24, 'height' => 24, 'style' => 'margin-top:-8px;']) . ' ' . Yii::$app->name,
+            'brandLabel' => Html::img('/favicon-96x96.png', ['width' => 24, 'height' => 24, 'style' => 'margin-top:-8px;'])/* . ' ' . Yii::$app->name*/,
             'brandUrl' => Yii::$app->homeUrl,
-            'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
+            'options' => ['class' => 'navbar-expand-lg navbar-dark bg-dark fixed-top']
     ]);
     $items = [
     ];
@@ -56,8 +56,6 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
         if (Yii::$app->user->can('editor')) {
             $items[] = ['label' => Icon::getIconAndLabel('contact'), 'url' => ['/contact'], 'encode' => false];
             $items[] = ['label' => Icon::getIconAndLabel('succeed'), 'url' => ['/person-relation'], 'encode' => false];
-        }
-        if (Yii::$app->user->can('admin')) {
             $items[] = [
                     'label' => 'マスター',
                     'items' => [
@@ -66,8 +64,10 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
                             ['label' => '農地利用状況', 'url' => ['/usage'], 'encode' => false],
                     ]
             ];
+        }
+        if (Yii::$app->user->can('admin')) {
             $items[] = [
-                    'label' => '名簿作業',
+                    'label' => '保守作業',
                     'items' => [
                             ['label' => '名簿ワーク', 'url' => ['/person-work'], 'encode' => false],
                             ['label' => '棚田', 'url' => ['/isg-tanada'], 'encode' => false],

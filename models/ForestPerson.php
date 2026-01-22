@@ -82,7 +82,7 @@ class ForestPerson extends \yii\db\ActiveRecord
             'id' => 'ID',
             'role' => '役割',
             'forest_id' => '山林',
-            'person_id' => '名簿',
+            'person_id' => '名義人',
             'valid_from' => 'FROM',
             'valid_from_text' => 'FROM',
             'valid_to' => 'TO',

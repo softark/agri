@@ -20,6 +20,16 @@ $this->params['breadcrumbs'][] = $model->p_no;
 
     <div class="row">
         <div class="col-lg-4 col-md-6">
+            <p>
+                <?php if (yii::$app->user->can('forest.edit')): ?>
+                    <?= Html::a(Icon::getIconAndLabel('update'),
+                            ['update', 'id' => $model->id, 'ret_route' => ['view', 'id' => $model->id]],
+                            ['class' => 'btn btn-primary']) ?>
+                <?php endif; ?>
+                <?= Html::a(Icon::getIcon('map-location') . ' i-GIS で見る', $model->mapurl,
+                        ['class' => 'btn btn-outline-primary', 'target' => '_blank']) ?>
+                <?= Html::a(Icon::getIconAndLabel('go-back'), ['index'], ['class' => 'btn btn-outline-secondary']) ?>
+            </p>
             <?php
             $attributes = [
                     [
@@ -61,183 +71,113 @@ $this->params['breadcrumbs'][] = $model->p_no;
                         }
                 ];
             }
-            $attributes[] = [
-                    'label' => '操作',
-                    'format' => 'raw',
-                    'value' => function ($model) {
-                        $buttons = [];
-                        if (yii::$app->user->can('field.edit')) {
-                            $buttons[] = Html::a(Icon::getIconAndLabel('update'),
-                                    ['update', 'id' => $model->id, 'ret_route' => ['view', 'id' => $model->id]],
-                                    ['class' => 'btn btn-sm btn-primary']);
-                        }
-                        $buttons[] = Html::a(Icon::getIcon('map-location') . ' i-GIS で見る', $model->mapurl,
-                                ['class' => 'btn btn-sm btn-outline-primary', 'target' => '_blank']);
-                        return implode(' ', $buttons);
-                    }
-            ];
             ?>
             <?= DetailView::widget([
                     'model' => $model,
                     'attributes' => $attributes,
             ]) ?>
-            <p>
-                <?= Html::a(Icon::getIconAndLabel('go-back'), ['index'], ['class' => 'btn btn-outline-secondary']) ?>
-            </p>
-            <h2 class="h4">所有者</h2>
-            <?php if (count($model->ownerFieldPersons) == 0): ?>
-                <p>
-                    （未設定）
-                    <?php if (\yii::$app->user->can('field.edit')) : ?>
-                        <?= Html::a(Icon::getIcon('plus') . ' 所有者を登録',
-                                ['add-field-person', 'id' => $model->id, 'role' => FieldPerson::ROLE_OWNER],
-                                ['class' => 'btn btn-sm btn-primary']) ?>
-                    <?php endif; ?>
-                </p>
-            <?php else: ?>
-                <?php foreach ($model->ownerFieldPersons as $ofp): ?>
-                    <?php
-                    $attributes = [
-                            [
-                                    'label' => '名前',
-                                    'value' => function ($model) {
-                                        return $model->person->dispname;
-                                    },
-                            ],
-                            [
-                                    'label' => '期間',
-                                    'value' => function ($model) {
-                                        return $model->valid_from_text . ' ～ ' . $model->valid_to_text;
-                                    }
-                            ],
-                    ];
-                    if ($ofp->note != '') {
-                        $attributes[] = 'note';
-                    }
-                    if (\yii::$app->user->can('field.edit')) {
-                        $attributes[] = [
-                                'label' => '操作',
-                                'format' => 'raw',
-                                'value' => function ($model) {
-                                    return Html::a(Icon::getIconAndLabel('update'),
-                                            ['update-field-person', 'id' => $model->id, 'role' => FieldPerson::ROLE_OWNER],
-                                            ['class' => 'btn btn-sm btn-primary']);
-                                }
-                        ];
-                    }
-                    ?>
-                    <?= DetailView::widget(['model' => $ofp, 'attributes' => $attributes]) ?>
-                <?php endforeach; ?>
-                <?php if (\yii::$app->user->can('field.edit')) : ?>
-                    <p>
-                        <?= Html::a(Icon::getIcon('plus') . ' 新しい所有者を登録',
-                                ['add-field-person', 'id' => $model->id, 'role' => FieldPerson::ROLE_OWNER],
-                                ['class' => 'btn btn-sm btn-primary']) ?>
-                    </p>
+            <h2 class="h5">所有者</h2>
+            <table class="table table-striped table-bordered table-sm">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>FROM</th>
+                    <th>TO</th>
+                    <th>所有者</th>
+                    <th>メモ</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php if (count($model->ownerFieldPersons) == 0): ?>
+                    <tr>
+                        <td>1</td>
+                        <td>****</td>
+                        <td>現在</td>
+                        <td>未登録</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                <?php else: ?>
+                    <?php $n = 1; ?>
+                    <?php foreach ($model->ownerFieldPersons as $ofp): ?>
+                        <tr>
+                            <td><?= $n++ ?></td>
+                            <td><?= $ofp->valid_from_text ?></td>
+                            <td><?= $ofp->valid_to_text ?></td>
+                            <td><?= $ofp->person->dispname ?></td>
+                            <td><?= $ofp->note ?></td>
+                        </tr>
+                    <?php endforeach; ?>
                 <?php endif; ?>
-            <?php endif; ?>
-            <h2 class="h4">耕作者</h2>
-            <?php if (count($model->cultivatorFieldPersons) == 0): ?>
-                <p>（未設定）
-                    <?php if (\yii::$app->user->can('field.edit')) : ?>
-                        <?= Html::a(Icon::getIcon('plus') . ' 耕作者を登録',
-                                ['add-field-person', 'id' => $model->id, 'role' => FieldPerson::ROLE_CULTIVATOR],
-                                ['class' => 'btn btn-sm btn-primary']) ?>
-                    <?php endif; ?>
-                </p>
-            <?php else: ?>
-                <?php foreach ($model->cultivatorFieldPersons as $cfp): ?>
-                    <?php
-                    $attributes = [
-                            [
-                                    'label' => '名前',
-                                    'value' => function ($model) {
-                                        return $model->person->dispname;
-                                    },
-                            ],
-                            [
-                                    'label' => '期間',
-                                    'value' => function ($model) {
-                                        return $model->valid_from_text . ' ～ ' . $model->valid_to_text;
-                                    }
-                            ],
-                    ];
-                    if ($cfp->note != '') {
-                        $attributes[] = 'note';
-                    }
-                    if (\yii::$app->user->can('field.edit')) {
-                        $attributes[] = [
-                                'label' => '操作',
-                                'format' => 'raw',
-                                'value' => function ($model) {
-                                    return Html::a(Icon::getIconAndLabel('update'),
-                                            ['update-field-person', 'id' => $model->id],
-                                            ['class' => 'btn btn-sm btn-primary']);
-                                }
-                        ];
-                    }
-                    ?>
-                    <?= DetailView::widget(['model' => $cfp, 'attributes' => $attributes]) ?>
-                <?php endforeach; ?>
-                <?php if (\yii::$app->user->can('field.edit')) : ?>
-                    <p>
-                        <?= Html::a(Icon::getIcon('plus') . ' 新しい管理者を登録',
-                                ['add-field-person', 'id' => $model->id, 'role' => FieldPerson::ROLE_CULTIVATOR],
-                                ['class' => 'btn btn-sm btn-primary']) ?>
-                    </p>
+                </tbody>
+            </table>
+            <h2 class="h5">耕作者</h2>
+            <table class="table table-striped table-bordered table-sm">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>FROM</th>
+                    <th>TO</th>
+                    <th>耕作者</th>
+                    <th>メモ</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php if (count($model->cultivatorFieldPersons) == 0): ?>
+                    <tr>
+                        <td>1</td>
+                        <td>****</td>
+                        <td>現在</td>
+                        <td>未登録</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                <?php else: ?>
+                    <?php $n = 1; ?>
+                    <?php foreach ($model->cultivatorFieldPersons as $cfp): ?>
+                        <tr>
+                            <td><?= $n++ ?></td>
+                            <td><?= $cfp->valid_from_text ?></td>
+                            <td><?= $cfp->valid_to_text ?></td>
+                            <td><?= $cfp->person->dispname ?></td>
+                            <td><?= $cfp->note ?></td>
+                        </tr>
+                    <?php endforeach; ?>
                 <?php endif; ?>
-            <?php endif; ?>
-            <h2 class="h4">農地利用状況</h2>
-            <?php if (count($model->fieldUsages) == 0): ?>
-                <p>（未設定）
-                    <?php if (\yii::$app->user->can('field.edit')) : ?>
-                        <?= Html::a(Icon::getIcon('plus') . ' 農地利用状況を登録',
-                                ['add-field-usage', 'id' => $model->id],
-                                ['class' => 'btn btn-sm btn-primary']) ?>
-                    <?php endif; ?>
-                </p>
-            <?php else: ?>
-                <?php foreach ($model->fieldUsages as $fu): ?>
-                    <?php
-                    $attributes = [
-                            [
-                                    'label' => '農地利用状況',
-                                    'value' => function ($model) {
-                                        return $model->usage->name;
-                                    },
-                            ],
-                            [
-                                    'label' => '期間',
-                                    'value' => function ($model) {
-                                        return $model->valid_from_text . ' ～ ' . $model->valid_to_text;
-                                    }
-                            ],
-                    ];
-                    if ($fu->note != '') {
-                        $attributes[] = 'note';
-                    }
-                    if (\yii::$app->user->can('field.edit')) {
-                        $attributes[] = [
-                                'label' => '操作',
-                                'format' => 'raw',
-                                'value' => function ($model) {
-                                    return Html::a(Icon::getIconAndLabel('update'),
-                                            ['update-field-usage', 'id' => $model->id],
-                                            ['class' => 'btn btn-sm btn-primary']);
-                                }
-                        ];
-                    }
-                    ?>
-                    <?= DetailView::widget(['model' => $fu, 'attributes' => $attributes]) ?>
-                <?php endforeach; ?>
-                <?php if (\yii::$app->user->can('field.edit')) : ?>
-                    <p>
-                        <?= Html::a(Icon::getIcon('plus') . ' 新しい利用状況を登録',
-                                ['add-field-usage', 'id' => $model->id],
-                                ['class' => 'btn btn-sm btn-primary']) ?>
-                    </p>
+                </tbody>
+            </table>
+            <h2 class="h5">利用状況</h2>
+            <table class="table table-striped table-bordered table-sm">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>FROM</th>
+                    <th>TO</th>
+                    <th>利用状況</th>
+                    <th>メモ</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php if (count($model->fieldUsages) == 0): ?>
+                    <tr>
+                        <td>1</td>
+                        <td>****</td>
+                        <td>現在</td>
+                        <td>未登録</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                <?php else: ?>
+                    <?php $n = 1; ?>
+                    <?php foreach ($model->fieldUsages as $fo): ?>
+                        <tr>
+                            <td><?= $n++ ?></td>
+                            <td><?= $fo->valid_from_text ?></td>
+                            <td><?= $fo->valid_to_text ?></td>
+                            <td><?= $fo->usage->name ?></td>
+                            <td><?= $fo->note ?></td>
+                        </tr>
+                    <?php endforeach; ?>
                 <?php endif; ?>
-            <?php endif; ?>
+                </tbody>
+            </table>
         </div>
         <div class="col-lg-8 col-md-6">
             <iframe src="<?= $model->mapurl ?>" style="width:100%; height:75vh;"></iframe>

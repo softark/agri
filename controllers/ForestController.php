@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Forest;
+use app\models\ForestForm;
 use app\models\ForestPerson;
 use app\models\ForestSearch;
 use Yii;
@@ -58,8 +59,34 @@ class ForestController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id, $ret_route = null)
+    public function actionUpdate($id, $mode = null, $ret_route = null)
     {
+        if ($ret_route == null) {
+            $ret_route = ['index'];
+        }
+
+        $model = new ForestForm();
+        $model->loadModels($id);
+
+        if ($this->request->isPost) {
+            $ret =$model->loadPost($mode, $this->request->post());
+            if ($ret) {
+                $ret = $model->saveModels($mode);
+                if ($ret) {
+                    if ($mode == 'o' || $mode == 'm') {
+                        return $this->redirect(['update', 'id' => $id, 'ret_route' => $ret_route]);
+                    }
+                    return $this->redirect($ret_route);
+                }
+            }
+        }
+
+        return $this->render('update_ex', [
+            'model' => $model,
+            'ret_route' => $ret_route,
+        ]);
+
+        /*
         $model = $this->findModel($id);
         if ($ret_route == null) {
             $ret_route = ['index'];
@@ -73,6 +100,7 @@ class ForestController extends Controller
             'model' => $model,
             'ret_route' => $ret_route,
         ]);
+        */
     }
 
     /**
