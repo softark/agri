@@ -56,6 +56,7 @@ class Icon
         'tree' => ['label' => '山林','class' => 'fa-solid fa-tree'],
         'field' => ['label' => '農地','class' => 'fa-solid fa-seedling'],
         'map-location' => ['label' => '地図','class' => 'fa-solid fa-location-dot'],
+        'excel' => ['label' => 'Excel','class' => 'fa-solid fa-file-excel'],
     ];
 
     /**

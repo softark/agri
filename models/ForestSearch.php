@@ -78,6 +78,9 @@ class ForestSearch extends Forest
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => $pageSize,
+            ],
             'sort' => [
                 'defaultOrder' => ['p_no' => SORT_ASC],
                 'attributes' => [

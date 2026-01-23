@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Field;
+use app\models\FieldExcel;
 use app\models\FieldForm;
 use app\models\FieldPerson;
 use app\models\FieldSearch;
@@ -28,7 +29,7 @@ class FieldController extends Controller
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
-                        'delete' => ['POST'],
+                        'export' => ['POST'],
                     ],
                 ],
             ]
@@ -57,6 +58,22 @@ class FieldController extends Controller
             ]);
         }
     }
+
+    /**
+     * Export to Excel
+     */
+    public function actionExport()
+    {
+        $searchModel = new FieldSearch();
+        $dataProvider = $searchModel->search([], 0);
+        if ($dataProvider->getCount() == 0) {
+            return $this->goBack();
+        }
+
+        FieldExcel::exportFieldList($dataProvider);
+        return null;
+    }
+
 
     /**
      * Displays a single Field model.

@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Forest;
+use app\models\ForestExcel;
 use app\models\ForestForm;
 use app\models\ForestPerson;
 use app\models\ForestSearch;
@@ -16,6 +17,24 @@ use yii\filters\VerbFilter;
  */
 class ForestController extends Controller
 {
+    /**
+     * @inheritDoc
+     */
+    public function behaviors()
+    {
+        return array_merge(
+            parent::behaviors(),
+            [
+                'verbs' => [
+                    'class' => VerbFilter::className(),
+                    'actions' => [
+                        'export' => ['POST'],
+                    ],
+                ],
+            ]
+        );
+    }
+
     /**
      * Lists all Forest models.
      *
@@ -37,6 +56,21 @@ class ForestController extends Controller
                 'dataProvider' => $dataProvider,
             ]);
         }
+    }
+
+    /**
+     * Export to Excel
+     */
+    public function actionExport()
+    {
+        $searchModel = new ForestSearch();
+        $dataProvider = $searchModel->search([], 0);
+        if ($dataProvider->getCount() == 0) {
+            return $this->goBack();
+        }
+
+        ForestExcel::exportForestList($dataProvider);
+        return null;
     }
 
     /**
