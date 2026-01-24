@@ -69,7 +69,7 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
             $items[] = [
                     'label' => '保守作業',
                     'items' => [
-                            ['label' => '名簿ワーク', 'url' => ['/person-work'], 'encode' => false],
+                            ['label' => '関係者ワーク', 'url' => ['/person-work'], 'encode' => false],
                             ['label' => '棚田', 'url' => ['/isg-tanada'], 'encode' => false],
                             ['label' => '山林', 'url' => ['/isg-forest'], 'encode' => false],
                     ]

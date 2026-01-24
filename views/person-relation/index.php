@@ -23,38 +23,47 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a(Icon::getIcon('plus') . ' 引継の登録', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
     <?php Pjax::begin(); ?>
+    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <?= GridView::widget([
-            'dataProvider' => $dataProvider,
-        // 'filterModel' => $searchModel,
-            'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
-                    [
-                            'attribute' => 'from_person_id',
-                            'format' => 'raw',
-                            'value' => function ($model) {
-                                return Html::a($model->fromPerson->dispname, ['/person/view', 'id' => $model->from_person_id]);
-                            }
-                    ],
-                    [
-                            'attribute' => 'to_person_id',
-                            'format' => 'raw',
-                            'value' => function ($model) {
-                                return Html::a($model->toPerson->dispname, ['/person/view', 'id' => $model->to_person_id]);
-                            }
-                    ],
-                    'note',
-                    [
-                            'class' => ActionColumn::className(),
-                            'urlCreator' => function ($action, PersonRelation $model, $key, $index, $column) {
-                                return Url::toRoute([$action, 'id' => $model->id]);
-                            }
-                    ],
-            ],
-    ]); ?>
+    <div class="row">
+        <div class="col-lg-8">
 
+            <?= GridView::widget([
+                    'dataProvider' => $dataProvider,
+                // 'filterModel' => $searchModel,
+                    'columns' => [
+                            ['class' => 'yii\grid\SerialColumn'],
+                            [
+                                    'attribute' => 'from_person_id',
+                                    'format' => 'raw',
+                                    'value' => function ($model) {
+                                        return Html::a($model->fromPerson->dispname,
+                                                ['/person/view', 'id' => $model->from_person_id],
+                                                ['class' => 'btn btn-sm btn-outline-primary']);
+                                    }
+                            ],
+                            [
+                                    'attribute' => 'to_person_id',
+                                    'format' => 'raw',
+                                    'value' => function ($model) {
+                                        return Html::a($model->toPerson->dispname,
+                                                ['/person/view', 'id' => $model->to_person_id],
+                                                ['class' => 'btn btn-sm btn-outline-primary']);
+                                    }
+                            ],
+                            'note',
+                            [
+                                    'class' => ActionColumn::class,
+                                    'template' => '{update} {delete}',
+                                    'urlCreator' => function ($action, PersonRelation $model, $key, $index, $column) {
+                                        return Url::toRoute([$action, 'id' => $model->id]);
+                                    }
+                            ],
+                    ],
+            ]); ?>
+        </div>
+    </div>
     <?php Pjax::end(); ?>
 
 </div>

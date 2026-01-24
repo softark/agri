@@ -35,17 +35,24 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'attribute' => 'aza_id',
                                 'value' => 'aza_name',
                         ],
-                        'p_no',
+                        [
+                                'attribute' => 'p_no',
+                                'value' => 'p_str',
+                        ],
                         [
                                 'attribute' => 'owner',
+                                'format' => 'html',
                                 'value' => function ($model) {
-                                    return $model->owner_name;
+                                    return $model->owner ? Html::a($model->owner_name, ['/person/view', 'id' => $model->owner_id],
+                                            ['class' => 'btn btn-sm btn-outline-primary']) : '&nbsp;';
                                 }
                         ],
                         [
                                 'attribute' => 'cultivator',
+                                'format' => 'html',
                                 'value' => function ($model) {
-                                    return $model->cultivator_name;
+                                    return $model->cultivator ? Html::a($model->cultivator_name, ['/person/view', 'id' => $model->cultivator_id],
+                                            ['class' => 'btn btn-sm btn-outline-primary']) : '&nbsp;';
                                 }
                         ],
                         [
@@ -80,9 +87,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                             Html::a(Icon::getIconAndLabel('view'), ['view', 'id' => $model->id],
                                                     ['class' => 'btn btn-sm btn-primary']),
                                             Html::button(Icon::getIconAndLabel('map-location'),
-                                                    ['class' => 'btn-map-open btn btn-sm btn-primary', 'data-url' => $model->mapurl]),
+                                                    ['class' => 'btn-map-open btn btn-sm btn-outline-success', 'data-url' => $model->mapurl]),
                                             Html::a(Icon::getIcon('map-location') . ' i-GIS で見る', $model->mapurl,
-                                                    ['class' => 'btn btn-sm btn-outline-primary', 'target' => '_blank']),
+                                                    ['class' => 'btn btn-sm btn-outline-success', 'target' => '_blank']),
                                     ];
                                     if (Yii::$app->user->can('forest.edit')) {
                                         $buttons[] = Html::a(Icon::getIconAndLabel('update'), ['update', 'id' => $model->id],
@@ -144,7 +151,7 @@ btn.on('click', function(){
     if ($('div.summary div.summary')[0]) {
         startLoading();
         form.trigger('submit');
-        setTimeout(stopLoading, 15000);
+        setTimeout(stopLoading, 5000);
     } else {
         alert('ダウンロードするデータがありません。');
     }

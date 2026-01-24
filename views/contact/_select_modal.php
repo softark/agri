@@ -5,6 +5,7 @@
 
 use app\models\Icon;
 use app\models\ContactSearch;
+use app\models\Person;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Modal;
 use yii\bootstrap5\ActiveForm;
@@ -41,13 +42,13 @@ Modal::begin([
 ]); ?>
     <div class="row">
         <div class="col-md-2 col-sm-3 col-5">
+            <?= $form->field($searchModel, 'p_type')->dropDownList(Person::getTypes(), ['prompt' => '']) ?>
+        </div>
+        <div class="col-md-3 col-sm-3 col-5">
             <?= $form->field($searchModel, 'search_name') ?>
         </div>
-        <div class="col-md-2 col-sm-3 col-5">
+        <div class="col-md-3 col-sm-3 col-5">
             <?= $form->field($searchModel, 'address1') ?>
-        </div>
-        <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($searchModel, 'search_phone') ?>
         </div>
         <div class="form-group col-md-2 col-sm-2">
             <?= Html::submitButton(Icon::getBtnText('search'), ['class' => 'btn btn-primary btn-sm d-block']) ?>

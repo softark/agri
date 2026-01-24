@@ -9,8 +9,8 @@ use yii\grid\GridView;
 /** @var app\models\Person $model */
 /** @var app\models\Contact $contact */
 
-$this->title = '名簿 : ' . $model->dispname . ' / 連絡先追加';
-$this->params['breadcrumbs'][] = ['label' => '名簿', 'url' => ['index']];
+$this->title = '関係者 : ' . $model->dispname . ' / 連絡先追加';
+$this->params['breadcrumbs'][] = ['label' => '関係者', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->dispname, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = '連絡先追加';
 

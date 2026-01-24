@@ -34,7 +34,7 @@ class PersonWorkSearch extends PersonWork
         return ArrayHelper::merge(
             parent::attributeLabels(),
             [
-                'p_link' => '名簿へのリンク',
+                'p_link' => '関係者へのリンク',
             ]);
     }
 

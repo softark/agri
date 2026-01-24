@@ -10,8 +10,8 @@ use yii\grid\GridView;
 /** @var app\models\Person $person */
 /** @var app\models\Contact $contact */
 
-$this->title = '名簿ワーク : ' . $model->name . ' / 連絡先追加';
-$this->params['breadcrumbs'][] = ['label' => '名簿ワーク', 'url' => ['index']];
+$this->title = '関係者ワーク : ' . $model->name . ' / 連絡先追加';
+$this->params['breadcrumbs'][] = ['label' => '関係者ワーク', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = '連絡先追加';
 
@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = '連絡先追加';
         'contact' => $contact,
     ]) ?>
 
-    <h3>参照している名簿ワーク</h3>
+    <h3>参照している関係者ワーク</h3>
     <?= GridView::widget([
             'dataProvider' => (new PersonWorkSearch(['person_id' => $model->person_id]))->search([]),
             'columns' => [

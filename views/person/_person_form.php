@@ -118,7 +118,7 @@ $('#address1').autocomplete({
             <hr/>
             <?= $form->field($model, 'has_contact')->checkbox(['id' => 'has-contact']) ?>
             <p><?= Html::button(Icon::getIcon('contact') . ' 既存の連絡先をコピー', ['id' => 'btn-contact-select', 'class' => 'btn btn-outline-secondary']) ?></p>
-            <p>名簿と連絡先の名前が同じ場合は、組織名・役割・肩書、宛名（前半）、宛名（後半）は入力する必要はありません</p>
+            <p>関係者と連絡先の名前が同じ場合は、役割／肩書、連絡先名前半、連絡先名後半は省略して、郵便番号以下を入力してください</p>
             <?= $form->field($model, 'role')->textInput(['maxlength' => true, 'id' => 'role']) ?>
             <?= $form->field($model, 'contact_name1')->textInput(['maxlength' => true,  'id' => 'contact-name1']) ?>
             <?= $form->field($model, 'contact_name2')->textInput(['maxlength' => true,  'id' => 'contact-name2']) ?>

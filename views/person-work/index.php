@@ -12,7 +12,7 @@ use yii\widgets\Pjax;
 /** @var app\models\PersonWorkSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = '名簿ワーク';
+$this->title = '関係者ワーク';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
     <div id="person-work-index" class="person-work-index">
@@ -23,14 +23,14 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Html::a('棚田テーブルからインポート', ['import-tanada'], [
                     'class' => 'btn btn-success',
                     'data' => [
-                            'confirm' => '棚田テーブルから名簿ワークのエントリをインポートしますか？',
+                            'confirm' => '棚田テーブルから関係者ワークのエントリをインポートしますか？',
                             'method' => 'post',
                     ],
             ]) ?>
             <?= Html::a('山林テーブルからインポート', ['import-isg-forest'], [
                     'class' => 'btn btn-success',
                     'data' => [
-                            'confirm' => '山林テーブルから名簿ワークのエントリをインポートしますか？',
+                            'confirm' => '山林テーブルから関係者ワークのエントリをインポートしますか？',
                             'method' => 'post',
                     ],
             ]) ?>
@@ -76,7 +76,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 }
                         ],
                         [
-                                'label' => '名簿へのリンク',
+                                'label' => '関係者へのリンク',
                                 'format' => 'raw',
                                 'contentOptions' => ['class' => 'col-link-buttons'],
                                 'value' => function ($model) {
@@ -100,7 +100,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                                 'attribute' => 'person_id',
-                                'label' => '名簿',
+                                'label' => '関係者',
                                 'format' => 'raw',
                                 'contentOptions' => ['class' => 'col-link-person'],
                                 'value' => function ($model) {
@@ -176,7 +176,7 @@ $('#person-work-index').on('click', '.del-link', function (event) {
   event.stopPropagation();
   const modelId = $(this).data('model-id');
   const row = $(this).closest('tr');
-  yii.confirm('名簿へのリンクを削除しますか？', function () {
+  yii.confirm('関係者へのリンクを削除しますか？', function () {
     $.ajax({
       url: '$urlDel',
       type: 'POST',

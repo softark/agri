@@ -3,7 +3,10 @@
 namespace app\controllers;
 
 use app\models\Contact;
+use app\models\FieldSearch;
+use app\models\ForestSearch;
 use app\models\Person;
+use app\models\PersonExcel;
 use app\models\PersonForm;
 use app\models\PersonSearch;
 use app\models\PersonWork;
@@ -36,6 +39,7 @@ class PersonController extends Controller
                         'delete' => ['POST'],
                         'reorder-contact' => ['POST'],
                         'delete-contact' => ['POST'],
+                        'export' => ['POST'],
                     ],
                 ],
             ]
@@ -65,6 +69,21 @@ class PersonController extends Controller
         }
     }
 
+    /**
+     * Export to Excel
+     */
+    public function actionExport()
+    {
+        $searchModel = new PersonSearch();
+        $dataProvider = $searchModel->search([], 0);
+        if ($dataProvider->getCount() == 0) {
+            return $this->goBack();
+        }
+
+        PersonExcel::exportPersonList($dataProvider);
+        return null;
+    }
+
     public function actionSelect()
     {
         if (Yii::$app->request->isPjax) {
@@ -85,9 +104,24 @@ class PersonController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        $model = $this->findModel($id);
+        $fieldParams = ArrayHelper::merge(['FieldSearch' => ['search_name' => $model->name]], Yii::$app->request->queryParams);
+        $forestParams = ArrayHelper::merge(['ForestSearch' => ['search_name' => $model->name]], Yii::$app->request->queryParams);
+        $fieldDp = (new FieldSearch())->search($fieldParams);
+        $forestDp = (new ForestSearch())->search($forestParams);
+        if (Yii::$app->request->isPjax) {
+            return $this->renderPartial('view', [
+                'model' => $model,
+                'fieldDp' => $fieldDp,
+                'forestDp' => $forestDp,
+            ]);
+        } else {
+            return $this->render('view', [
+                'model' => $model,
+                'fieldDp' => $fieldDp,
+                'forestDp' => $forestDp,
+            ]);
+        }
     }
 
     /**
@@ -102,7 +136,7 @@ class PersonController extends Controller
         $model = new PersonForm();
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                if ($model->validate() ) {
+                if ($model->validate()) {
                     $model->savePersonAndContact();
                     return $this->redirect($ret_route);
                 }
@@ -131,7 +165,7 @@ class PersonController extends Controller
         $model->loadPersonAndContact($id);
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                if ($model->validate() ) {
+                if ($model->validate()) {
                     $model->savePersonAndContact();
                     return $this->redirect($ret_route);
                 }
@@ -161,8 +195,7 @@ class PersonController extends Controller
 
         try {
             $person->delete();
-        }
-        catch (IntegrityException $e) {
+        } catch (IntegrityException $e) {
             throw new UserException('この名簿を参照しているデータが存在するため、削除することが出来ません。');
         }
 
@@ -260,7 +293,7 @@ class PersonController extends Controller
         $contacts = Contact::find()->where(['person_id' => $id])
             ->andWhere(['>', 'order', $curOrder])
             ->orderBy(['order' => SORT_ASC])->all();
-        foreach($contacts as $contact) {
+        foreach ($contacts as $contact) {
             $contact->order = $contact->order - 1;
             $contact->save();
         }

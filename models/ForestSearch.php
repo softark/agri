@@ -12,11 +12,11 @@ use yii\helpers\ArrayHelper;
  */
 class ForestSearch extends Forest
 {
-    public string $_form_name = 'fs';
-
     use LoadParamsTrait;
 
     public ?string $search_name = null;
+
+    public $search_person_id = null;
 
     /**
      * {@inheritdoc}
@@ -24,7 +24,7 @@ class ForestSearch extends Forest
     public function rules(): array
     {
         return [
-            [['id', 'aza_id', 'type_id', 'created_by', 'updated_by'], 'integer'],
+            [['id', 'aza_id', 'type_id', 'search_person_id', 'created_by', 'updated_by'], 'integer'],
             [['p_no', 'note', 'search_name', 'created_at', 'updated_at'], 'safe'],
             [['area'], 'number'],
         ];
@@ -143,6 +143,13 @@ class ForestSearch extends Forest
                 ['ilike', 'pm.name', $this->search_name],
                 ['ilike', 'po.yomi', $this->search_name],
                 ['ilike', 'pm.yomi', $this->search_name]
+            ]);
+        }
+
+        if ($this->search_person_id) {
+            $query->andWhere(['or',
+                ['fpo.person_id' => $this->search_person_id],
+                ['fpm.person_id' => $this->search_person_id],
             ]);
         }
 

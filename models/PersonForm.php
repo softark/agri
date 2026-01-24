@@ -109,14 +109,14 @@ class PersonForm extends Model
     public function attributeLabels()
     {
         return [
-            'name1' => '姓（名前前半）',
-            'name2' => '名（名前後半）',
-            'yomi1' => 'よみがな（姓）',
-            'yomi2' => 'よみがな（名）',
+            'name1' => '氏／名称前半',
+            'name2' => '名／名称後半',
+            'yomi1' => 'よみがな（氏／名称前半）',
+            'yomi2' => 'よみがな（名／名称後半）',
             'type' => 'タイプ',
             'person_note' => 'メモ',
             'has_contact' => '連絡先を登録・更新する',
-            'role' => '組織名・役割・肩書',
+            'role' => '役割／肩書',
             'contact_name1' => '連絡先名前半',
             'contact_name2' => '連絡先名後半',
             'zip' => '郵便番号',

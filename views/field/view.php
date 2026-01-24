@@ -103,7 +103,8 @@ $this->params['breadcrumbs'][] = $model->p_no;
                             <td><?= $n++ ?></td>
                             <td><?= $ofp->valid_from_text ?></td>
                             <td><?= $ofp->valid_to_text ?></td>
-                            <td><?= $ofp->person->dispname ?></td>
+                            <td><?= Html::a($ofp->person->dispname, ['/person/view', 'id' => $ofp->person_id],
+                                ['class' => 'btn btn-sm btn-outline-primary']) ?></td>
                             <td><?= $ofp->note ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -137,7 +138,8 @@ $this->params['breadcrumbs'][] = $model->p_no;
                             <td><?= $n++ ?></td>
                             <td><?= $cfp->valid_from_text ?></td>
                             <td><?= $cfp->valid_to_text ?></td>
-                            <td><?= $cfp->person->dispname ?></td>
+                            <td><?= Html::a($cfp->person->dispname, ['/person/view', 'id' => $cfp->person_id],
+                                        ['class' => 'btn btn-sm btn-outline-primary']) ?></td>
                             <td><?= $cfp->note ?></td>
                         </tr>
                     <?php endforeach; ?>

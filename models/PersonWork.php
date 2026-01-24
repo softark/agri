@@ -76,7 +76,7 @@ class PersonWork extends \yii\db\ActiveRecord
             'name' => '名称',
             'address' => '住所',
             'src' => 'ソース',
-            'person_id' => '名簿',
+            'person_id' => '関係者',
         ];
     }
 

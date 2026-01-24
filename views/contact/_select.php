@@ -38,8 +38,16 @@ use yii\widgets\Pjax;
     'columns' => [
         ['class' => 'yii\grid\SerialColumn'],
         [
-            'attribute' => 'name',
-            'value' => 'contactname',
+            'attribute' => 'person.type',
+            'value' => 'person.typetext',
+        ],
+        [
+            'attribute' => 'person.name',
+            'value' => 'person.dispname',
+        ],
+        [
+            'attribute' => 'contact_name',
+            'value' => 'contact_name',
         ],
         [
             'attribute' => 'address1',
@@ -47,7 +55,7 @@ use yii\widgets\Pjax;
                 return $model->shortAddress;
             }
         ],
-        'phones',
+        'phone1',
     ],
 ]);?>
 

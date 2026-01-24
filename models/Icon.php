@@ -23,7 +23,7 @@ class Icon
         'admin' => ['label' => '管理', 'class' => 'fa-solid fa-wrench'],
         'user-admin' => ['label' => '管理', 'class' => 'fa-solid fa-wrench'],
         'user-create' => ['label' => 'ユーザを新規登録', 'class' => 'fa-solid fa-user-plus'],
-        'person' => ['label' => '名簿', 'class' => 'fa-solid fa-address-book'],
+        'person' => ['label' => '関係者', 'class' => 'fa-solid fa-address-book'],
         'contact' => ['label' => '連絡先', 'class' => 'fa-solid fa-address-card'],
         'delete' => ['label' => '削除', 'class' => 'fa-solid fa-trash-can'],
         'cancel' => ['label' => 'キャンセル', 'class' => 'fa-solid fa-xmark'],

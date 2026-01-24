@@ -9,7 +9,7 @@ use yii\widgets\DetailView;
 /** @var app\models\PersonWork $model */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => '名簿ワーク', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => '関係者ワーク', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -74,7 +74,7 @@ $('#person-view').on('change', '#person-id', function() {
       $('#person-view').html(html);
     },
     error: function (xhr) {
-      alert('名簿へのリンク更新に失敗しました: ' + xhr.status);
+      alert('関係者へのリンク更新に失敗しました: ' + xhr.status);
     }
   });
 });
@@ -82,7 +82,7 @@ $('#person-view').on('change', '#person-id', function() {
 $('#person-view').on('click', '#btn-person-unlink', function(event){
   event.preventDefault();
   event.stopPropagation();
-  yii.confirm('名簿へのリンクを削除しますか？', function () {
+  yii.confirm('関係者へのリンクを削除しますか？', function () {
     $.ajax({
       url: '$urlDeleteLink',
       type: 'POST',
@@ -91,7 +91,7 @@ $('#person-view').on('click', '#btn-person-unlink', function(event){
         $('#person-view').html(html);
       },
       error: function (xhr) {
-        alert('名簿へのリンク削除に失敗しました: ' + xhr.status);
+        alert('関係者へのリンク削除に失敗しました: ' + xhr.status);
       }
     });
   });
@@ -101,7 +101,7 @@ $('#person-view').on('click', '.delete-person', function(event){
   event.preventDefault();
   event.stopPropagation();
   const personId = $(this).data('person-id');
-  yii.confirm('この名簿を削除しますか？（連絡先も一緒に削除されます）', function () {
+  yii.confirm('この関係者を削除しますか？（連絡先も一緒に削除されます）', function () {
     $.ajax({
       url: '$urlDeletePerson',
       type: 'POST',
@@ -113,7 +113,7 @@ $('#person-view').on('click', '.delete-person', function(event){
         $('#person-view').html(html);
       },
       error: function (xhr) {
-        alert('名簿の削除に失敗しました: ' + xhr.status);
+        alert('関係者の削除に失敗しました: ' + xhr.status);
       }
     });
   });

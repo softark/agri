@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Icon;
+use app\models\Person;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 
@@ -40,13 +41,13 @@ $('#contact-search-form').on('change', 'input', function(event){
 
     <div class="row">
         <div class="col-md-2 col-sm-3 col-5">
+            <?= $form->field($model, 'p_type')->dropDownList(Person::getTypes(), ['prompt' => '']) ?>
+        </div>
+        <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'search_name') ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'address1') ?>
-        </div>
-        <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($model, 'search_phone') ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'note') ?>

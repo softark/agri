@@ -123,7 +123,7 @@ $('#address1').autocomplete({
                             'options' => ['class' => 'mb-3']
                     ],
             ]); ?>
-            <p>名簿と連絡先の名前が同じ場合は、組織名・役割・肩書、宛名（前半）、宛名（後半）は入力する必要はありません</p>
+            <p>関係者と連絡先の名前が同じ場合は、役割／肩書、連絡先名前半、連絡先名後半は省略して、郵便番号以下を入力してください</p>
             <?= $form->field($contact, 'order')->textInput(['disabled' => true]) ?>
             <?= $form->field($contact, 'role')->textInput(['maxlength' => true, 'id' => 'role']) ?>
             <?= $form->field($contact, 'name1')->textInput(['maxlength' => true, 'id' => 'contact-name1']) ?>
@@ -150,8 +150,8 @@ $('#address1').autocomplete({
             <?= $this->render('/contact/_select_modal.php', []); ?>
         </div>
         <?php if (count($contact->person->contacts) > 1): ?>
-            <p>※ 連絡先の優先順位の変更は、名簿の閲覧画面で行うことが出来ます。
-                <?= Html::a(Icon::getIcon('view') . ' ' . $contact->person->dispname,
+            <p>※ 連絡先の優先順位の変更は、関係者の閲覧画面で行うことが出来ます。
+                <?= Html::a($contact->person->dispname,
                         ['/person/view', 'id' => $contact->person->id],
                         ['class' => 'btn btn-outline-primary']) ?>
             </p>

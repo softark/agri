@@ -2,6 +2,7 @@
 
 use app\models\Icon;
 use app\models\Person;
+use app\models\PersonSearch;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 
@@ -41,7 +42,7 @@ $('#person-search-form').on('change', 'input', function(event){
 
     <div class="row">
         <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($model, 'status')->dropDownList(Person::getStates(), ['prompt' => '']) ?>
+            <?= $form->field($model, 'relation_type')->dropDownList(PersonSearch::relationLabels()) ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'type')->dropDownList(Person::getTypes(), ['prompt' => '']) ?>
@@ -51,6 +52,9 @@ $('#person-search-form').on('change', 'input', function(event){
         </div>
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'search_address') ?>
+        </div>
+        <div class="col-md-2 col-sm-3 col-5">
+            <?= $form->field($model, 'search_phone') ?>
         </div>
 
         <div class="form-group search-buttons col-md-2 col-sm-3 col-4">

@@ -39,10 +39,7 @@ $('#pr-search-form').on('change', 'input', function(event){
     ]); ?>
     <div class="row">
         <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($model, 'from_name') ?>
-        </div>
-        <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($model, 'to_name') ?>
+            <?= $form->field($model, 'name') ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'note') ?>

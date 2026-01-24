@@ -8,17 +8,17 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var app\models\Contact $model */
 
-$this->title = '連絡先 : ' . $model->contactname;
+$this->title = $model->disp_name;
 $this->params['breadcrumbs'][] = ['label' => '連絡先', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="person-view">
 
-    <h1><?= Icon::getIcon('contact') . ' ' . Html::encode($this->title) ?></h1>
+    <h1><?= Icon::getIconAndLabel('contact') . ' : ' . Html::encode($this->title) ?></h1>
 
     <div class="row">
         <div class="col-lg-6 col-md-8">
-            <h2 class="h4">名簿</h2>
+            <h2 class="h4">関係者</h2>
             <?php
             $attributes = [
                     [
@@ -41,7 +41,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <h2 class="h4">連絡先</h2>
             <?php $attributes = [];
-            if (count($model->person->contacts) > 1) $attributes[] = 'order';
+            if (count($model->person->contacts) > 1) $attributes[] = [
+                    'attribute' => 'order',
+                    'value' => function ($model) {
+                        return $model->order . ' / ' . count($model->person->contacts);
+                    }
+            ];
             if ($model->fullname != '' && $model->fullname != $model->person->dispname) $attributes[] = 'fullname';
             if ($model->fulladdress != '') $attributes[] = 'fulladdress';
             if ($model->phones != '') $attributes[] = 'phones';
@@ -79,7 +84,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= Html::a(Icon::getIconAndLabel('delete'), ['delete', 'id' => $model->id], [
                             'class' => 'btn btn-danger',
                             'data' => [
-                                    'confirm' => '連絡先 <strong>"' . $model->fullname . '"</strong> を削除しますか？（名簿は削除されません）',
+                                    'confirm' => '連絡先 <strong>"' . $model->fullname . '"</strong> を削除しますか？（関係者は削除されません）',
                                     'method' => 'post',
                             ],
                     ]) ?>
@@ -88,7 +93,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </p>
         </div>
         <?php if (count($model->person->contacts) > 1): ?>
-            <p>※ 連絡先の優先順位の変更は、名簿の閲覧画面で行うことが出来ます。
+            <p>※ この関係者には複数の連絡先があります。連絡先の優先順位の変更は、関係者の閲覧画面で行うことが出来ます。
                 <?= Html::a(Icon::getIcon('view') . ' ' . $model->person->dispname,
                         ['/person/view', 'id' => $model->person->id],
                         ['class' => 'btn btn-outline-primary']) ?>

@@ -14,16 +14,14 @@ class PersonRelationSearch extends PersonRelation
 {
     use LoadParamsTrait;
 
-    public $from_name;
-    public $to_name;
+    public $name;
 
     public function attributeLabels()
     {
         return ArrayHelper::merge(
             parent::attributeLabels(),
             [
-                'from_name' => '引継元',
-                'to_name' => '引継先',
+                'name' => '引継元・引継先',
             ]);
     }
 
@@ -34,7 +32,7 @@ class PersonRelationSearch extends PersonRelation
     {
         return [
             [['id', 'from_person_id', 'to_person_id', 'created_by', 'updated_by'], 'integer'],
-            [['note', 'from_name', 'to_name', 'created_at', 'updated_at'], 'safe'],
+            [['note', 'name', 'created_at', 'updated_at'], 'safe'],
         ];
     }
 
@@ -109,12 +107,10 @@ class PersonRelationSearch extends PersonRelation
 
         $query->andFilterWhere(['ilike', 'person_relation.note', $this->note]);
         $query->andFilterWhere(['or',
-            ['ilike', 'pf.name', $this->from_name],
-            ['ilike', 'pf.yomi', $this->from_name]
-        ]);
-        $query->andFilterWhere(['or',
-            ['ilike', 'pt.name', $this->to_name],
-            ['ilike', 'pt.yomi', $this->to_name]
+            ['ilike', 'pf.name', $this->name],
+            ['ilike', 'pf.yomi', $this->name],
+            ['ilike', 'pt.name', $this->name],
+            ['ilike', 'pt.yomi', $this->name]
         ]);
 
         return $dataProvider;

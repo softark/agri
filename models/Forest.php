@@ -75,6 +75,19 @@ class Forest extends \yii\db\ActiveRecord
 
     private ?string $_type_name = null;
 
+    private $_p_str = null;
+    public function getP_str(): string
+    {
+        if ($this->_p_str === null) {
+            if ($this->p_no != '') {
+                $this->_p_str = $this->p_no;
+            } else {
+                $this->_p_str = '(不詳)';
+            }
+        }
+        return $this->_p_str;
+    }
+
     public function getType_Name(): string
     {
         if ($this->_type_name === null) {

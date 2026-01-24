@@ -45,7 +45,7 @@ $this->title = '岩座神農林';
                     <div class="row">
                     <h2 class="h4">保守作業</h2>
                     <p>
-                        <?= Html::a('名簿ワーク', ['/person-work'], ['class' => 'btn btn-primary btn-lg']) ?>
+                        <?= Html::a('関係者ワーク', ['/person-work'], ['class' => 'btn btn-primary btn-lg']) ?>
                         <?= Html::a('棚田', ['/isg-tanada'], ['class' => 'btn btn-primary btn-lg']) ?>
                         <?= Html::a('山林', ['/isg-forest'], ['class' => 'btn btn-primary btn-lg']) ?>
                     </p>

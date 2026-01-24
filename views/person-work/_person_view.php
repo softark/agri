@@ -12,18 +12,18 @@ use yii\widgets\DetailView;
 <?php if ($model->person_id) : ?>
     <?php $pw_id = $model->id; ?>
     <p>
-        <?= Html::button(Icon::getIcon('link') . ' 名簿へのリンクを変更', [
+        <?= Html::button(Icon::getIcon('link') . ' 関係者へのリンクを変更', [
                 'class' => 'btn btn-primary',
                 'id' => 'btn-person-select',
         ]) ?>
         <?= Html::hiddenInput('person_id', '', ['id' => 'person-id']) ?>
         <?= Html::hiddenInput('person_name', '', ['id' => 'person-name']) ?>
-        <?= Html::button(Icon::getIcon('unlink') . ' 名簿へのリンクを解除', [
+        <?= Html::button(Icon::getIcon('unlink') . ' 関係者へのリンクを解除', [
                 'class' => 'btn btn-danger',
                 'id' => 'btn-person-unlink',
         ]) ?>
     </p>
-    <h3>名簿</h3>
+    <h3>関係者</h3>
     <?php
     $attributes = [
             [
@@ -141,15 +141,15 @@ use yii\widgets\DetailView;
     </p>
 <?php else : ?>
     <p>
-        <?= Html::a(Icon::getIcon('plus') . ' 名簿を新規登録',
+        <?= Html::a(Icon::getIcon('plus') . ' 関係者を新規登録',
                 ['register', 'id' => $model->id, 'route' => ['view', 'id' => $model->id]],
                 ['class' => 'btn btn-success']) ?>
-        <?= Html::button(Icon::getIcon('link') . ' 名簿へのリンクを選択',
+        <?= Html::button(Icon::getIcon('link') . ' 関係者へのリンクを選択',
                 ['class' => 'btn btn-primary', 'id' => 'btn-person-select']) ?>
         <?= Html::hiddenInput('person_id', '', ['id' => 'person-id']) ?>
         <?= Html::hiddenInput('person_name', '', ['id' => 'person-name']) ?>
     </p>
-    <h3>名簿</h3>
-    <p>名簿なし</p>
+    <h3>関係者</h3>
+    <p>関係者なし</p>
 <?php endif; ?>
 

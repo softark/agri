@@ -29,7 +29,11 @@ use Yii;
  * @property Person[] ancestors
  * @property Person[] descendants
  * @property Contact[] $contacts
- * @property Contact $priorContact
+ * @property Contact $contact
+ * @property FieldPerson[] $fieldPersons
+ * @property Field[] $fields
+ * @property ForestPerson[] $forestPersons
+ * @property Forest[] $forests
  * @property User $createdBy
  * @property User $updatedBy
  */
@@ -116,7 +120,7 @@ class Person extends \yii\db\ActiveRecord
                 $dispname = $this->getDispName();
                 if (count($this->contacts) > 0) {
                     $contact = $this->contacts[0];
-                    if ($contact->role != '' || ( $contact->name != '' && $contact->name != $this->name)) {
+                    if ($contact->role != '' || ($contact->name != '' && $contact->name != $this->name)) {
                         $dispname .= ' : ' . $contact->fullname;
                     }
                 }
@@ -164,6 +168,7 @@ SQL;
     }
 
     private $_descendants = null;
+
     /**
      * @return Person[]
      */
@@ -214,6 +219,7 @@ SQL;
     }
 
     private $_ancestors = null;
+
     /**
      * @return Person[]
      */
@@ -224,6 +230,64 @@ SQL;
             $this->_ancestors = empty($ids) ? [] : Person::find()->where(['id' => $ids])->all();
         }
         return $this->_ancestors;
+    }
+
+    private $_field_ids = null;
+
+    public function getField_ids()
+    {
+        if ($this->_field_ids === null) {
+            $field_ids = [];
+            foreach ($this->fieldPersons as $fp) {
+                $field_ids[] = $fp->field_id;
+            }
+            $this->_field_ids = array_unique($field_ids);
+        }
+        return $this->_field_ids;
+    }
+
+    private $_forest_ids = null;
+
+    public function getForest_ids()
+    {
+        if ($this->_forest_ids === null) {
+            $forest_ids = [];
+            foreach ($this->forestPersons as $fp) {
+                $forest_ids[] = $fp->forest_id;
+            }
+            $this->_forest_ids = array_unique($forest_ids);
+        }
+        return $this->_forest_ids;
+    }
+
+    private $_num_fields = null;
+
+    public function getNum_fields()
+    {
+        if ($this->_num_fields === null) {
+            $this->_num_fields = count($this->field_ids);
+        }
+        return $this->_num_fields;
+    }
+
+    public function setNum_fields($num_fields): void
+    {
+        $this->_num_fields = $num_fields;
+    }
+
+    private $_num_forests = null;
+
+    public function getNum_forests()
+    {
+        if ($this->_num_forests === null) {
+            $this->_num_forests = count($this->forest_ids);
+        }
+        return $this->_num_forests;
+    }
+
+    public function setNum_forests($num_forests): void
+    {
+        $this->_num_forests = $num_forests;
     }
 
     /**
@@ -266,18 +330,19 @@ SQL;
             'id' => 'ID',
             'status' => '状態',
             'type' => 'タイプ',
-            'name1' => '姓（名前前半）',
-            'name2' => '名（名前後半）',
-            'name' => '名前',
-            'dispname' => '名前',
-            'yomi1' => 'よみがな（姓）',
-            'yomi2' => 'よみがな（名）',
+            'name1' => '氏／名称前半',
+            'name2' => '名／名称後半',
+            'name' => '氏名／名称',
+            'dispname' => '氏名／名称',
+            'yomi1' => 'よみがな（氏／名称前半）',
+            'yomi2' => 'よみがな（名／名称後半）',
             'yomi' => 'よみがな',
             'yomigana' => 'よみがな',
             'note' => 'メモ',
             'contacts' => '連絡先',
-            'priorContact' => '連絡先',
-            'priorAddress' => '住所',
+            'contact' => '連絡先',
+            'num_fields' => '農地',
+            'num_forests' => '山林',
             'created_at' => '登録日時',
             'created_by' => '登録者',
             'updated_at' => '更新日時',
@@ -295,10 +360,7 @@ SQL;
         return $this->hasMany(Contact::class, ['person_id' => 'id'])->orderBy('order');
     }
 
-    /**
-     * @return Contact|null
-     */
-    public function getPriorContact()
+    public function getContact()
     {
         if (count($this->contacts) > 0) {
             return $this->contacts[0];
@@ -310,7 +372,7 @@ SQL;
     /**
      * @return string
      */
-    public function getPriorAddress()
+    public function getAddress()
     {
         if (count($this->contacts) > 0) {
             return $this->contacts[0]->getShortAddress();
@@ -369,6 +431,94 @@ SQL;
     public function getToPerson()
     {
         return $this->hasOne(Person::class, ['id' => 'to_person_id']);
+    }
+
+    // 関連する農地
+    
+    public function getOwnerFieldPersons()
+    {
+        return $this->hasMany(FieldPerson::class, ['person_id' => 'id'])
+            ->alias('ofp')
+            ->andOnCondition(['ofp.role' => FieldPerson::ROLE_OWNER]);
+    }
+
+    public function getCultivatorFieldPersons()
+    {
+        return $this->hasMany(FieldPerson::class, ['person_id' => 'id'])
+            ->alias('cfp')
+            ->andOnCondition(['cfp.role' => FieldPerson::ROLE_CULTIVATOR]);
+    }
+
+    public function getOwnerFields()
+    {
+        return $this->hasMany(Field::class, ['id' => 'field_id'])
+            ->via('ownerFieldPersons');
+    }
+
+    public function getCultivatorFields()
+    {
+        return $this->hasMany(Field::class, ['id' => 'field_id'])
+            ->via('cultivatorFieldPersons');
+    }
+
+    public function getFieldPersons()
+    {
+        return $this->hasMany(FieldPerson::class, ['person_id' => 'id'])
+            ->andOnCondition(['in', 'role', [
+                FieldPerson::ROLE_OWNER,
+                FieldPerson::ROLE_CULTIVATOR,
+            ]]);
+    }
+
+    public function getFields()
+    {
+        return $this->hasMany(Field::class, ['id' => 'field_id'])
+            ->via('fieldPersons')
+            ->distinct();
+    }
+
+    // 関連する山林
+
+    public function getOwnerForestPersons()
+    {
+        return $this->hasMany(ForestPerson::class, ['person_id' => 'id'])
+            ->alias('ofp')
+            ->andOnCondition(['ofp.role' => ForestPerson::ROLE_OWNER]);
+    }
+
+    public function getManagerForestPersons()
+    {
+        return $this->hasMany(ForestPerson::class, ['person_id' => 'id'])
+            ->alias('mfp')
+            ->andOnCondition(['cfp.role' => ForestPerson::ROLE_MANAGER]);
+    }
+
+    public function getOwnerForests()
+    {
+        return $this->hasMany(Forest::class, ['id' => 'Forest_id'])
+            ->via('ownerForestPersons');
+    }
+
+    public function getManagerForests()
+    {
+        return $this->hasMany(Forest::class, ['id' => 'Forest_id'])
+            ->via('managerForestPersons');
+    }
+
+    public function getForestPersons()
+    {
+        return $this->hasMany(ForestPerson::class, ['person_id' => 'id'])
+            ->andOnCondition(['in', 'role', [
+                ForestPerson::ROLE_OWNER,
+                ForestPerson::ROLE_MANAGER,
+            ]]);
+    }
+
+    public function getForests()
+    {
+        return $this->hasMany(Forest::class, ['id' => 'Forest_id'])
+            ->via('ForestPersons')
+            ->distinct();
     }
 
     /**

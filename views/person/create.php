@@ -7,13 +7,13 @@ use yii\bootstrap5\Html;
 /** @var app\models\PersonForm $model */
 /** @var string|array $ret_route */
 
-$this->title = '名簿に新規登録';
-$this->params['breadcrumbs'][] = ['label' => '名簿', 'url' => ['index']];
+$this->title = '関係者を新規登録';
+$this->params['breadcrumbs'][] = ['label' => '関係者', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="person-create">
 
-    <h1><?= Icon::getIconAndLabel('person') . ' に新規登録' ?></h1>
+    <h1><?= Icon::getIconAndLabel('person') . ' を新規登録' ?></h1>
 
     <?= $this->render('_person_form', [
         'model' => $model,

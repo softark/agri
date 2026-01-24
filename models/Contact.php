@@ -41,14 +41,18 @@ class Contact extends \yii\db\ActiveRecord
         return 'contact';
     }
 
-    private $_dispname = null;
+    private $_disp_name = null;
 
-    public function getDispName()
+    public function getDisp_name()
     {
-        if ($this->_dispname === null) {
-            $this->_dispname = trim($this->name1 . ' ' . $this->name2);
+        if ($this->_disp_name === null) {
+            $this->_disp_name = $this->person->dispname;
+            $fullname = $this->fullname;
+            if ($fullname != '' && $fullname != $this->_disp_name) {
+                $this->_disp_name = $this->_disp_name . ' / ' . $fullname;
+            }
         }
-        return $this->_dispname;
+        return $this->_disp_name;
     }
 
     private $_fullname = null;
@@ -63,17 +67,13 @@ class Contact extends \yii\db\ActiveRecord
 
     private $_contact_name = null;
 
-    public function getContactName()
+    public function getContact_name()
     {
         if ($this->_contact_name === null) {
             $this->_contact_name = $this->getFullName();
             $person_name = $this->person->dispname;
-            if ($this->_contact_name == '') {
-                $this->_contact_name = $person_name;
-            } else {
-                if ($this->_contact_name != $person_name) {
-                    $this->_contact_name = $person_name . ' / ' . $this->_contact_name;
-                }
+            if ($this->_contact_name == $person_name) {
+                $this->_contact_name = '';
             }
         }
         return $this->_contact_name;
@@ -182,15 +182,15 @@ class Contact extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'person_id' => '名簿',
+            'person_id' => '関係者',
             'order' => '優先順位',
-            'name1' => '宛名（前半）',
-            'name2' => '宛名（後半）',
+            'name1' => '連絡先名前半',
+            'name2' => '連絡先名後半',
             'name' => '宛名',
-            'dispname' => '宛名',
+            'disp_name' => '宛名',
             'fullname' => '宛名',
-            'contactname' => '宛名',
-            'role' => '組織名・役割・肩書',
+            'contact_name' => '連絡先',
+            'role' => '役割／肩書',
             'zip' => '郵便番号',
             'address' => '住所',
             'address1' => '住所',

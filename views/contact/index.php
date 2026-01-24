@@ -29,19 +29,24 @@ $this->params['breadcrumbs'][] = $this->title;
             'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
                     [
-                            'attribute' => 'name',
-                            'value' => 'contactname'
+                            'attribute' => 'person.type',
+                            'value' => 'person.typetext',
                     ],
+                    [
+                            'attribute' => 'person.name',
+                            'label' => '関係者（氏名／名称）',
+                            'format' => 'html',
+                            'value' => function ($model) {
+                                return Html::a($model->person->dispname, ['/person/view', 'id' => $model->person->id],
+                                        ['class' => 'btn btn-sm btn-outline-primary']);
+                            },
+                    ],
+                    'contact_name',
                     [
                             'attribute' => 'address1',
                             'value' => 'shortaddress'
                     ],
-                    [
-                            'attribute' => 'phone1',
-                            'label' => '電話',
-                            'value' => 'phones'
-                    ],
-                    'note',
+                    'phone1',
                     [
                             'class' => ActionColumn::className(),
                             'urlCreator' => function ($action, Contact $model, $key, $index, $column) {

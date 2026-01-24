@@ -12,13 +12,13 @@ use yii\helpers\ArrayHelper;
  */
 class FieldSearch extends Field
 {
-    public string $_form_name = 'fs';
-
     use LoadParamsTrait;
 
     public ?string $search_name = null;
 
     public $search_usage = null;
+
+    public $search_person_id = null;
 
     /**
      * {@inheritdoc}
@@ -26,7 +26,7 @@ class FieldSearch extends Field
     public function rules()
     {
         return [
-            [['id', 'aza_id', 'created_by', 'updated_by'], 'integer'],
+            [['id', 'aza_id', 'search_person_id', 'created_by', 'updated_by'], 'integer'],
             [['p_no', 'note', 'search_name', 'search_usage', 'created_at', 'updated_at'], 'safe'],
             [['c_area', 'f_area'], 'number'],
         ];
@@ -149,6 +149,13 @@ class FieldSearch extends Field
                 ['ilike', 'pc.name', $this->search_name],
                 ['ilike', 'po.yomi', $this->search_name],
                 ['ilike', 'pc.yomi', $this->search_name]
+            ]);
+        }
+
+        if ($this->search_person_id) {
+            $query->andWhere(['or',
+                ['fpo.person_id' => $this->search_person_id],
+                ['fpc.person_id' => $this->search_person_id],
             ]);
         }
 

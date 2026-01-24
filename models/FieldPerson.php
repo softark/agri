@@ -83,7 +83,7 @@ class FieldPerson extends \yii\db\ActiveRecord
             'id' => 'ID',
             'role' => '役割',
             'field_id' => '農地',
-            'person_id' => '名簿',
+            'person_id' => '関係者',
             'valid_from' => 'FROM',
             'valid_from_text' => 'FROM',
             'valid_to' => 'TO',

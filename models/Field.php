@@ -60,6 +60,20 @@ class Field extends \yii\db\ActiveRecord
         return $this->_aza_name;
     }
 
+    private $_p_str = null;
+    public function getP_str(): string
+    {
+        if ($this->_p_str === null) {
+            $strs = preg_split('/\//', $this->p_no);
+            if (count($strs) < 2) {
+                $this->_p_str = $this->p_no;
+            } else {
+                $this->_p_str = $strs[0] . ' 他';
+            }
+        }
+        return $this->_p_str;
+    }
+
     private ?string $_owner_name = null;
 
     public function getOwner_Name()

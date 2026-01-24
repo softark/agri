@@ -57,7 +57,7 @@ class m251216_121248_setup_rbac_for_person extends Migration
 
         // 'person.list' 許可
         $personList = $auth->createPermission('person.list');
-        $personList->description = '名簿一覧';
+        $personList->description = 'Person 一覧';
         $auth->add($personList);
 
         $auth->addChild($personList, $routeIndex);
@@ -66,7 +66,7 @@ class m251216_121248_setup_rbac_for_person extends Migration
 
         // 'person.view' 許可
         $personView = $auth->createPermission('person.view');
-        $personView->description = '名簿閲覧';
+        $personView->description = 'Person 閲覧';
         $auth->add($personView);
 
         $auth->addChild($personView, $routeView);
@@ -74,7 +74,7 @@ class m251216_121248_setup_rbac_for_person extends Migration
 
         // 'person.edit' 許可
         $personEdit = $auth->createPermission('person.edit');
-        $personEdit->description = '名簿編集';
+        $personEdit->description = 'Person 編集';
         $auth->add($personEdit);
 
         $auth->addChild($personEdit, $routeUpdate);
@@ -84,7 +84,7 @@ class m251216_121248_setup_rbac_for_person extends Migration
 
         // 'person.delete' 許可
         $personDelete = $auth->createPermission('person.delete');
-        $personDelete->description = '名簿削除';
+        $personDelete->description = 'Person 削除';
         $auth->add($personDelete);
 
         $auth->addChild($personDelete, $routeDelete);
@@ -93,7 +93,7 @@ class m251216_121248_setup_rbac_for_person extends Migration
 
         // 'person.create' 許可
         $personCreate = $auth->createPermission('person.create');
-        $personCreate->description = '名簿登録';
+        $personCreate->description = 'Person 登録';
         $auth->add($personCreate);
 
         $auth->addChild($personCreate, $routeCreate);

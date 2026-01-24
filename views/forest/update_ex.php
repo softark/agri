@@ -41,14 +41,12 @@ $this->params['breadcrumbs'][] = '編集';
                         <?= $form->field($model->forest, 'note')->textInput(['maxlength' => true]) ?>
                     </div>
                     <div class="form-group">
+                        <?= Html::button(Icon::getIconAndLabel('map-location'),
+                                    ['class' => 'btn btn-outline-success', 'id' => 'open-map-modal', 'data-url' => $model->forest->mapurl]) ?>
                         <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
                         <?= Html::a(Icon::getIconAndLabel('end-edit'), $ret_route, ['class' => 'btn btn-outline-secondary']) ?>
                     </div>
                     <?php ActiveForm::end(); ?>
-                    <h2 class="h5">地図</h2>
-                    <p><?= Html::button(Icon::getIcon('map-location') . ' 地図を参照する',
-                                ['class' => 'btn btn-primary', 'id' => 'open-map-modal', 'data-url' => $model->forest->mapurl]) ?>
-                    </p>
                 </div>
                 <div class="col-xl-4 col-lg-6">
                     <h2 class="h5">所有者</h2>
@@ -168,7 +166,7 @@ $this->params['breadcrumbs'][] = '編集';
                 </div>
             </div>
         </div>
-        <?= $this->render('/forest/_map_modal') ?>
+        <?= $this->render('/field/_map_modal') ?>
         <?= Html::hiddenInput('person_id', '', ['id' => 'person-id']) ?>
         <?= Html::hiddenInput('person_name', '', ['id' => 'person-name']) ?>
         <?= $this->render('/person/_select_modal.php', [

@@ -12,9 +12,9 @@ use yii\bootstrap5\Modal;
 
 <?php
 Modal::begin([
-        'title' => '農地地図',
+        'title' => '<span class="text-success">' . Icon::getIconAndLabel('map-location') . '</span>',
         'toggleButton' => false,
-        'id' => 'field-map-modal',
+        'id' => 'igis-map-modal',
         'size' => Modal::SIZE_EXTRA_LARGE,
         'bodyOptions' => ['style' => 'height:85vh']
 ]);
@@ -27,10 +27,10 @@ Modal::end();
 $this->registerJs("
 function openMapModal(src) {
     $('#map-frame').attr('src', src);
-    $('#field-map-modal').modal('show');
+    $('#igis-map-modal').modal('show');
 }
 
-$('#field-map-modal').on('hidden.bs.modal', () => {
+$('#igis-map-modal').on('hidden.bs.modal', () => {
   // 閉じたら読み込み停止（重要）
   $('#map-frame').attr('src', '');
 });

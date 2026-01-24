@@ -10,10 +10,10 @@ use yii\grid\GridView;
 /** @var app\models\PersonWork $model */
 /** @var app\models\Person $person */
 
-$this->title = '名簿ワーク : ' . $model->name . ' / 名簿編集';
-$this->params['breadcrumbs'][] = ['label' => '名簿ワーク', 'url' => ['index']];
+$this->title = '関係者ワーク : ' . $model->name . ' / 関係者編集';
+$this->params['breadcrumbs'][] = ['label' => '関係者ワーク', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = '名簿編集';
+$this->params['breadcrumbs'][] = '関係者編集';
 ?>
 <div class="person-update">
 
@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = '名簿編集';
             'route' => ['view', 'id' => $model->id],
     ]) ?>
 
-    <h3>参照している名簿ワーク</h3>
+    <h3>参照している関係者ワーク</h3>
     <?= GridView::widget([
             'dataProvider' => (new PersonWorkSearch(['person_id' => $model->person_id]))->search([]),
             'columns' => [

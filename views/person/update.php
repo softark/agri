@@ -7,8 +7,8 @@ use yii\bootstrap5\Html;
 /** @var app\models\PersonForm $model */
 /** @var string|array $ret_route */
 
-$this->title = '名簿 : ' . $model->dispname . ' - 編集';
-$this->params['breadcrumbs'][] = ['label' => '名簿', 'url' => ['index']];
+$this->title = '関係者 : ' . $model->dispname . ' - 編集';
+$this->params['breadcrumbs'][] = ['label' => '関係者', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->dispname, 'url' => ['view', 'id' => $model->person->id]];
 $this->params['breadcrumbs'][] = '編集';
 ?>
