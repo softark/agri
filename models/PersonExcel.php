@@ -40,15 +40,18 @@ class PersonExcel
         $header_row = 1;
 
         $row = $header_row;
+        $p_row = 0;
         foreach ($models as $model) {
             /* @var $model Person */
             $row++;
-            $sheet->getCell('A' . $row)->setValueExplicit($row - 1, DataType::TYPE_NUMERIC);
+            $p_row++;
+            $sheet->getCell('A' . $row)->setValueExplicit($p_row, DataType::TYPE_NUMERIC);
             $sheet->getCell('B' . $row)->setValueExplicit($model->num_fields, DataType::TYPE_NUMERIC);
             $sheet->getCell('C' . $row)->setValueExplicit($model->num_forests, DataType::TYPE_NUMERIC);
             $sheet->getCell('D' . $row)->setValueExplicit($model->typeText, DataType::TYPE_STRING);
             $sheet->getCell('E' . $row)->setValueExplicit($model->dispname, DataType::TYPE_STRING);
             $sheet->getCell('F' . $row)->setValueExplicit($model->note, DataType::TYPE_STRING);
+            $row_start = $row;
             if (count($model->contacts) > 0) {
                 $row--;
                 foreach ($model->contacts as $contact) {
@@ -60,6 +63,11 @@ class PersonExcel
                     $sheet->getCell('K' . $row)->setValueExplicit($contact->phone2, DataType::TYPE_STRING);
                     $sheet->getCell('L' . $row)->setValueExplicit($contact->mail, DataType::TYPE_STRING);
                     $sheet->getCell('M' . $row)->setValueExplicit($contact->note, DataType::TYPE_STRING);
+                }
+            }
+            if ($row_start != $row) {
+                for($col = 'A'; $col <> 'G'; $col++) {
+                    $sheet->mergeCells($col . $row_start . ':' . $col . $row);
                 }
             }
         }
