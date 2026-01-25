@@ -95,8 +95,10 @@ class PersonSearch extends Person
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $pageSize = 20)
+    public function search($params, $pageSize = 20, $sessionKey = null)
     {
+        $params = $this->rememberGridParams($params, 'p-page', 'p-sort', $sessionKey);
+
         $fp = FieldPerson::tableName();   // 'field_person'
         $rp = ForestPerson::tableName();  // 'forest_person'
         $c = Contact::tableName();       // 'contact'
@@ -166,8 +168,12 @@ class PersonSearch extends Person
             'query' => $query,
             'pagination' => [
                 'pageSize' => $pageSize,
+                'pageParam' => 'p-page',
+                'params'    => $params,
             ],
             'sort' => [
+                'sortParam' => 'p-sort',
+                'params'    => $params,
                 'defaultOrder' => ['name' => SORT_ASC],
                 'attributes' => [
                     'status',
@@ -208,8 +214,7 @@ class PersonSearch extends Person
             ],
         ]);
 
-        $this->loadAndRememberParams($this, $dataProvider, $params);
-        // $this->load($params, $formName);
+        $this->load($params);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails

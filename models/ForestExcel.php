@@ -46,16 +46,16 @@ class ForestExcel
             if ($model->owner) {
                 $sheet->getCell('H' . $row)->setValueExplicit($model->owner->typetext, DataType::TYPE_STRING);
                 $sheet->getCell('I' . $row)->setValueExplicit($model->owner->dispname, DataType::TYPE_STRING);
-                if ($model->owner->priorContact) {
-                    $sheet->getCell('J' . $row)->setValueExplicit($model->owner->priorContact->fullAddress, DataType::TYPE_STRING);
-                    $sheet->getCell('K' . $row)->setValueExplicit($model->owner->priorContact->phones, DataType::TYPE_STRING);
+                if ($model->owner->contact) {
+                    $sheet->getCell('J' . $row)->setValueExplicit($model->owner->contact->fullAddress, DataType::TYPE_STRING);
+                    $sheet->getCell('K' . $row)->setValueExplicit($model->owner->contact->phones, DataType::TYPE_STRING);
                 }
             }
             if ($model->manager) {
                 $sheet->getCell('L' . $row)->setValueExplicit($model->manager->dispname, DataType::TYPE_STRING);
-                if ($model->owner->priorContact) {
-                    $sheet->getCell('M' . $row)->setValueExplicit($model->manager->priorContact->fullAddress, DataType::TYPE_STRING);
-                    $sheet->getCell('N' . $row)->setValueExplicit($model->manager->priorContact->phones, DataType::TYPE_STRING);
+                if ($model->owner->contact) {
+                    $sheet->getCell('M' . $row)->setValueExplicit($model->manager->contact->fullAddress, DataType::TYPE_STRING);
+                    $sheet->getCell('N' . $row)->setValueExplicit($model->manager->contact->phones, DataType::TYPE_STRING);
                 }
             }
             $sheet->getCell('O' . $row)->setValueExplicit($model->note, DataType::TYPE_STRING);

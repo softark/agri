@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a(Icon::getIcon('plus') . ' 引継の登録', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php Pjax::begin(); ?>
+    <?php Pjax::begin(['timeout' => 5000]) ?>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <div class="row">

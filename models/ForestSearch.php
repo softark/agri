@@ -56,8 +56,10 @@ class ForestSearch extends Forest
      *
      * @return ActiveDataProvider
      */
-    public function search($params,  $pageSize = 20)
+    public function search($params, $pageSize = 20, $sessionKey = null)
     {
+        $params = $this->rememberGridParams($params, 'fo-page', 'fo-sort', $sessionKey);
+
         $query = Forest::find()
             ->leftJoin('aza a', 'a.id = forest.aza_id')
             ->leftJoin('frtype ft', 'ft.id = forest.type_id')
@@ -80,8 +82,12 @@ class ForestSearch extends Forest
             'query' => $query,
             'pagination' => [
                 'pageSize' => $pageSize,
+                'pageParam' => 'fo-page',
+                'params'    => $params,
             ],
             'sort' => [
+                'sortParam' => 'fo-sort',
+                'params'    => $params,
                 'defaultOrder' => ['p_no' => SORT_ASC],
                 'attributes' => [
                     'aza_id' => [
@@ -113,8 +119,7 @@ class ForestSearch extends Forest
             ]
         ]);
 
-        $this->loadAndRememberParams($this, $dataProvider, $params);
-        // $this->load($params, $formName);
+        $this->load($params);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails

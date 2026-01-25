@@ -59,8 +59,10 @@ class FieldSearch extends Field
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $pageSize = 20)
+    public function search($params, $pageSize = 20, $sessionKey = null)
     {
+        $params = $this->rememberGridParams($params, 'fl-page', 'fl-sort', $sessionKey);
+
         $query = Field::find()
             ->leftJoin('aza a', 'a.id = field.aza_id')
             ->leftJoin('field_person fpo', 'fpo.field_id = field.id and fpo.role = 1 and fpo.valid_to IS null')
@@ -84,9 +86,13 @@ class FieldSearch extends Field
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
+                'pageParam' => 'fl-page',
+                'params'    => $params,
                 'pageSize' => $pageSize,
             ],
             'sort' => [
+                'sortParam' => 'fl-sort',
+                'params'    => $params,
                 'defaultOrder' => ['p_no' => SORT_ASC],
                 'attributes' => [
                     'aza_id' => [
@@ -119,8 +125,7 @@ class FieldSearch extends Field
             ]
         ]);
 
-        $this->loadAndRememberParams($this, $dataProvider, $params);
-        // $this->load($params);
+        $this->load($params);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails

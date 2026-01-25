@@ -64,7 +64,7 @@ class ForestController extends Controller
     public function actionExport()
     {
         $searchModel = new ForestSearch();
-        $dataProvider = $searchModel->search([], 0);
+        $dataProvider = $searchModel->search([], 0, 'forest:index');
         if ($dataProvider->getCount() == 0) {
             return $this->goBack();
         }

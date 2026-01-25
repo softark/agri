@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <h1><?= Icon::getIconAndLabel('field') ?></h1>
 
-        <?php Pjax::begin(); ?>
+        <?php Pjax::begin(['timeout' => 5000]) ?>
         <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
         <?= GridView::widget([
@@ -41,18 +41,18 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         [
                                 'attribute' => 'owner',
-                                'format' => 'html',
+                                'format' => 'raw',
                                 'value' => function ($model) {
                                     return $model->owner ? Html::a($model->owner_name, ['/person/view', 'id' => $model->owner_id],
-                                            ['class' => 'btn btn-sm btn-outline-primary']) : '&nbsp;';
+                                            ['class' => 'btn btn-sm btn-outline-primary', 'data-pjax' => 0]) : '&nbsp;';
                                 }
                         ],
                         [
                                 'attribute' => 'cultivator',
-                                'format' => 'html',
+                                'format' => 'raw',
                                 'value' => function ($model) {
                                     return $model->cultivator ? Html::a($model->cultivator_name, ['/person/view', 'id' => $model->cultivator_id],
-                                            ['class' => 'btn btn-sm btn-outline-primary']) : '&nbsp;';
+                                            ['class' => 'btn btn-sm btn-outline-primary', 'data-pjax' => 0]) : '&nbsp;';
                                 }
                         ],
                         [
@@ -85,7 +85,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'value' => function ($model) {
                                     $buttons = [
                                             Html::a(Icon::getIconAndLabel('view'), ['view', 'id' => $model->id],
-                                                    ['class' => 'btn btn-sm btn-primary']),
+                                                    ['class' => 'btn btn-sm btn-primary', 'data-pjax' => 0]),
                                             Html::button(Icon::getIconAndLabel('map-location'),
                                                     ['class' => 'btn-map-open btn btn-sm btn-outline-success', 'data-url' => $model->mapurl]),
                                             Html::a(Icon::getIcon('map-location') . ' i-GIS で見る', $model->mapurl,
@@ -93,7 +93,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ];
                                     if (Yii::$app->user->can('forest.edit')) {
                                         $buttons[] = Html::a(Icon::getIconAndLabel('update'), ['update', 'id' => $model->id],
-                                                ['class' => 'btn btn-sm btn-primary']);
+                                                ['class' => 'btn btn-sm btn-primary', 'data-pjax' => 0]);
                                     }
                                     return implode(' ', $buttons);
                                 }

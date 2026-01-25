@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Contact;
@@ -74,8 +75,10 @@ class ContactSearch extends Contact
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $pageSize = 20)
+    public function search($params, $pageSize = 20, $sessionKey = null)
     {
+        $params = $this->rememberGridParams($params, 'c-page', 'c-sort', $sessionKey);
+
         $query = Contact::find()->joinWith('person');
 
         // add conditions that should always apply here
@@ -83,9 +86,13 @@ class ContactSearch extends Contact
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
+                'pageParam' => 'c-page',
+                'params'    => $params,
                 'pageSize' => $pageSize,
             ],
             'sort' => [
+                'sortParam' => 'c-sort',
+                'params'    => $params,
                 'defaultOrder' => ['person.name' => SORT_ASC],
                 'attributes' => [
                     'person.type' => [
@@ -119,8 +126,7 @@ class ContactSearch extends Contact
             ],
         ]);
 
-        $this->loadAndRememberParams($this, $dataProvider, $params);
-        // $this->load($params, $formName);
+        $this->load($params);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
@@ -162,26 +168,5 @@ class ContactSearch extends Contact
             ]);
         }
         return $dataProvider;
-    }
-
-    /**
-     * @param bool $insert
-     * @return bool
-     */
-    public
-    function beforeSave($insert)
-    {
-        if (parent::beforeSave($insert)) {
-            $user_id = (Yii::$app->user->isGuest) ? 1 : Yii::$app->user->id;
-            if ($insert) {
-                $this->created_by = $user_id;
-            }
-            $this->updated_by = $user_id;
-            $dt = new \DateTimeImmutable("now", new \DateTimeZone("UTC"));
-            $this->updated_at = $dt->format("Y-m-d H:i:s T");
-            return true;
-        } else {
-            return false;
-        }
     }
 }

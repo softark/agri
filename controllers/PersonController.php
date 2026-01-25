@@ -75,7 +75,7 @@ class PersonController extends Controller
     public function actionExport()
     {
         $searchModel = new PersonSearch();
-        $dataProvider = $searchModel->search([], 0);
+        $dataProvider = $searchModel->search([], 0, 'person:index');
         if ($dataProvider->getCount() == 0) {
             return $this->goBack();
         }

@@ -126,8 +126,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </div>
             <div class="col-lg-7" id="ff-list">
-                <?php Pjax::begin(); ?>
                 <h2 class="h4">関係する農地</h2>
+                <?php Pjax::begin([
+                        'id' => 'field-grid-pjax',
+                        'linkSelector' => '#field-grid-pjax a',
+                        'timeout' => 5000
+                ]); ?>
                 <?= GridView::widget([
                         'dataProvider' => $fieldDp,
                     // 'filterModel' => $searchModel,
@@ -148,14 +152,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                                 [
                                         'attribute' => 'owner',
-                                        'format' => 'html',
                                         'value' => function ($model) {
                                             return $model->owner ? $model->owner_name : '&nbsp;';
                                         }
                                 ],
                                 [
                                         'attribute' => 'cultivator',
-                                        'format' => 'html',
                                         'value' => function ($model) {
                                             return $model->cultivator ? $model->cultivator_name : '&nbsp;';
                                         }
@@ -188,8 +190,14 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'note',
                         ],
                 ]); ?>
+                <?php Pjax::end(); ?>
                 <hr/>
                 <h2 class="h4">関係する山林</h2>
+                <?php Pjax::begin([
+                        'id' => 'forest-grid-pjax',
+                        'linkSelector' => '#forest-grid-pjax a',
+                        'timeout' => 5000
+                ]); ?>
                 <?= GridView::widget([
                         'dataProvider' => $forestDp,
                     // 'filterModel' => $searchModel,
@@ -210,14 +218,12 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                                 [
                                         'attribute' => 'owner',
-                                        'format' => 'html',
                                         'value' => function ($model) {
                                             return $model->owner ? $model->owner_name : '&nbsp;';
                                         }
                                 ],
                                 [
                                         'attribute' => 'manager',
-                                        'format' => 'html',
                                         'value' => function ($model) {
                                             return $model->manager ? $model->manager_name : '&nbsp;';
                                         }

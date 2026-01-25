@@ -5,79 +5,68 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\helpers\ArrayHelper;
 
 trait LoadParamsTrait
 {
-    /**
-     * @param $searchModel Model
-     * @param $dataProvider ActiveDataProvider
-     * @param $params array|false|null
-     */
-    public function loadAndRememberParams(Model $searchModel, ActiveDataProvider $dataProvider, $params)
+    protected function rememberGridParams(
+        array   $params,
+        string  $pageParam,
+        string  $sortParam,
+        ?string $sessionKey = null
+    ): array
     {
-        if (!is_array($params)) {
-            return;
-        }
-
-        $key = $searchModel->formName();
-
-//        if (!isset($params[$key])) {
-//            $attrs = $searchModel->activeAttributes();
-//            foreach($attrs as $attribute) {
-//                if (!empty($searchModel->$attribute)) {
-//                    $params[$key][$attribute] = $searchModel->$attribute;
-//                }
-//            }
-//        }
-
-        $recall = false;
-
         $session = Yii::$app->session;
-        $session->open();
 
-        if (!empty($key)) {
-            if (!isset($params[$key])) {
-                if (isset($session[$key]) && !is_array($session[$key])) {
-                    $params[$key] = json_decode($session[$key], true);
-                    $recall = true;
-                }
-            } else {
-                $session[$key] = json_encode($params[$key]);
-            }
-        } else {
-            $key = (new \ReflectionClass($this))->getShortName();
-            if (count($params) == 0) {
-                if (isset($session[$key]) && !is_array($session[$key])) {
-                    $params = json_decode($session[$key], true);
-                    $recall = true;
-                }
-            } else {
-                $session[$key] = json_encode($params);
-            }
+        $sessionKey = $sessionKey ?? implode(':', [Yii::$app->controller->id, Yii::$app->controller->action->id]);
+
+        $formName = $this->formName();
+        $keyBase = implode(':', [
+                'gridState',
+                $sessionKey,
+                static::class,
+                $formName,
+            ]);
+
+        $keyFilter = $keyBase . ':filter';
+        $keyView = $keyBase . ':view';
+
+        // 1) 今回来たものを抽出
+        $hasFilter = array_key_exists($formName, $params);
+        $hasPage = array_key_exists($pageParam, $params);
+        $hasSort = array_key_exists($sortParam, $params);
+
+        $storedFilter = $session->get($keyFilter, []);
+        $storedView = $session->get($keyView, []);
+
+        // 2) 検索条件が来たら filter 更新、page はリセット
+        if ($hasFilter) {
+            $storedFilter = [$formName => $params[$formName]];
+            $session->set($keyFilter, $storedFilter);
+
+            // 検索条件が変わったらページは1に戻す（view state から page を捨てる）
+            unset($storedView[$pageParam]);
+            // sort は維持したければ残す／検索条件と一緒にリセットしたければ unset
+            // unset($storedView[$sortParam]);
+
+            // 今回指定された page/sort があればそれは採用
+            if ($hasPage) $storedView[$pageParam] = $params[$pageParam];
+            if ($hasSort) $storedView[$sortParam] = $params[$sortParam];
+            $session->set($keyView, $storedView);
+
+            return ArrayHelper::merge($params, $storedFilter, $storedView);
         }
 
-        $searchModel->load($params);
+        // 3) filter 無しで page/sort だけ来たら、filter を補完して view 更新
+        if ($hasPage || $hasSort) {
+            if ($hasPage) $storedView[$pageParam] = $params[$pageParam];
+            if ($hasSort) $storedView[$sortParam] = $params[$sortParam];
+            $session->set($keyView, $storedView);
 
-        $sortParam = $dataProvider->sort->sortParam;
-        if (!isset($params[$sortParam])) {
-            if (isset($session[$key . $sortParam])) {
-                $params[$sortParam] = $session[$key . $sortParam];
-                $dataProvider->sort->params = $params;
-            }
-        } else {
-            $session[$key . $sortParam] = $params[$sortParam];
+            return ArrayHelper::merge($params, $storedFilter, $storedView);
         }
 
-        $pageParam = $dataProvider->pagination->pageParam;
-        if (!isset($params[$pageParam])) {
-            if (isset($session[$key . $pageParam]) && $recall) {
-                Yii::$app->request->setQueryParams([$pageParam => $session[$key . $pageParam]]);
-                // $dataProvider->pagination->page = intval($session[$key . $pageParam]) - 1;
-            }
-        } else {
-            $session[$key . $pageParam] = $params[$pageParam];
-        }
-
-        $session->close();
+        // 4) 何も来てないなら全部復元
+        return ArrayHelper::merge($params, $storedFilter, $storedView);
     }
 }

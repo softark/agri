@@ -57,15 +57,21 @@ class IsgForestSearch extends IsgForest
      *
      * @return ActiveDataProvider
      */
-    public function search($params, $formName = null)
+    public function search($params, $formName = null, $sessionKey = null)
     {
+        $params = $this->rememberGridParams($params, 'page', 'sort', $sessionKey);
+
         $query = IsgForest::find();
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'params'    => $params,
+            ],
             'sort' => [
+                'params'    => $params,
                 'defaultOrder' => ['p_no' => SORT_ASC],
                 'attributes' => [
                     'ko_aza',
@@ -78,8 +84,7 @@ class IsgForestSearch extends IsgForest
             ],
         ]);
 
-        $this->loadAndRememberParams($this, $dataProvider, $params);
-        // $this->load($params, $formName);
+        $this->load($params, $formName);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails

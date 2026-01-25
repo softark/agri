@@ -65,7 +65,7 @@ class FieldController extends Controller
     public function actionExport()
     {
         $searchModel = new FieldSearch();
-        $dataProvider = $searchModel->search([], 0);
+        $dataProvider = $searchModel->search([], 0, 'field:index');
         if ($dataProvider->getCount() == 0) {
             return $this->goBack();
         }

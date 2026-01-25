@@ -49,16 +49,18 @@ class PersonExcel
             $sheet->getCell('D' . $row)->setValueExplicit($model->typeText, DataType::TYPE_STRING);
             $sheet->getCell('E' . $row)->setValueExplicit($model->dispname, DataType::TYPE_STRING);
             $sheet->getCell('F' . $row)->setValueExplicit($model->note, DataType::TYPE_STRING);
-            $row--;
-            foreach ($model->contacts as $contact) {
-                $row++;
-                $sheet->getCell('G' . $row)->setValueExplicit($contact->contact_name, DataType::TYPE_STRING);
-                $sheet->getCell('H' . $row)->setValueExplicit($contact->zip, DataType::TYPE_STRING);
-                $sheet->getCell('I' . $row)->setValueExplicit($contact->address1 . $contact->address2, DataType::TYPE_STRING);
-                $sheet->getCell('J' . $row)->setValueExplicit($contact->phone1, DataType::TYPE_STRING);
-                $sheet->getCell('K' . $row)->setValueExplicit($contact->phone2, DataType::TYPE_STRING);
-                $sheet->getCell('L' . $row)->setValueExplicit($contact->mail, DataType::TYPE_STRING);
-                $sheet->getCell('M' . $row)->setValueExplicit($contact->note, DataType::TYPE_STRING);
+            if (count($model->contacts) > 0) {
+                $row--;
+                foreach ($model->contacts as $contact) {
+                    $row++;
+                    $sheet->getCell('G' . $row)->setValueExplicit($contact->contact_name, DataType::TYPE_STRING);
+                    $sheet->getCell('H' . $row)->setValueExplicit($contact->zip, DataType::TYPE_STRING);
+                    $sheet->getCell('I' . $row)->setValueExplicit($contact->address1 . $contact->address2, DataType::TYPE_STRING);
+                    $sheet->getCell('J' . $row)->setValueExplicit($contact->phone1, DataType::TYPE_STRING);
+                    $sheet->getCell('K' . $row)->setValueExplicit($contact->phone2, DataType::TYPE_STRING);
+                    $sheet->getCell('L' . $row)->setValueExplicit($contact->mail, DataType::TYPE_STRING);
+                    $sheet->getCell('M' . $row)->setValueExplicit($contact->note, DataType::TYPE_STRING);
+                }
             }
         }
 

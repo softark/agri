@@ -55,6 +55,8 @@ class PersonRelationSearch extends PersonRelation
      */
     public function search($params, $pageSize = 20)
     {
+        $params = $this->rememberGridParams($params, 'page', 'sort');
+
         $query = PersonRelation::find()
             ->leftJoin('person pf', 'pf.id=person_relation.from_person_id')
             ->leftJoin('person pt', 'pt.id=person_relation.to_person_id');
@@ -65,8 +67,10 @@ class PersonRelationSearch extends PersonRelation
             'query' => $query,
             'pagination' => [
                 'pageSize' => $pageSize,
+                'params'    => $params,
             ],
             'sort' => [
+                'params'    => $params,
                 'defaultOrder' => ['from_person_id' => SORT_ASC],
                 'attributes' => [
                     'from_person_id' => [
@@ -85,8 +89,7 @@ class PersonRelationSearch extends PersonRelation
             ],
         ]);
 
-        $this->loadAndRememberParams($this, $dataProvider, $params);
-        // $this->load($params, $formName);
+        $this->load($params);
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails

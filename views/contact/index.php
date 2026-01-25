@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Icon::getIconAndLabel('contact') ?></h1>
 
-    <?php Pjax::begin(); ?>
+    <?php Pjax::begin(['timeout' => 5000]) ?>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <?= GridView::widget([
@@ -35,10 +35,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                             'attribute' => 'person.name',
                             'label' => '関係者（氏名／名称）',
-                            'format' => 'html',
+                            'format' => 'raw',
                             'value' => function ($model) {
                                 return Html::a($model->person->dispname, ['/person/view', 'id' => $model->person->id],
-                                        ['class' => 'btn btn-sm btn-outline-primary']);
+                                        ['class' => 'btn btn-sm btn-outline-primary', 'data-pjax' => 0]);
                             },
                     ],
                     'contact_name',
