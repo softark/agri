@@ -25,6 +25,8 @@ class m260123_021804_setup_rbac_for_excel extends Migration
         $auth->add($routeForest);
         $routePerson = $auth->createPermission('/person/export');
         $auth->add($routePerson);
+        $routeContact = $auth->createPermission('/contact/export');
+        $auth->add($routeContact);
 
         // 'user' ロール
         $user = $auth->getRole("user");
@@ -32,6 +34,7 @@ class m260123_021804_setup_rbac_for_excel extends Migration
         $auth->addChild($user, $routeField);
         $auth->addChild($user, $routeForest);
         $auth->addChild($user, $routePerson);
+        $auth->addChild($user, $routeContact);
 
         $auth->invalidateCache();
     }
@@ -46,5 +49,7 @@ class m260123_021804_setup_rbac_for_excel extends Migration
         $auth->remove($routeForest);
         $routePerson = $auth->getPermission('/person/export');
         $auth->remove($routePerson);
+        $routeContact = $auth->getPermission('/contact/export');
+        $auth->remove($routeContact);
     }
 }

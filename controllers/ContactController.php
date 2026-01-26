@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Contact;
+use app\models\ContactExcel;
 use app\models\ContactSearch;
 use Yii;
 use yii\web\BadRequestHttpException;
@@ -27,6 +28,7 @@ class ContactController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                        'export' => ['POST'],
                     ],
                 ],
             ]
@@ -55,6 +57,22 @@ class ContactController extends Controller
             ]);
         }
     }
+
+    /**
+     * Export to Excel
+     */
+    public function actionExport()
+    {
+        $searchModel = new ContactSearch();
+        $dataProvider = $searchModel->search([], 0, 'contact:index');
+        if ($dataProvider->getCount() == 0) {
+            return $this->goBack();
+        }
+
+        ContactExcel::exportContactList($dataProvider);
+        return null;
+    }
+
 
     public function actionSelect()
     {

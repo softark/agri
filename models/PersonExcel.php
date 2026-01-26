@@ -50,23 +50,24 @@ class PersonExcel
             $sheet->getCell('C' . $row)->setValueExplicit($model->num_forests, DataType::TYPE_NUMERIC);
             $sheet->getCell('D' . $row)->setValueExplicit($model->typeText, DataType::TYPE_STRING);
             $sheet->getCell('E' . $row)->setValueExplicit($model->dispname, DataType::TYPE_STRING);
-            $sheet->getCell('F' . $row)->setValueExplicit($model->note, DataType::TYPE_STRING);
+            $sheet->getCell('F' . $row)->setValueExplicit($model->yomigana, DataType::TYPE_STRING);
+            $sheet->getCell('G' . $row)->setValueExplicit($model->note, DataType::TYPE_STRING);
             $row_start = $row;
             if (count($model->contacts) > 0) {
                 $row--;
                 foreach ($model->contacts as $contact) {
                     $row++;
-                    $sheet->getCell('G' . $row)->setValueExplicit($contact->contact_name, DataType::TYPE_STRING);
-                    $sheet->getCell('H' . $row)->setValueExplicit($contact->zip, DataType::TYPE_STRING);
-                    $sheet->getCell('I' . $row)->setValueExplicit($contact->address1 . $contact->address2, DataType::TYPE_STRING);
-                    $sheet->getCell('J' . $row)->setValueExplicit($contact->phone1, DataType::TYPE_STRING);
-                    $sheet->getCell('K' . $row)->setValueExplicit($contact->phone2, DataType::TYPE_STRING);
-                    $sheet->getCell('L' . $row)->setValueExplicit($contact->mail, DataType::TYPE_STRING);
-                    $sheet->getCell('M' . $row)->setValueExplicit($contact->note, DataType::TYPE_STRING);
+                    $sheet->getCell('H' . $row)->setValueExplicit($contact->contact_name, DataType::TYPE_STRING);
+                    $sheet->getCell('I' . $row)->setValueExplicit($contact->zip, DataType::TYPE_STRING);
+                    $sheet->getCell('J' . $row)->setValueExplicit($contact->address1 . $contact->address2, DataType::TYPE_STRING);
+                    $sheet->getCell('K' . $row)->setValueExplicit($contact->phone1, DataType::TYPE_STRING);
+                    $sheet->getCell('L' . $row)->setValueExplicit($contact->phone2, DataType::TYPE_STRING);
+                    $sheet->getCell('M' . $row)->setValueExplicit($contact->mail, DataType::TYPE_STRING);
+                    $sheet->getCell('N' . $row)->setValueExplicit($contact->note, DataType::TYPE_STRING);
                 }
             }
             if ($row_start != $row) {
-                for($col = 'A'; $col <> 'G'; $col++) {
+                for($col = 'A'; $col <> 'H'; $col++) {
                     $sheet->mergeCells($col . $row_start . ':' . $col . $row);
                 }
             }
