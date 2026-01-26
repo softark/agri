@@ -10,8 +10,8 @@ $this->title = '岩座神農林';
 <div class="site-index">
 
     <div class="jumbotron text-center bg-transparent mt-5 mb-5">
-        <h1 class="display-4"><?= Html::img('/favicon-96x96.png', ['width' => 56, 'height' => 56, 'style' => 'margin-top:-10px;']) ?>
-            岩座神農林</h1>
+        <h1 class="display-4"><?= Html::img('/favicon-128x128.png', ['width' => 58, 'height' => 58, 'style' => 'margin-top:-10px;']) ?>
+            岩座神農林業データベース</h1>
         <p class="lead">岩座神の農地と山林のデータベース</p>
     </div>
 
@@ -30,6 +30,7 @@ $this->title = '岩座神農林';
                     <?= Html::a(Icon::getIconAndLabel('contact'), ['/contact'], ['class' => 'btn btn-primary btn-lg']) ?>
                     <?= Html::a(Icon::getIconAndLabel('succeed'), ['/person-relation'], ['class' => 'btn btn-primary btn-lg']) ?>
                 <?php endif; ?>
+                <?= Html::a(Icon::getIcon('map-location') . ' i-GIS', 'https://gis.isarigami.net/home', ['class' => 'btn btn-outline-primary btn-lg']) ?>
             </p>
             <?php if (Yii::$app->user->can('editor')): ?>
                 </div>
