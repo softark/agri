@@ -45,7 +45,7 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
 <header id="header">
     <?php
     NavBar::begin([
-            'brandLabel' => Html::img('/favicon-48x48.png', ['width' => 32, 'height' => 32, 'style' => 'margin-top:-8px;'])/* . ' ' . Yii::$app->name*/,
+            'brandLabel' => Html::img('/favicon-48x48.png', ['width' => 28, 'height' => 28, 'style' => 'margin-top:-8px;'])/* . ' ' . Yii::$app->name*/,
             'brandUrl' => Yii::$app->homeUrl,
             'options' => ['class' => 'navbar-expand-lg navbar-dark bg-dark fixed-top']
     ]);
