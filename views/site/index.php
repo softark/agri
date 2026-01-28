@@ -5,7 +5,7 @@
 use app\models\Icon;
 use yii\bootstrap5\Html;
 
-$this->title = '岩座神農林';
+$this->title = '岩座神農林業データベース';
 ?>
 <div class="site-index">
 
