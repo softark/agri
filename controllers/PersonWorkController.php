@@ -17,7 +17,7 @@ use yii\filters\VerbFilter;
 /**
  * PersonWorkController implements the CRUD actions for PersonWork model.
  */
-class PersonWorkController extends Controller
+class PersonWorkController extends BaseController
 {
     /**
      * @inheritDoc

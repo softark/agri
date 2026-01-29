@@ -10,7 +10,7 @@ $config = [
     'bootstrap' => [
         'log',
         'session',
-        function() {
+        function () {
             \app\models\GridAndListUtil::setupGrid();
             \app\models\GridAndListUtil::setupListView();
         }
@@ -59,6 +59,18 @@ $config = [
                 [
                     'class' => yii\log\FileTarget::class,
                     'levels' => ['error', 'warning'],
+                ],
+                [
+                    'class' => \yii\log\FileTarget::class,
+                    'levels' => ['info', 'warning', 'error'],
+                    'categories' => ['audit'],
+                    'logFile' => '@runtime/logs/audit.log',
+                    'logVars' => [],          // $_GET, $_POST 等を勝手に混ぜない
+                    'exportInterval' => 1,    // 1行ずつ即時吐き（監査は確実性優先）
+                    'enableRotation' => true, // Yiiのローテも一応ON
+                    'maxFileSize' => 10240,   // KB（=10MB）必要に応じて調整
+                    'maxLogFiles' => 50,      // 保持数（logrotate使うなら少なめでもOK）
+                    'prefix' => fn($message) => '',
                 ],
             ],
         ],

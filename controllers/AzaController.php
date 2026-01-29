@@ -13,7 +13,7 @@ use yii\filters\VerbFilter;
 /**
  * AzaController implements the CRUD actions for Aza model.
  */
-class AzaController extends Controller
+class AzaController extends BaseController
 {
     /**
      * @inheritDoc

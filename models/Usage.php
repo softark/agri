@@ -23,6 +23,16 @@ use yii\helpers\ArrayHelper;
  */
 class Usage extends \yii\db\ActiveRecord
 {
+    public function behaviors()
+    {
+        return array_merge(parent::behaviors(), [
+            'audit' => [
+                'class' => AuditBehavior::class,
+                'modelName' => 'agri.usage', // 好み。未指定でも tableName() が入る
+                // 'ignoreAttributes' => ['updated_at'], // 必要なら上書き
+            ],
+        ]);
+    }
 
     public const TYPE_UNDEF = 0;
     public const TYPE_GRAIN = 1;

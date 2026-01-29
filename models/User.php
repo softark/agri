@@ -27,6 +27,17 @@ use yii\web\IdentityInterface;
  */
 class User extends ActiveRecord implements IdentityInterface
 {
+    public function behaviors()
+    {
+        return array_merge(parent::behaviors(), [
+            'audit' => [
+                'class' => AuditBehavior::class,
+                'modelName' => 'agri.user', // 好み。未指定でも tableName() が入る
+                // 'ignoreAttributes' => ['updated_at'], // 必要なら上書き
+            ],
+        ]);
+    }
+
     /**
      * @var string the user friendly name of the model used in user interface
      */

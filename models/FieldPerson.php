@@ -28,6 +28,17 @@ use yii\base\UserException;
 class FieldPerson extends \yii\db\ActiveRecord
 {
 
+    public function behaviors()
+    {
+        return array_merge(parent::behaviors(), [
+            'audit' => [
+                'class' => AuditBehavior::class,
+                'modelName' => 'agri.field_person', // 好み。未指定でも tableName() が入る
+                // 'ignoreAttributes' => ['updated_at'], // 必要なら上書き
+            ],
+        ]);
+    }
+
     const ROLE_OWNER = 1;
     const ROLE_CULTIVATOR = 2;
 

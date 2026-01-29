@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * TanadaController implements the CRUD actions for Tanada model.
  */
-class IsgTanadaController extends Controller
+class IsgTanadaController extends BaseController
 {
     /**
      * @inheritDoc

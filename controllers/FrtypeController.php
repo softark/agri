@@ -13,7 +13,7 @@ use yii\filters\VerbFilter;
 /**
  * FrtypeController implements the CRUD actions for Frtype model.
  */
-class FrtypeController extends Controller
+class FrtypeController extends BaseController
 {
     /**
      * @inheritDoc

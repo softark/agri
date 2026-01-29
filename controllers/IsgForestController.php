@@ -12,7 +12,7 @@ use yii\filters\VerbFilter;
 /**
  * ForestController implements the CRUD actions for Forest model.
  */
-class IsgForestController extends Controller
+class IsgForestController extends BaseController
 {
     /**
      * @inheritDoc

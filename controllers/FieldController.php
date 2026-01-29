@@ -16,7 +16,7 @@ use yii\filters\VerbFilter;
 /**
  * FieldController implements the CRUD actions for Field model.
  */
-class FieldController extends Controller
+class FieldController extends BaseController
 {
     /**
      * @inheritDoc

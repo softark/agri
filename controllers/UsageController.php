@@ -13,7 +13,7 @@ use yii\filters\VerbFilter;
 /**
  * UsageController implements the CRUD actions for Usage model.
  */
-class UsageController extends Controller
+class UsageController extends BaseController
 {
     /**
      * @inheritDoc
