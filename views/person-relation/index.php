@@ -28,6 +28,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="row">
         <div class="col-lg-8">
+            <?php
+            $template = '{view}';
+            if (Yii::$app->user->can('/person-relation/update')) {
+                $template .= ' {update}';
+            }
+            if (Yii::$app->user->can('/person-relation/delete')) {
+                $template .= ' {delete}';
+            }
+            ?>
 
             <?= GridView::widget([
                     'dataProvider' => $dataProvider,
@@ -55,7 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'note',
                             [
                                     'class' => ActionColumn::class,
-                                    'template' => Yii::$app->user->can('/person-relation/delete') ? '{update} {delete}' : '{update}',
+                                    'template' => $template,
                                     'urlCreator' => function ($action, PersonRelation $model, $key, $index, $column) {
                                         return Url::toRoute([$action, 'id' => $model->id]);
                                     }

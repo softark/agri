@@ -19,7 +19,8 @@ use yii\bootstrap5\ActiveForm;
                     'enableAjaxValidation' => false,
                     'options' => ['autocomplete' => 'off'],
                     'fieldConfig' => [
-                            'options' => ['class' => 'mb-3']
+                            'options' => ['class' => 'mb-3'],
+                            'errorOptions' => ['class' => 'd-none'],
                     ],
             ]); ?>
             <div class="row">
@@ -27,10 +28,16 @@ use yii\bootstrap5\ActiveForm;
                     <?= $form->field($model, 'from_person_id')->textInput(['id' => 'from-person-id', 'readonly' => true]) ?>
                 </div>
                 <div class="col-5 pt-4">
-                    <p class="form-control mt-2" id="from-person-name"><?= $model->isNewRecord ? '&nbsp;' : $model->fromPerson->dispname ?></p>
+                    <?php
+                    $fromPersonName = '&nbsp;';
+                    if ($model->from_person_id) {
+                        $fromPersonName = $model->fromPerson->dispname;
+                    }
+                    ?>
+                    <p class="form-control mt-2" id="from-person-name"><?= $fromPersonName ?></p>
                 </div>
                 <div class="col-3 pt-4">
-                    <?= Html::button('選択 ...', ['class' => 'btn btn-primary mt-2', 'id' => 'btn-from-person']) ?>
+                    <?= Html::button('選択 ...', ['class' => 'btn btn-primary mt-2', 'id' => 'btn-from-person', 'disabled' => !$model->isNewRecord]) ?>
                 </div>
             </div>
             <div class="row">
@@ -38,13 +45,20 @@ use yii\bootstrap5\ActiveForm;
                     <?= $form->field($model, 'to_person_id')->textInput(['id' => 'to-person-id', 'readonly' => true]) ?>
                 </div>
                 <div class="col-5 pt-4">
-                    <p class="form-control mt-2" id="to-person-name"><?= $model->isNewRecord ? '&nbsp;' : $model->toPerson->dispname ?></p>
+                    <?php
+                    $toPersonName = '&nbsp;';
+                    if ($model->to_person_id) {
+                        $toPersonName = $model->toPerson->dispname;
+                    }
+                    ?>
+                    <p class="form-control mt-2" id="to-person-name"><?= $toPersonName ?></p>
                 </div>
                 <div class="col-3 pt-4">
-                    <?= Html::button('選択 ...', ['class' => 'btn btn-primary mt-2', 'id' => 'btn-to-person']) ?>
+                    <?= Html::button('選択 ...', ['class' => 'btn btn-primary mt-2', 'id' => 'btn-to-person', 'disabled' => !$model->isNewRecord]) ?>
                 </div>
             </div>
             <?= $form->field($model, 'note')->textInput(['maxlength' => true]) ?>
+            <?= $form->errorSummary($model); ?>
 
             <div class="form-group">
                 <?php if ($model->isNewRecord): ?>

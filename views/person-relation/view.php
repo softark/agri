@@ -10,7 +10,7 @@ use yii\widgets\DetailView;
 
 $this->title = '引継 : ' . $model->fromPerson->dispname . ' > ' . $model->toPerson->dispname;
 $this->params['breadcrumbs'][] = ['label' => '引継', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->params['breadcrumbs'][] = $model->fromPerson->dispname . ' > ' . $model->toPerson->dispname;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="person-relation-view">

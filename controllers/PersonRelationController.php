@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Person;
 use app\models\PersonRelation;
 use app\models\PersonRelationSearch;
 use yii\web\Controller;
@@ -71,8 +72,17 @@ class PersonRelationController extends BaseController
         $model = new PersonRelation();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect($ret_route);
+            if ($model->load($this->request->post())) {
+                if ($model->validate()) {
+                    $fromPerson = Person::findOne($model->from_person_id);
+                    $toPerson = Person::findOne($model->to_person_id);
+                    if ($model->checkWithPerson($fromPerson, 'D') &&
+                        $model->checkWithPerson($toPerson, 'A')) {
+                        if ($model->save(false)) {
+                            return $this->redirect($ret_route);
+                        }
+                    }
+                }
             }
         } else {
             $model->loadDefaultValues();
