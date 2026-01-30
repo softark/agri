@@ -15,6 +15,7 @@ use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
 
 AppAsset::register($this);
+BootboxAsset::register($this);
 BootboxAsset::overrideSystemConfirm();
 FontAwesomeAsset::register($this);
 
@@ -55,7 +56,7 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
         $items[] = ['label' => Icon::getIconAndLabel('field'), 'url' => ['/field'], 'encode' => false];
         $items[] = ['label' => Icon::getIconAndLabel('tree'), 'url' => ['/forest'], 'encode' => false];
         $items[] = ['label' => Icon::getIconAndLabel('person'), 'url' => ['/person'], 'encode' => false];
-        if (Yii::$app->user->can('editor')) {
+        if (Yii::$app->user->can('admin')) {
             $items[] = ['label' => Icon::getIconAndLabel('contact'), 'url' => ['/contact'], 'encode' => false];
             $items[] = ['label' => Icon::getIconAndLabel('succeed'), 'url' => ['/person-relation'], 'encode' => false];
             $items[] = [
@@ -66,14 +67,19 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
                             ['label' => '農地利用状況', 'url' => ['/usage'], 'encode' => false],
                     ]
             ];
-        }
-        if (Yii::$app->user->can('admin')) {
             $items[] = [
                     'label' => '保守作業',
                     'items' => [
                             ['label' => '関係者ワーク', 'url' => ['/person-work'], 'encode' => false],
                             ['label' => '棚田', 'url' => ['/isg-tanada'], 'encode' => false],
                             ['label' => '山林', 'url' => ['/isg-forest'], 'encode' => false],
+                    ]
+            ];
+        } elseif (Yii::$app->user->can('editor')) {
+            $items[] = [
+                    'label' => 'マスター',
+                    'items' => [
+                            ['label' => '農地利用状況', 'url' => ['/usage'], 'encode' => false],
                     ]
             ];
         }

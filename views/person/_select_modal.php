@@ -20,7 +20,7 @@ $this->registerCss("
 ");
 
 $searchModel = new PersonSearch(['_form_name' => 'psel']);
-$dataProvider = $searchModel->search([], 10);
+$dataProvider = $searchModel->search([], 10, 'person:select');
 
 Modal::begin([
         'title' => '関係者を選択',
@@ -68,7 +68,7 @@ $this->registerJs("
 var openDone = false;
 function openPersonSelectModal() {
     if (!openDone) {
-      updatePersonSelectList();
+      /* updatePersonSelectList(); */
       openDone = true;
     }
     $('#person-select-modal').modal('show');

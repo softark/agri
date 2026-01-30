@@ -17,7 +17,7 @@ $this->registerCss("
 ");
 
 $searchModel = new ContactSearch(['_form_name' => 'csel']);
-$dataProvider = $searchModel->search([], 10);
+$dataProvider = $searchModel->search([], 10, 'contact:select');
 
 Modal::begin([
         'title' => '連絡先を選択',
@@ -63,7 +63,7 @@ Modal::end();
 
 $this->registerJs("
 function openContactSelectModal() {
-    updateContactSelectList();
+    /* updateContactSelectList(); */
     $('#contact-select-modal').modal('show');
 }
 $('#contact-search-form').on('change', 'select', function(event){

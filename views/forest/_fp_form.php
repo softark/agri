@@ -56,7 +56,8 @@ use yii\widgets\DetailView;
                         'enableAjaxValidation' => false,
                         'options' => ['autocomplete' => 'off'],
                         'fieldConfig' => [
-                                'options' => ['class' => 'mb-3']
+                                'options' => ['class' => 'mb-3'],
+                                'errorOptions' => ['class' => 'd-none'],
                         ],
                 ]); ?>
                 <?php $role_text = $model->role == ForestPerson::ROLE_OWNER ? '所有者' : '管理者'; ?>
@@ -128,6 +129,7 @@ use yii\widgets\DetailView;
                     </div>
                 </div>
                 <?= $form->field($model, 'note')->textInput(['maxlength' => true]) ?>
+                <?= $form->errorSummary($model) ?>
 
                 <div class="form-group">
                     <?php if ($model->isNewRecord): ?>

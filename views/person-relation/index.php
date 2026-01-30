@@ -55,7 +55,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'note',
                             [
                                     'class' => ActionColumn::class,
-                                    'template' => '{update} {delete}',
+                                    'template' => Yii::$app->user->can('/person-relation/delete') ? '{update} {delete}' : '{update}',
                                     'urlCreator' => function ($action, PersonRelation $model, $key, $index, $column) {
                                         return Url::toRoute([$action, 'id' => $model->id]);
                                     }

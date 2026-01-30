@@ -42,7 +42,7 @@ $this->params['breadcrumbs'][] = '編集';
                     </div>
                     <div class="form-group">
                         <?= Html::button(Icon::getIconAndLabel('map-location'),
-                                    ['class' => 'btn btn-outline-success', 'id' => 'open-map-modal', 'data-url' => $model->forest->mapurl]) ?>
+                                ['class' => 'btn btn-outline-success', 'id' => 'open-map-modal', 'data-url' => $model->forest->mapurl]) ?>
                         <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
                         <?= Html::a(Icon::getIconAndLabel('end-edit'), $ret_route, ['class' => 'btn btn-outline-secondary']) ?>
                     </div>
@@ -60,7 +60,8 @@ $this->params['breadcrumbs'][] = '編集';
                             'enableClientValidation' => false,
                             'options' => ['autocomplete' => 'off'],
                             'fieldConfig' => [
-                                    'options' => ['class' => 'mb-3']
+                                    'options' => ['class' => 'mb-3'],
+                                    'errorOptions' => ['class' => 'd-none'],
                             ],
                     ]); ?>
                     <?php foreach ($model->ofps as $i => $ofp) : ?>
@@ -118,7 +119,8 @@ $this->params['breadcrumbs'][] = '編集';
                             'enableClientValidation' => false,
                             'options' => ['autocomplete' => 'off'],
                             'fieldConfig' => [
-                                    'options' => ['class' => 'mb-3']
+                                    'options' => ['class' => 'mb-3'],
+                                    'errorOptions' => ['class' => 'd-none'],
                             ],
                     ]); ?>
                     <?php foreach ($model->mfps as $i => $mfp) : ?>

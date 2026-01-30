@@ -8,6 +8,7 @@ use app\models\ForestSearch;
 use app\models\Person;
 use app\models\PersonExcel;
 use app\models\PersonForm;
+use app\models\PersonRelation;
 use app\models\PersonSearch;
 use app\models\PersonWork;
 use Yii;
@@ -40,6 +41,7 @@ class PersonController extends BaseController
                         'reorder-contact' => ['POST'],
                         'delete-contact' => ['POST'],
                         'export' => ['POST'],
+                        'delete-relation' => ['POST'],
                     ],
                 ],
             ]
@@ -88,7 +90,7 @@ class PersonController extends BaseController
     {
         if (Yii::$app->request->isPjax) {
             $searchModel = new PersonSearch(['_form_name' => 'psel']);
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, 10);
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, 10, 'person:select');
             return $this->renderPartial('_select', [
                 'dataProvider' => $dataProvider,
             ]);
@@ -215,7 +217,7 @@ class PersonController extends BaseController
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException('The requested person does not exist.');
     }
 
     public function actionCreateContact($id)
@@ -301,4 +303,48 @@ class PersonController extends BaseController
         return $this->renderAjax('_contact_view', ['model' => $model]);
     }
 
+    public function actionUpdateRelation($id)
+    {
+        $model = $this->findModel($id);
+        return $this->render('update-relation', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionDeleteRelation($id, $rel_id)
+    {
+        $model = PersonRelation::findOne($rel_id);
+        if ($model === null) {
+            throw new NotFoundHttpException('The requested person_relation does not exist.');
+        }
+        $model->delete();
+        return $this->redirect(['update-relation', 'id' => $id]);
+    }
+
+    public function actionAddRelation($id, $mode)
+    {
+        $model = $this->findModel($id);
+        $relation = new PersonRelation();
+        if ($mode == 'A') {
+            $relation->to_person_id = $id;
+        } else {
+            $relation->from_person_id = $id;
+        }
+
+        if ($this->request->isPost && $relation->load($this->request->post())) {
+            if ($relation->validate()) {
+                if ($relation->checkWithPerson($model, $mode)) {
+                    if ($relation->save(false)) {
+                        return $this->redirect(['update-relation', 'id' => $id]);
+                    }
+                }
+            }
+        }
+
+        return $this->render('add-relation', [
+            'model' => $model,
+            'relation' => $relation,
+            'mode' => $mode,
+        ]);
+    }
 }

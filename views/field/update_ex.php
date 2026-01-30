@@ -61,7 +61,8 @@ $this->params['breadcrumbs'][] = '編集';
                             'enableClientValidation' => false,
                             'options' => ['autocomplete' => 'off'],
                             'fieldConfig' => [
-                                    'options' => ['class' => 'mb-3']
+                                    'options' => ['class' => 'mb-3'],
+                                    'errorOptions' => ['class' => 'd-none'],
                             ],
                     ]); ?>
                     <?php foreach ($model->ofps as $i => $ofp) : ?>
@@ -119,7 +120,8 @@ $this->params['breadcrumbs'][] = '編集';
                             'enableClientValidation' => false,
                             'options' => ['autocomplete' => 'off'],
                             'fieldConfig' => [
-                                    'options' => ['class' => 'mb-3']
+                                    'options' => ['class' => 'mb-3'],
+                                    'errorOptions' => ['class' => 'd-none'],
                             ],
                     ]); ?>
                     <?php foreach ($model->cfps as $i => $cfp) : ?>
@@ -177,7 +179,8 @@ $this->params['breadcrumbs'][] = '編集';
                             'enableClientValidation' => false,
                             'options' => ['autocomplete' => 'off'],
                             'fieldConfig' => [
-                                    'options' => ['class' => 'mb-3']
+                                    'options' => ['class' => 'mb-3'],
+                                    'errorOptions' => ['class' => 'd-none'],
                             ],
                     ]); ?>
                     <?php foreach ($model->fus as $i => $fu) : ?>

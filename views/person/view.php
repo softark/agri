@@ -29,12 +29,6 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="col-lg-5 col-md-8">
                 <?php
                 $attributes = [
-//                    [
-//                            'attribute' => 'status',
-//                            'value' => function ($model) {
-//                                return $model->statusText;
-//                            },
-//                    ],
                         [
                                 'attribute' => 'type',
                                 'value' => function ($model) {
@@ -104,6 +98,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ],
                         ]);
                     }
+                    $cmdButtons[] = Html::a(Icon::getIcon('update') . ' 引継の編集',
+                            ['update-relation', 'id' => $model->id, 'ret_route' => ['view', 'id' => $model->id]],
+                            ['class' => 'btn btn-primary btn-sm']);
                 }
                 if (count($cmdButtons) > 0) {
                     $attributes[] = [

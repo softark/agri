@@ -57,7 +57,7 @@ class PersonRelation extends \yii\db\ActiveRecord
             [['from_person_id', 'to_person_id'], 'unique', 'targetAttribute' => ['from_person_id', 'to_person_id']],
             [['from_person_id'], 'exist', 'skipOnError' => true, 'targetClass' => Person::class, 'targetAttribute' => ['from_person_id' => 'id']],
             [['to_person_id'], 'exist', 'skipOnError' => true, 'targetClass' => Person::class, 'targetAttribute' => ['to_person_id' => 'id']],
-            ['from_person_id', 'compare', 'operator' => '!=', 'compareAttribute' => 'to_person_id'],
+            ['to_person_id', 'compare', 'operator' => '!=', 'compareAttribute' => 'from_person_id'],
         ];
     }
 
@@ -160,5 +160,40 @@ class PersonRelation extends \yii\db\ActiveRecord
             $this->fromPerson->save();
         }
         return parent::beforeDelete();
+    }
+
+    /**
+     * @param Person $person
+     * @param string $mode 'A' = 引継元を指定 / 'D' = 引継先を指定
+     * @return bool
+     */
+    public function checkWithPerson($person, $mode) : bool
+    {
+        // 引継元を指定する場合
+        if ($mode == 'A') {
+            if (in_array($this->from_person_id, $person->ancIds)) {
+                $this->addError('from_person_id', '引継元に指定された関係者は、既に登録されています。');
+                return false;
+            }
+            if (in_array($this->from_person_id, $person->descIds)) {
+                $this->addError('from_person_id', '引継元に指定された関係者は、引継先として登録されているため、循環が生じてしまいます。');
+                return false;
+            }
+        }
+        // 引継先を指定する場合
+        elseif ($mode == 'D') {
+            if (in_array($this->to_person_id, $person->descIds)) {
+                $this->addError('to_person_id', '引継先に指定された関係者は、既に登録されています。');
+                return false;
+            }
+            if (in_array($this->from_person_id, $person->ancIds)) {
+                $this->addError('to_person_id', '引継先に指定された関係者は、引継元として登録されているため、循環が生じてしまいます。');
+                return false;
+            }
+        } else {
+            $this->addError('note', 'Invalid mode specified for PersonRelation::checkWithPerson()');
+            return false;
+        }
+        return true;
     }
 }

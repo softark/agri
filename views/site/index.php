@@ -26,9 +26,9 @@ $this->title = '岩座神農林業データベース';
                 <?= Html::a(Icon::getIconAndLabel('field'), ['/field'], ['class' => 'btn btn-primary btn-lg']) ?>
                 <?= Html::a(Icon::getIconAndLabel('tree'), ['/forest'], ['class' => 'btn btn-primary btn-lg']) ?>
                 <?= Html::a(Icon::getIconAndLabel('person'), ['/person'], ['class' => 'btn btn-primary btn-lg']) ?>
-                <?php if (Yii::$app->user->can('editor')): ?>
-                    <?= Html::a(Icon::getIconAndLabel('contact'), ['/contact'], ['class' => 'btn btn-primary btn-lg']) ?>
-                    <?= Html::a(Icon::getIconAndLabel('succeed'), ['/person-relation'], ['class' => 'btn btn-primary btn-lg']) ?>
+                <?php if (Yii::$app->user->can('admin')): ?>
+                    <?= Html::a(Icon::getIconAndLabel('contact'), ['/contact'], ['class' => 'btn btn-warning btn-lg']) ?>
+                    <?= Html::a(Icon::getIconAndLabel('succeed'), ['/person-relation'], ['class' => 'btn btn-warning btn-lg']) ?>
                 <?php endif; ?>
                 <?= Html::a(Icon::getIcon('map-location') . ' i-GIS', 'https://gis.isarigami.net/home', ['class' => 'btn btn-outline-primary btn-lg']) ?>
             </p>
@@ -37,8 +37,10 @@ $this->title = '岩座神農林業データベース';
                 <div class="row">
                 <h2 class="h4">マスター</h2>
                 <p>
-                    <?= Html::a('字（あざ）', ['/aza'], ['class' => 'btn btn-primary btn-lg']) ?>
-                    <?= Html::a('森林タイプ', ['/frtype'], ['class' => 'btn btn-primary btn-lg']) ?>
+                    <?php if (Yii::$app->user->can('admin')): ?>
+                        <?= Html::a('字（あざ）', ['/aza'], ['class' => 'btn btn-warning btn-lg']) ?>
+                        <?= Html::a('森林タイプ', ['/frtype'], ['class' => 'btn btn-warning btn-lg']) ?>
+                    <?php endif; ?>
                     <?= Html::a('農地利用状況', ['/usage'], ['class' => 'btn btn-primary btn-lg']) ?>
                 </p>
                 <?php if (Yii::$app->user->can('admin')): ?>
