@@ -9,89 +9,13 @@ use yii\widgets\DetailView;
 /** @var app\models\Person $model */
 /** @var app\models\Contact $contact */
 
-\app\assets\JuiAsset::register($this);
+\app\assets\ZipSearchAsset::register($this);
 
 $this->registerJs("
 // 連絡先選択ダイアログのポップアップ
 $(document).on('click', '#btn-contact-select', function(event){
   $('#contact-select-modal').modal('show');
   event.preventDefault();
-});
-
-// ZIP 検索データ受信時の処理
-function zipDataReceive(response, data) {
-    response($.map(data, function (item) {
-        // 住所
-        var address = item.pref + item.town + item.block;
-        // ラベル
-        var label = item.zip_code + ' : ' + address;
-        if (item.street) {
-            label += ' (' + item.street + ')';
-        }
-        return {
-            label: label,
-            zip_code: item.zip_code,
-            address: address,
-        }
-    }));
-}
-
-// フォームの項目を更新
-function zipDataUpdate(ui) {
-    $('#zip').val(ui.item.zip_code);
-    $('#address1').val(ui.item.address);
-}
-
-// 郵便番号の入力フィールドに Autocomplete を適用
-$('#zip').autocomplete({
-    delay: 500,
-    minLength: 3,
-    source: function (request, response) {
-        $.ajax({
-            url: 'https://tools.softark.net/zipdata/api/search',
-            dataType: 'jsonp',
-            data: {
-                mode: 0,
-                term: request.term,
-                max_rows: 100,
-                biz_mode: 0,
-                sort: 0
-            },
-            success: function (data) {
-                zipDataReceive(response, data);
-            }
-        });
-    },
-    select: function (event, ui) {
-        zipDataUpdate(ui);
-        return false;
-    }
-});
-
-// 住所の入力フィールドに Autocomplete を適用
-$('#address1').autocomplete({
-    delay: 300,
-    minLength: 2,
-    source: function (request, response) {
-        $.ajax({
-            url: 'https://tools.softark.net/zipdata/api/search',
-            dataType: 'jsonp',
-            data: {
-                mode: 1,
-                term: request.term,
-                max_rows: 100,
-                biz_mode: 0,
-                sort: 1
-            },
-            success: function (data) {
-                zipDataReceive(response, data);
-            }
-        });
-    },
-    select: function (event, ui) {
-        zipDataUpdate(ui);
-        return false;
-    }
 });
 ");
 ?>
@@ -127,8 +51,10 @@ $('#address1').autocomplete({
             <?= $form->field($contact, 'role')->textInput(['maxlength' => true, 'id' => 'role']) ?>
             <?= $form->field($contact, 'name1')->textInput(['maxlength' => true, 'id' => 'contact-name1']) ?>
             <?= $form->field($contact, 'name2')->textInput(['maxlength' => true, 'id' => 'contact-name2']) ?>
-            <?= $form->field($contact, 'zip')->textInput(['maxlength' => true, 'id' => 'zip']) ?>
-            <?= $form->field($contact, 'address1')->textInput(['maxlength' => true, 'id' => 'address1']) ?>
+            <?= $form->field($contact, 'zip')->textInput(['maxlength' => true, 'id' => 'zip',
+                    'data-zip-autocomplete' => true, 'data-zip-target' => '#zip', 'data-address-target' => '#address1']) ?>
+            <?= $form->field($contact, 'address1')->textInput(['maxlength' => true, 'id' => 'address1',
+                    'data-address-autocomplete' => true, 'data-zip-target' => '#zip', 'data-address-target' => '#address1']) ?>
             <?= $form->field($contact, 'address2')->textInput(['maxlength' => true, 'id' => 'address2']) ?>
             <?= $form->field($contact, 'phone1')->textInput(['maxlength' => true, 'id' => 'phone1']) ?>
             <?= $form->field($contact, 'phone2')->textInput(['maxlength' => true, 'id' => 'phone2']) ?>
