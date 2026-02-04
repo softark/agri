@@ -1,13 +1,12 @@
 <?php
 
+use app\components\Icon;
 use app\models\Contact;
-use app\models\Icon;
-use app\models\Person;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
-use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\helpers\Url;
 use yii\widgets\Pjax;
 
 /** @var yii\web\View $this */

@@ -1,7 +1,6 @@
 <?php
 
-use app\models\Icon;
-use yii\bootstrap5\Html;
+use app\components\Icon;
 
 /** @var yii\web\View $this */
 /** @var app\models\PersonForm $model */

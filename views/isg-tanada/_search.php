@@ -1,42 +1,29 @@
 <?php
 
-use app\models\Icon;
-use yii\bootstrap5\Html;
+use app\components\Icon;
 use yii\bootstrap5\ActiveForm;
+use yii\bootstrap5\Html;
 
 /** @var yii\web\View $this */
 /** @var app\models\IsgTanadaSearch $model */
+
 /** @var yii\bootstrap5\ActiveForm $form */
 
-$this->registerJs("
-$('#tanada-search-form').on('click', '#clear-btn', function(event){
-    $('#tanada-search-form select').val('');
-    $('#tanada-search-form input').val('');
-    $('#tanada-search-form').submit();
-    event.preventDefault();
-});
-$('#tanada-search-form').on('change', 'select', function(event){
-    $('#tanada-search-form').submit();
-    event.preventDefault();
-});
-$('#tanada-search-form').on('change', 'input', function(event){
-    $('#tanada-search-form').submit();
-    event.preventDefault();
-});
-");
+use app\assets\SearchFormAsset;
 
+SearchFormAsset::register($this);
 ?>
 
 <div class="tanada-search">
 
     <?php $form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-        'options' => [
-            'data-pjax' => 1,
-            'autocomplete' => 'off'
-        ],
-        'id' => 'tanada-search-form',
+            'action' => ['index'],
+            'method' => 'get',
+            'options' => [
+                    'data-pjax' => 1,
+                    'autocomplete' => 'off',
+                    'data-search-form' => 1,
+            ],
     ]); ?>
 
     <div class="row">
@@ -55,7 +42,7 @@ $('#tanada-search-form').on('change', 'input', function(event){
         <div class="form-group search-buttons col-md-3 col-sm-3 col-4">
             <p class="text-nowrap pt-2">
                 <?= Html::submitButton(Icon::getBtnText('search'), ['class' => 'btn btn-primary btn-sm']) ?>
-                <?= Html::button(Icon::getBtnText('clear'), ['class' => 'btn btn-outline-secondary btn-sm', 'id' => 'clear-btn']) ?>
+                <?= Html::button(Icon::getBtnText('clear'), ['class' => 'btn btn-outline-secondary btn-sm', 'data-clear' => 1]) ?>
             </p>
         </div>
     </div>

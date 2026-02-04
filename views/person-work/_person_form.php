@@ -1,11 +1,9 @@
 <?php
 
-use app\models\Icon;
-use yii\helpers\ArrayHelper;
+use app\components\Icon;
+use app\models\Person;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
-use app\models\Person;
-use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
 /** @var app\models\PersonWork $model */

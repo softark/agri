@@ -1,12 +1,8 @@
 <?php
 
-use app\models\Icon;
-use app\models\PersonRelation;
-use app\models\PersonWorkSearch;
+use app\components\Icon;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
-use yii\grid\GridView;
-use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
 /** @var app\models\Person $model */
@@ -76,24 +72,27 @@ $this->params['breadcrumbs'][] = $modeText . 'を登録';
 <?= Html::hiddenInput('person_id', '', ['id' => 'person-id']) ?>
 <?= Html::hiddenInput('person_name', '', ['id' => 'person-name']) ?>
 <?= $this->render('/person/_select_modal.php', [
-        'personIdInput' => 'person-id',
-        'personNameInput' => 'person-name',
+        'modalId' => 'person-select-modal',
+        'pickerMap' => [
+                'person-id' => '#person-id',
+                'person-name' => '#person-name',
+        ],
 ]);
 ?>
 
 <?php $this->registerJs("
 var mode = 0;
-$('#btn-from-person').on('click', function(event){
+$(document).on('click', '#btn-from-person', function(event){
   mode = 0;
-  openPersonSelectModal();
+  $('#person-select-modal').modal('show');
   event.preventDefault();
 });
-$('#btn-to-person').on('click', function(event){
+$(document).on('click', '#btn-to-person', function(event){
   mode = 1;
-  openPersonSelectModal();
+  $('#person-select-modal').modal('show');
   event.preventDefault();
 });
-$('#person-id').on('change', function() {
+$(document).on('picker:selected', '#person-select-modal', function() {
   event.preventDefault();
   if (mode == 0) {
     $('#from-person-id').val($('#person-id').val());

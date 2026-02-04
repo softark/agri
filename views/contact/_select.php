@@ -20,6 +20,7 @@ use yii\widgets\Pjax;
     'rowOptions' => function ($model) {
         return [
             'class' => 'contact-row',
+            'data-picker-row' => 1,          // ★追加
             'data-contact-id' => $model->id,
             'data-role' => $model->role,
             'data-name1' => $model->name1,

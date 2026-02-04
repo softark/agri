@@ -7,8 +7,8 @@
 use app\assets\AppAsset;
 use app\assets\BootboxAsset;
 use app\assets\FontAwesomeAsset;
+use app\components\Icon;
 use app\widgets\Alert;
-use app\models\Icon;
 use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Nav;

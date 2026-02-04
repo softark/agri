@@ -1,8 +1,7 @@
 <?php
 
+use app\components\Icon;
 use app\models\Aza;
-use app\models\Frtype;
-use app\models\Icon;
 use app\models\Usage;
 use kartik\date\DatePicker;
 use yii\bootstrap5\ActiveForm;
@@ -219,8 +218,11 @@ $this->params['breadcrumbs'][] = '編集';
         <?= Html::hiddenInput('person_id', '', ['id' => 'person-id']) ?>
         <?= Html::hiddenInput('person_name', '', ['id' => 'person-name']) ?>
         <?= $this->render('/person/_select_modal.php', [
-                'personIdInput' => 'person-id',
-                'personNameInput' => 'person-name',
+                'modalId' => 'person-select-modal',
+                'pickerMap' => [
+                        'person-id' => '#person-id',
+                        'person-name' => '#person-name',
+                ],
         ]); ?>
     </div>
 
@@ -237,9 +239,9 @@ $('#field-form').on('click', '.btn-person', function(event){
   event.preventDefault();
   person_id_field = $(this).data('id-field');
   person_name_field = $(this).data('name-field');
-  openPersonSelectModal();
+  $('#person-select-modal').modal('show');
 });
-$('#person-id').on('change', function() {
+$(document).on('picker:selected', '#person-select-modal', function() {
   event.preventDefault();
   $(person_id_field).val($('#person-id').val());
   $(person_name_field).text($('#person-name').val());

@@ -4,9 +4,9 @@
 /** @var yii\bootstrap5\ActiveForm $form */
 /** @var app\models\LoginForm $model */
 
+use app\components\Icon;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
-use app\models\Icon;
 
 $this->title = 'ログイン';
 $this->params['breadcrumbs'][] = $this->title;

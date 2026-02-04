@@ -1,6 +1,6 @@
 <?php
 
-namespace app\models;
+namespace app\components;
 
 use xstreamka\mobiledetect\Device;
 use Yii;

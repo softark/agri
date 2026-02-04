@@ -1,6 +1,6 @@
 <?php
 
-use app\models\Icon;
+use app\components\Icon;
 use yii\bootstrap5\Html;
 use yii\helpers\ArrayHelper;
 use yii\widgets\DetailView;

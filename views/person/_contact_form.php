@@ -1,9 +1,8 @@
 <?php
 
-use app\models\Icon;
-use yii\helpers\ArrayHelper;
-use yii\bootstrap5\Html;
+use app\components\Icon;
 use yii\bootstrap5\ActiveForm;
+use yii\bootstrap5\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
@@ -14,8 +13,8 @@ use yii\widgets\DetailView;
 
 $this->registerJs("
 // 連絡先選択ダイアログのポップアップ
-$('#contact-form').on('click', '#btn-contact-select', function(event){
-  openContactSelectModal();
+$(document).on('click', '#btn-contact-select', function(event){
+  $('#contact-select-modal').modal('show');
   event.preventDefault();
 });
 
@@ -147,7 +146,21 @@ $('#address1').autocomplete({
             </div>
 
             <?php ActiveForm::end(); ?>
-            <?= $this->render('/contact/_select_modal.php', []); ?>
+            <?= $this->render('/contact/_select_modal.php', [
+                    'modalId' => 'contact-select-modal',
+                    'pickerMap' => [
+                            'role' => '#role',
+                            'name1' => '#contact-name1',
+                            'name2' => '#contact-name2',
+                            'zip' => '#zip',
+                            'address1' => '#address1',
+                            'address2' => '#address2',
+                            'phone1' => '#phone1',
+                            'phone2' => '#phone2',
+                            'mail' => '#mail',
+                            'note' => '#contact-note',
+                    ],
+            ]); ?>
         </div>
         <?php if (count($contact->person->contacts) > 1): ?>
             <p>※ 連絡先の優先順位の変更は、関係者の閲覧画面で行うことが出来ます。

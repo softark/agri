@@ -2,7 +2,7 @@
 
 /** @var yii\web\View $this */
 
-use app\models\Icon;
+use app\components\Icon;
 use yii\bootstrap5\Html;
 
 $this->title = '岩座神農林業データベース';

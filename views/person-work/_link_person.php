@@ -1,9 +1,6 @@
 <?php
 
-use app\models\Icon;
 use yii\bootstrap5\Html;
-use yii\helpers\Url;
-use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
 /** @var app\models\PersonWork $model */

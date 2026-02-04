@@ -1,8 +1,7 @@
 <?php
 
+use app\components\Icon;
 use app\models\Field;
-use app\models\FieldPerson;
-use app\models\Icon;
 use yii\bootstrap5\Html;
 use yii\widgets\DetailView;
 

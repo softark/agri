@@ -1,9 +1,9 @@
 <?php
 
-use app\models\Icon;
-use yii\helpers\ArrayHelper;
-use yii\bootstrap5\Html;
+use app\components\Icon;
 use yii\bootstrap5\ActiveForm;
+use yii\bootstrap5\Html;
+use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
 /** @var app\models\IsgForest $model */

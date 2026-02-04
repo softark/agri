@@ -1,17 +1,17 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $personIdInput string */
-/* @var $personNameInput string|null */
-
+/* @var $modalId string */
+/* @var $pickerMap array */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-use app\models\Icon;
+use app\components\Icon;
 use app\models\Person;
 use app\models\PersonSearch;
+use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Modal;
-use yii\bootstrap5\ActiveForm;
+use yii\helpers\Json;
 
 $this->registerCss("
 .person-row.is-selected td {
@@ -19,26 +19,32 @@ $this->registerCss("
   color: white;
 ");
 
+app\assets\SelectModalAsset::register($this);
+
 $searchModel = new PersonSearch(['_form_name' => 'psel']);
 $dataProvider = $searchModel->search([], 10, 'person:select');
 
 Modal::begin([
         'title' => '関係者を選択',
         'toggleButton' => false,
-        'id' => 'person-select-modal',
+        'id' => $modalId,
+        'options' => [
+                'data-picker-map' => Json::encode($pickerMap),
+        ],
         'size' => Modal::SIZE_EXTRA_LARGE,
 ]);
 ?>
-
     <div class="form-group float-end">
-        <?= Html::button(Icon::getIconAndLabel('ok', '選択'), ['id' => 'modal-ok', 'class' => 'disabled btn btn-primary']) ?>
-        <?= Html::button(Icon::getIconAndLabel('cancel'), ['id' => 'modal-cancel', 'class' => 'btn btn-outline-secondary']) ?>
+        <?= Html::button(Icon::getIconAndLabel('ok', '選択'), ['class' => 'disabled btn btn-primary', 'data-picker-ok' => 1]) ?>
+        <?= Html::button(Icon::getIconAndLabel('cancel'), ['class' => 'btn btn-outline-secondary', 'data-picker-cancel' => 1]) ?>
     </div>
 
 <?php $form = ActiveForm::begin([
-        'id' => 'person-search-form',
         'method' => 'get',
         'action' => ['/person/select'],
+        'options' => [
+                'data-search-form' => 1,
+        ],
         'fieldConfig' => [
                 'inputOptions' => ['class' => 'allow_submit form-control']
         ],
@@ -55,7 +61,7 @@ Modal::begin([
         </div>
         <div class="form-group col-md-2 col-sm-2">
             <?= Html::submitButton(Icon::getBtnText('search'), ['class' => 'btn btn-primary btn-sm d-block']) ?>
-            <?= Html::button(Icon::getBtnText('clear'), ['class' => 'btn btn-outline-secondary btn-sm d-block', 'id' => 'clear-btn']) ?>
+            <?= Html::button(Icon::getBtnText('clear'), ['class' => 'btn btn-outline-secondary btn-sm d-block', 'data-clear' => 1]) ?>
         </div>
     </div>
 <?php ActiveForm::end(); ?>
@@ -63,51 +69,3 @@ Modal::begin([
 
 <?php
 Modal::end();
-
-$this->registerJs("
-var openDone = false;
-function openPersonSelectModal() {
-    if (!openDone) {
-      /* updatePersonSelectList(); */
-      openDone = true;
-    }
-    $('#person-select-modal').modal('show');
-}
-$('#person-search-form').on('change', 'select', function(event){
-    updatePersonSelectList();
-    event.preventDefault();
-});
-$('#person-search-form').on('change', 'input', function(event){
-    updatePersonSelectList();
-    event.preventDefault();
-});
-$('#person-search-form').on('click', '#clear-btn', function(event){
-    $('#person-search-form input:text').val('');
-    $('#person-search-form input:checked').prop('checked', false);
-    $('#person-search-form select').val('');
-    updatePersonSelectList();
-    event.preventDefault();
-});
-function updatePersonSelectList() {
-    $('#person-search-form').submit();
-}
-$('#person-select-modal').on('click', '.person-row', function(e){
-  $('.person-row.is-selected').removeClass('is-selected');
-  $(this).addClass('is-selected');
-
-  $('#$personIdInput').val($(this).data('person-id'));
-  $('#$personNameInput').val($(this).data('person-name'));
-  $('#modal-ok').removeClass('disabled');
-});
-$('#modal-ok').on('click', function(event){
-  event.preventDefault();
-  $('#$personIdInput').trigger('change');
-  $('#person-select-modal').modal('hide');
-  $('#modal-ok').addClass('disabled');
-});
-$('#modal-cancel').on('click', function(event){
-  event.preventDefault();
-  $('#person-select-modal').modal('hide');
-  $('#modal-ok').addClass('disabled');
-});
-");

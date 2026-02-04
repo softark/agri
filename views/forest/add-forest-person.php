@@ -1,9 +1,7 @@
 <?php
 
+use app\components\Icon;
 use app\models\ForestPerson;
-use app\models\Icon;
-use yii\bootstrap5\ActiveForm;
-use yii\bootstrap5\Html;
 
 /** @var yii\web\View $this */
 /** @var app\models\ForestPerson $model */

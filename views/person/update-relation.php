@@ -1,11 +1,8 @@
 <?php
 
-use app\models\Icon;
+use app\components\Icon;
 use app\models\PersonRelation;
-use app\models\PersonWorkSearch;
 use yii\bootstrap5\Html;
-use yii\grid\GridView;
-use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
 /** @var app\models\Person $model */

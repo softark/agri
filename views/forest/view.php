@@ -1,8 +1,7 @@
 <?php
 
+use app\components\Icon;
 use app\models\Forest;
-use app\models\ForestPerson;
-use app\models\Icon;
 use yii\bootstrap5\Html;
 use yii\widgets\DetailView;
 

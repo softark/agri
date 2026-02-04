@@ -1,11 +1,11 @@
 <?php
 
-use app\models\Icon;
+use app\components\Icon;
 use app\models\PersonWork;
 use yii\bootstrap5\Html;
-use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use yii\helpers\Url;
 use yii\widgets\Pjax;
 
 /** @var yii\web\View $this */
@@ -129,8 +129,11 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::hiddenInput('model_id', '', ['id' => 'model-id']) ?>
         <?php
         echo $this->render('/person/_select_modal.php', [
-                'personIdInput' => 'person-id',
-                'personNameInput' => 'person-name',
+                'modalId' => 'person-select-modal',
+                'pickerMap' => [
+                        'person-id' => '#person-id',
+                        'person-name' => '#person-name',
+                ],
         ]);
         ?>
 
@@ -144,13 +147,11 @@ $this->registerJs("
 $('#person-work-index').on('click', '.add-link', function(event){
   event.preventDefault();
   $('#model-id').val($(this).data('model-id'));
-  openPersonSelectModal();
+  $('#person-select-modal').modal('show');
 });
-
-$('#person-id').on('change', function () {
+$(document).on('picker:selected', '#person-select-modal', function() {
   const modelId = $('#model-id').val();
-  const personId = $(this).val();
-
+  const personId = $('#person-id').val();
   $.ajax({
     url: '$urlAdd',
     type: 'POST',

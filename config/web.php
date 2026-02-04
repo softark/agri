@@ -11,8 +11,8 @@ $config = [
         'log',
         'session',
         function () {
-            \app\models\GridAndListUtil::setupGrid();
-            \app\models\GridAndListUtil::setupListView();
+            \app\components\GridAndListUtil::setupGrid();
+            \app\components\GridAndListUtil::setupListView();
         }
     ],
     'aliases' => [

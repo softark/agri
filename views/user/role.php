@@ -1,8 +1,8 @@
 <?php
 
-use app\models\UserRoleForm;
+use app\components\Icon;
 use app\models\User;
-use app\models\Icon;
+use app\models\UserRoleForm;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 use yii\helpers\ArrayHelper;

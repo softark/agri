@@ -1,31 +1,19 @@
 <?php
 
+use app\components\Icon;
 use app\models\Aza;
 use app\models\Frtype;
-use app\models\Icon;
-use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
+use yii\bootstrap5\Html;
 
 /** @var yii\web\View $this */
 /** @var app\models\ForestSearch $model */
+
 /** @var yii\bootstrap5\ActiveForm $form */
 
-$this->registerJs("
-$('#forest-search-form').on('click', '#clear-btn', function(event){
-    $('#forest-search-form select').val('');
-    $('#forest-search-form input').val('');
-    $('#forest-search-form').submit();
-    event.preventDefault();
-});
-$('#forest-search-form').on('change', 'select', function(event){
-    $('#forest-search-form').submit();
-    event.preventDefault();
-});
-$('#forest-search-form').on('change', 'input', function(event){
-    $('#forest-search-form').submit();
-    event.preventDefault();
-});
-");
+use app\assets\SearchFormAsset;
+
+SearchFormAsset::register($this);
 ?>
 
 <div class="forest-search">
@@ -34,20 +22,20 @@ $('#forest-search-form').on('change', 'input', function(event){
             'method' => 'get',
             'options' => [
                     'data-pjax' => 1,
-                    'autocomplete' => 'off'
+                    'autocomplete' => 'off',
+                    'data-search-form' => 1,
             ],
-            'id' => 'forest-search-form',
     ]); ?>
 
     <div class="row">
         <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($model, 'aza_id')->dropDownList(Aza::getAzaList(), ['prompt' => ''])    ?>
+            <?= $form->field($model, 'aza_id')->dropDownList(Aza::getAzaList(), ['prompt' => '']) ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'p_no') ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($model, 'type_id')->dropDownList(Frtype::getTypeList(), ['prompt' => ''])    ?>
+            <?= $form->field($model, 'type_id')->dropDownList(Frtype::getTypeList(), ['prompt' => '']) ?>
         </div>
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'search_name') ?>
@@ -59,7 +47,7 @@ $('#forest-search-form').on('change', 'input', function(event){
         <div class="form-group search-buttons col-md-2 col-sm-3 col-4">
             <p class="text-nowrap pt-2">
                 <?= Html::submitButton(Icon::getBtnText('search'), ['class' => 'btn btn-primary btn-sm']) ?>
-                <?= Html::button(Icon::getBtnText('clear'), ['class' => 'btn btn-outline-secondary btn-sm', 'id' => 'clear-btn']) ?>
+                <?= Html::button(Icon::getBtnText('clear'), ['class' => 'btn btn-outline-secondary btn-sm', 'data-clear' => 1]) ?>
             </p>
         </div>
     </div>

@@ -1,42 +1,30 @@
 <?php
 
-use app\models\Icon;
+use app\components\Icon;
 use app\models\PersonWork;
 use app\models\PersonWorkSearch;
-use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
+use yii\bootstrap5\Html;
 
 /** @var yii\web\View $this */
 /** @var app\models\PersonWorkSearch $model */
+
 /** @var yii\bootstrap5\ActiveForm $form */
 
-$this->registerJs("
-$('#search-form').on('click', '#clear-btn', function(event){
-    $('#search-form select').val('');
-    $('#search-form input').val('');
-    $('#search-form').submit();
-    event.preventDefault();
-});
-$('#search-form').on('change', 'select', function(event){
-    $('#search-form').submit();
-    event.preventDefault();
-});
-$('#search-form').on('change', 'input', function(event){
-    $('#search-form').submit();
-    event.preventDefault();
-});
-");
+use app\assets\SearchFormAsset;
+
+SearchFormAsset::register($this);
 ?>
 
 <div class="person-work-search">
 
     <?php $form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-        'options' => [
-            'data-pjax' => 1
-        ],
-            'id' => 'search-form',
+            'action' => ['index'],
+            'method' => 'get',
+            'options' => [
+                    'data-pjax' => 1,
+                    'data-search-form' => 1,
+            ],
     ]); ?>
 
     <div class="row">
@@ -51,13 +39,13 @@ $('#search-form').on('change', 'input', function(event){
         </div>
         <div class="col-md-2 col-sm-3 col-5">
             <?= $form->field($model, 'p_link')
-            ->dropDownList(PersonWorkSearch::getStatusList())?>
+                    ->dropDownList(PersonWorkSearch::getStatusList()) ?>
         </div>
 
         <div class="form-group search-buttons col-lg-2 col-md-3 col-sm-3 col-4">
             <p class="text-nowrap pt-2">
                 <?= Html::submitButton(Icon::getBtnText('search'), ['class' => 'btn btn-primary btn-sm']) ?>
-                <?= Html::button(Icon::getBtnText('clear'), ['class' => 'btn btn-outline-secondary btn-sm', 'id' => 'clear-btn']) ?>
+                <?= Html::button(Icon::getBtnText('clear'), ['class' => 'btn btn-outline-secondary btn-sm', 'data-clear' => 1]) ?>
             </p>
         </div>
     </div>

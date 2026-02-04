@@ -1,31 +1,19 @@
 <?php
 
-use app\models\Icon;
+use app\components\Icon;
 use app\models\Person;
 use app\models\PersonSearch;
-use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
+use yii\bootstrap5\Html;
 
 /** @var yii\web\View $this */
 /** @var app\models\PersonSearch $model */
+
 /** @var yii\bootstrap5\ActiveForm $form */
 
-$this->registerJs("
-$('#person-search-form').on('click', '#clear-btn', function(event){
-    $('#person-search-form select').val('');
-    $('#person-search-form input').val('');
-    $('#person-search-form').submit();
-    event.preventDefault();
-});
-$('#person-search-form').on('change', 'select', function(event){
-    $('#person-search-form').submit();
-    event.preventDefault();
-});
-$('#person-search-form').on('change', 'input', function(event){
-    $('#person-search-form').submit();
-    event.preventDefault();
-});
-");
+use app\assets\SearchFormAsset;
+
+SearchFormAsset::register($this);
 ?>
 
 <div class="person-search">
@@ -35,9 +23,9 @@ $('#person-search-form').on('change', 'input', function(event){
             'method' => 'get',
             'options' => [
                     'data-pjax' => 1,
-                    'autocomplete' => 'off'
+                    'autocomplete' => 'off',
+                    'data-search-form' => 1,
             ],
-            'id' => 'person-search-form',
     ]); ?>
 
     <div class="row">
@@ -60,7 +48,7 @@ $('#person-search-form').on('change', 'input', function(event){
         <div class="form-group search-buttons col-md-2 col-sm-3 col-4">
             <p class="text-nowrap pt-2">
                 <?= Html::submitButton(Icon::getBtnText('search'), ['class' => 'btn btn-primary btn-sm']) ?>
-                <?= Html::button(Icon::getBtnText('clear'), ['class' => 'btn btn-outline-secondary btn-sm', 'id' => 'clear-btn']) ?>
+                <?= Html::button(Icon::getBtnText('clear'), ['class' => 'btn btn-outline-secondary btn-sm', 'data-clear' => 1]) ?>
             </p>
         </div>
     </div>

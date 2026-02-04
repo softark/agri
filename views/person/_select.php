@@ -1,8 +1,6 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $openBtnId string */
-
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 use app\models\Person;
@@ -23,6 +21,7 @@ use yii\widgets\Pjax;
     'rowOptions' => function ($model) {
         return [
             'class' => 'person-row',
+            'data-picker-row' => 1,          // ★追加
             'data-person-id' => $model->id,
             'data-person-name' => $model->dispname,
             'style' => 'cursor:pointer;',

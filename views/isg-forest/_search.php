@@ -1,29 +1,17 @@
 <?php
 
-use app\models\Icon;
-use yii\bootstrap5\Html;
+use app\components\Icon;
 use yii\bootstrap5\ActiveForm;
+use yii\bootstrap5\Html;
 
 /** @var yii\web\View $this */
 /** @var app\models\IsgForestSearch $model */
+
 /** @var yii\bootstrap5\ActiveForm $form */
 
-$this->registerJs("
-$('#isg-forest-search-form').on('click', '#clear-btn', function(event){
-$('#isg-forest-search-form select').val('');
-$('#isg-forest-search-form input').val('');
-$('#isg-forest-search-form').submit();
-event.preventDefault();
-});
-$('#isg-forest-search-form').on('change', 'select', function(event){
-$('#isg-forest-search-form').submit();
-event.preventDefault();
-});
-$('#isg-forest-search-form').on('change', 'input', function(event){
-$('#isg-forest-search-form').submit();
-event.preventDefault();
-});
-");
+use app\assets\SearchFormAsset;
+
+SearchFormAsset::register($this);
 ?>
 
 <div class="forest-search">
@@ -33,9 +21,9 @@ event.preventDefault();
             'method' => 'get',
             'options' => [
                     'data-pjax' => 1,
-                    'autocomplete' => 'off'
+                    'autocomplete' => 'off',
+                    'data-search-form' => 1,
             ],
-            'id' => 'isg-forest-search-form',
     ]); ?>
 
     <div class="row">
@@ -55,7 +43,7 @@ event.preventDefault();
         <div class="form-group search-buttons col-md-3 col-sm-3 col-4">
             <p class="text-nowrap pt-2">
                 <?= Html::submitButton(Icon::getBtnText('search'), ['class' => 'btn btn-primary btn-sm']) ?>
-                <?= Html::button(Icon::getBtnText('clear'), ['class' => 'btn btn-outline-secondary btn-sm', 'id' => 'clear-btn']) ?>
+                <?= Html::button(Icon::getBtnText('clear'), ['class' => 'btn btn-outline-secondary btn-sm', 'data-clear' => 1]) ?>
             </p>
         </div>
     </div>

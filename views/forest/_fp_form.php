@@ -1,13 +1,11 @@
 <?php
 
-use app\models\Aza;
+use app\components\Icon;
 use app\models\Forest;
 use app\models\ForestPerson;
-use app\models\Frtype;
-use app\models\Icon;
 use kartik\date\DatePicker;
-use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
+use yii\bootstrap5\Html;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
@@ -148,22 +146,18 @@ use yii\widgets\DetailView;
         </div>
 
     </div>
-<?= Html::hiddenInput('person_id', '', ['id' => 'person-id']) ?>
-<?= Html::hiddenInput('person_name', '', ['id' => 'person-name']) ?>
 <?= $this->render('/person/_select_modal.php', [
-        'personIdInput' => 'person-id',
-        'personNameInput' => 'person-name',
+        'modalId' => 'person-select-modal',
+        'pickerMap' => [
+                'person-id' => '#person-id',
+                'person-name' => '#person-name',
+        ],
 ]);
 ?>
 
 <?php $this->registerJs("
 $('#btn-person').on('click', function(event){
-  openPersonSelectModal();
+  $('#person-select-modal').modal('show');
   event.preventDefault();
-});
-$('#person-id').on('change', function() {
-  event.preventDefault();
-  $('#person-id').val($('#person-id').val());
-  $('#person-name').text($('#person-name').val());
 });
 ");

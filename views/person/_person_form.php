@@ -1,10 +1,9 @@
 <?php
 
-use app\models\Icon;
-use yii\helpers\ArrayHelper;
+use app\components\Icon;
+use app\models\Person;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
-use app\models\Person;
 
 /** @var yii\web\View $this */
 /** @var app\models\PersonForm $model */
@@ -15,9 +14,9 @@ use app\models\Person;
 
 $this->registerJs("
 // 連絡先選択ダイアログのポップアップ
-$('#person-form').on('click', '#btn-contact-select', function(event){
-    openContactSelectModal();
-    event.preventDefault();
+$(document).on('click', '#btn-contact-select', function(event){
+  $('#contact-select-modal').modal('show');
+  event.preventDefault();
 });
 
 // ZIP 検索データ受信時の処理
@@ -139,7 +138,21 @@ $('#address1').autocomplete({
             </div>
 
             <?php ActiveForm::end(); ?>
-            <?= $this->render('/contact/_select_modal.php', []); ?>
+            <?= $this->render('/contact/_select_modal.php', [
+                    'modalId' => 'contact-select-modal',
+                    'pickerMap' => [
+                            'role' => '#role',
+                            'name1' => '#contact-name1',
+                            'name2' => '#contact-name2',
+                            'zip' => '#zip',
+                            'address1' => '#address1',
+                            'address2' => '#address2',
+                            'phone1' => '#phone1',
+                            'phone2' => '#phone2',
+                            'mail' => '#mail',
+                            'note' => '#contact-note',
+                    ],
+            ]); ?>
         </div>
     </div>
 </div>

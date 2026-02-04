@@ -1,6 +1,6 @@
 <?php
 
-use app\models\Icon;
+use app\components\Icon;
 use yii\bootstrap5\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
@@ -42,8 +42,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= $this->render('_person_view', ['model' => $model]) ?>
             </div>
             <?= $this->render('/person/_select_modal.php', [
-                    'personIdInput' => 'person-id',
-                    'personNameInput' => 'person-name',
+                    'modalId' => 'person-select-modal',
+                    'pickerMap' => [
+                            'person-id' => '#person-id',
+                            'person-name' => '#person-name',
+                    ],
             ]);
             ?>
         </div>
@@ -58,11 +61,11 @@ $urlReorderContact = Url::to(['person-work/reorder-contact', 'id' => $model->id]
 $urlDeleteContact = Url::to(['person-work/delete-contact', 'id' => $model->id]);
 $this->registerJs("
 $('#person-view').on('click', '#btn-person-select', function(event){
-    openPersonSelectModal();
-    event.preventDefault();
+  $('#person-select-modal').modal('show');
+  event.preventDefault();
 });
-$('#person-view').on('change', '#person-id', function() {
-  const personId = $(this).val();
+$(document).on('picker:selected', '#person-select-modal', function() {
+  const personId = $('#person-id').val();
   $.ajax({
     url: '$urlAddLink',
     type: 'POST',

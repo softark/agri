@@ -4,7 +4,7 @@
  * https://glyphicons.bootstrapcheatsheets.com/
  */
 
-namespace app\models;
+namespace app\components;
 
 class Icon
 {

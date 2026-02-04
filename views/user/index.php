@@ -1,9 +1,9 @@
 <?php
 
-use app\models\Icon;
+use app\components\Icon;
 use app\models\User;
-use yii\grid\GridView;
 use yii\bootstrap5\Html;
+use yii\grid\GridView;
 use yii\widgets\Pjax;
 
 /** @var yii\web\View $this */

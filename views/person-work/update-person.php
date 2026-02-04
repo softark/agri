@@ -1,7 +1,6 @@
 <?php
 
-use app\models\Icon;
-use app\models\PersonWork;
+use app\components\Icon;
 use app\models\PersonWorkSearch;
 use yii\bootstrap5\Html;
 use yii\grid\GridView;

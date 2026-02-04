@@ -1,6 +1,6 @@
 <?php
 
-use app\models\Icon;
+use app\components\Icon;
 use yii\bootstrap5\Html;
 
 /** @var yii\web\View $this */

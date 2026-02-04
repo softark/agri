@@ -1,8 +1,8 @@
 <?php
 
-use app\models\Icon;
-use yii\helpers\ArrayHelper;
+use app\components\Icon;
 use yii\bootstrap5\Html;
+use yii\helpers\ArrayHelper;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */

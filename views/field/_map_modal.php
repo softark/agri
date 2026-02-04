@@ -4,8 +4,7 @@
 
 /* @var $personIdInput string */
 
-use app\models\Icon;
-use yii\bootstrap5\Html;
+use app\components\Icon;
 use yii\bootstrap5\Modal;
 
 ?>
