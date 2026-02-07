@@ -150,25 +150,25 @@ $this->params['breadcrumbs'][] = $this->title;
                                 [
                                         'attribute' => 'owner',
                                         'value' => function ($model) {
-                                            return $model->owner ? $model->owner_name : '&nbsp;';
+                                            return $model->owner ? $model->owner_name : '';
                                         }
                                 ],
                                 [
                                         'attribute' => 'cultivator',
                                         'value' => function ($model) {
-                                            return $model->cultivator ? $model->cultivator_name : '&nbsp;';
+                                            return $model->cultivator ? $model->cultivator_name : '';
                                         }
                                 ],
                                 [
                                         'attribute' => 'chusankan',
                                         'value' => function ($model) {
-                                            return $model->chusankan ? $model->chusankan_name : '&nbsp;';
+                                            return $model->chusankan ? $model->chusankan_name : '';
                                         }
                                 ],
                                 [
                                         'attribute' => 'saimokusho',
                                         'value' => function ($model) {
-                                            return $model->saimokusho ? $model->saimokusho_name : '&nbsp;';
+                                            return $model->saimokusho ? $model->saimokusho_name : '';
                                         }
                                 ],
                                 [
@@ -228,13 +228,13 @@ $this->params['breadcrumbs'][] = $this->title;
                                 [
                                         'attribute' => 'owner',
                                         'value' => function ($model) {
-                                            return $model->owner ? $model->owner_name : '&nbsp;';
+                                            return $model->owner ? $model->owner_name : '';
                                         }
                                 ],
                                 [
                                         'attribute' => 'manager',
                                         'value' => function ($model) {
-                                            return $model->manager ? $model->manager_name : '&nbsp;';
+                                            return $model->manager ? $model->manager_name : '';
                                         }
                                 ],
                                 [
