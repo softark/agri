@@ -48,6 +48,7 @@ $this->params['breadcrumbs'][] = '編集';
                     </div>
                     <?php ActiveForm::end(); ?>
                 </div>
+
                 <div class="col-xl-4 col-lg-6">
                     <h2 class="h5">所有者</h2>
                     <?php
@@ -107,6 +108,7 @@ $this->params['breadcrumbs'][] = '編集';
                     </div>
                     <?php ActiveForm::end(); ?>
                 </div>
+
                 <div class="col-xl-4 col-lg-6">
                     <h2 class="h5">耕作者</h2>
                     <?php
@@ -166,6 +168,127 @@ $this->params['breadcrumbs'][] = '編集';
                     </div>
                     <?php ActiveForm::end(); ?>
                 </div>
+
+                <div class="col-xl-4 col-lg-6">
+                    <h2 class="h5">中山間名義人</h2>
+                    <?php
+                    $count = count($model->chfps);
+                    ?>
+                    <?php $form = ActiveForm::begin([
+                            'action' => ['update', 'mode' => 'ch', 'id' => $model->field->id, 'ret_route' => $ret_route],
+                            'id' => 'field-chfps-edit-form',
+                            'enableAjaxValidation' => false,
+                            'enableClientValidation' => false,
+                            'options' => ['autocomplete' => 'off'],
+                            'fieldConfig' => [
+                                    'options' => ['class' => 'mb-3'],
+                                    'errorOptions' => ['class' => 'd-none'],
+                            ],
+                    ]); ?>
+                    <?php foreach ($model->chfps as $i => $chfp) : ?>
+                        <?php if ($i == $count - 1): ?>
+                            <?= $form->field($model, 'new_chfp')
+                                    ->checkbox(['class' => 'chk-new-fp-div', 'data-target' => "#div-chfp-$i"]) ?>
+                        <?php endif; ?>
+                        <?php
+                        $div_class = 'p-2 mb-3 border border-secondary rounded';
+                        if ($i == $count - 1) {
+                            $div_class .= ' collapse';
+                            if ($model->new_chfp) {
+                                $div_class .= ' show';
+                            }
+                        }
+                        ?>
+                        <div class="<?= $div_class ?>" id="div-chfp-<?= $i ?>">
+                            <?php if ($i != 0): ?>
+                                <?= $form->field($chfp, "[$i]valid_from")->widget(DatePicker::class,
+                                        ['type' => DatePicker::TYPE_COMPONENT_APPEND, 'pluginOptions' => ['format' => 'yyyy-mm-dd']]) ?>
+                            <?php endif; ?>
+                            <div class="row">
+                                <div class="col-3">
+                                    <?= $form->field($chfp, "[$i]person_id", ['enableError' => false])
+                                            ->textInput(['id' => "person-id-chfp-$i", 'readonly' => true]); ?>
+                                </div>
+                                <div class="col-5 pt-4">
+                                    <p class="form-control mt-2"
+                                       id="<?= "person-name-chfp-$i" ?>"><?= $chfp->person_id ? $chfp->person->dispname : '&nbsp;'; ?></p>
+                                </div>
+                                <div class="col-4 pt-4">
+                                    <?= Html::button('選択 ...', ['class' => 'btn btn-primary mt-2 btn-person',
+                                            'data-id-field' => "#person-id-chfp-$i", 'data-name-field' => "#person-name-chfp-$i",]) ?>
+                                </div>
+                            </div>
+                            <?= $form->field($chfp, "[$i]note")->textInput(['maxlength' => true]) ?>
+                            <?= $form->errorSummary($chfp); ?>
+                        </div>
+                    <?php endforeach; ?>
+                    <div class="form-group">
+                        <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
+                        <?= Html::a(Icon::getIconAndLabel('end-edit'), $ret_route, ['class' => 'btn btn-outline-secondary']) ?>
+                    </div>
+                    <?php ActiveForm::end(); ?>
+                </div>
+
+                <div class="col-xl-4 col-lg-6">
+                    <h2 class="h5">細目書名義人</h2>
+                    <?php
+                    $count = count($model->safps);
+                    ?>
+                    <?php $form = ActiveForm::begin([
+                            'action' => ['update', 'mode' => 'c', 'id' => $model->field->id, 'ret_route' => $ret_route],
+                            'id' => 'field-safps-edit-form',
+                            'enableAjaxValidation' => false,
+                            'enableClientValidation' => false,
+                            'options' => ['autocomplete' => 'off'],
+                            'fieldConfig' => [
+                                    'options' => ['class' => 'mb-3'],
+                                    'errorOptions' => ['class' => 'd-none'],
+                            ],
+                    ]); ?>
+                    <?php foreach ($model->safps as $i => $safp) : ?>
+                        <?php if ($i == $count - 1): ?>
+                            <?= $form->field($model, 'new_safp')
+                                    ->checkbox(['class' => 'chk-new-fp-div', 'data-target' => "#div-safp-$i"]) ?>
+                        <?php endif; ?>
+                        <?php
+                        $div_class = 'p-2 mb-3 border border-secondary rounded';
+                        if ($i == $count - 1) {
+                            $div_class .= ' collapse';
+                            if ($model->new_safp) {
+                                $div_class .= ' show';
+                            }
+                        }
+                        ?>
+                        <div class="<?= $div_class ?>" id="div-safp-<?= $i ?>">
+                            <?php if ($i != 0): ?>
+                                <?= $form->field($safp, "[$i]valid_from")->widget(DatePicker::class,
+                                        ['type' => DatePicker::TYPE_COMPONENT_APPEND, 'pluginOptions' => ['format' => 'yyyy-mm-dd']]) ?>
+                            <?php endif; ?>
+                            <div class="row">
+                                <div class="col-3">
+                                    <?= $form->field($safp, "[$i]person_id", ['enableError' => false])
+                                            ->textInput(['id' => "person-id-safp-$i", 'readonly' => true]); ?>
+                                </div>
+                                <div class="col-5 pt-4">
+                                    <p class="form-control mt-2"
+                                       id="<?= "person-name-safp-$i" ?>"><?= $safp->person_id ? $safp->person->dispname : '&nbsp;'; ?></p>
+                                </div>
+                                <div class="col-4 pt-4">
+                                    <?= Html::button('選択 ...', ['class' => 'btn btn-primary mt-2 btn-person',
+                                            'data-id-field' => "#person-id-safp-$i", 'data-name-field' => "#person-name-safp-$i",]) ?>
+                                </div>
+                            </div>
+                            <?= $form->field($safp, "[$i]note")->textInput(['maxlength' => true]) ?>
+                            <?= $form->errorSummary($safp); ?>
+                        </div>
+                    <?php endforeach; ?>
+                    <div class="form-group">
+                        <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
+                        <?= Html::a(Icon::getIconAndLabel('end-edit'), $ret_route, ['class' => 'btn btn-outline-secondary']) ?>
+                    </div>
+                    <?php ActiveForm::end(); ?>
+                </div>
+
                 <div class="col-xl-4 col-lg-6">
                     <h2 class="h5">利用状況</h2>
                     <?php
@@ -196,13 +319,13 @@ $this->params['breadcrumbs'][] = '編集';
                             }
                         }
                         ?>
-                        <div class="<?= $div_class ?>" id="div-uf-<?= $i ?>">
+                        <div class="<?= $div_class ?>" id="div-fu-<?= $i ?>">
                             <?php if ($i != 0): ?>
                                 <?= $form->field($fu, "[$i]valid_from")->widget(DatePicker::class,
                                         ['type' => DatePicker::TYPE_COMPONENT_APPEND, 'pluginOptions' => ['format' => 'yyyy-mm-dd']]) ?>
                             <?php endif; ?>
                             <?= $form->field($fu, "[$i]usage_id")->dropDownList(Usage::getUsageList()) ?>
-                            <?= $form->field($cfp, "[$i]note")->textInput(['maxlength' => true]) ?>
+                            <?= $form->field($fu, "[$i]note")->textInput(['maxlength' => true]) ?>
                             <?= $form->errorSummary($cfp); ?>
                         </div>
                     <?php endforeach; ?>

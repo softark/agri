@@ -1,9 +1,9 @@
 <?php
 
 /* @var $this yii\web\View */
+/* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $modalId string */
 /* @var $pickerMap array */
-/* @var $dataProvider yii\data\ActiveDataProvider */
 
 use app\components\Icon;
 use app\models\Person;
@@ -42,8 +42,10 @@ Modal::begin([
 <?php $form = ActiveForm::begin([
         'method' => 'get',
         'action' => ['/person/select'],
+        'id' => 'person-select-search-form',
         'options' => [
                 'data-search-form' => 1,
+                'data-pjax' => 1,
         ],
         'fieldConfig' => [
                 'inputOptions' => ['class' => 'allow_submit form-control']

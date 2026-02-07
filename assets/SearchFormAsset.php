@@ -18,6 +18,7 @@ use yii\web\JqueryAsset;
  */
 class SearchFormAsset extends AssetBundle
 {
+    public $sourcePath = null;
     public $js = [
         'js/search-form-util.js',
     ];

@@ -25,8 +25,8 @@ $this->params['breadcrumbs'][] = $model->title;
                             ['update', 'id' => $model->id, 'ret_route' => ['view', 'id' => $model->id]],
                             ['class' => 'btn btn-primary']) ?>
                 <?php endif; ?>
-                <?= Html::a(Icon::getIcon('map-location') . ' i-GIS で見る', $model->mapurl,
-                        ['class' => 'btn btn-outline-primary', 'target' => '_blank']) ?>
+                <?= Html::a(Icon::getIcon('map-location') . ' i-GIS', $model->mapurl,
+                        ['class' => 'btn btn-outline-success', 'target' => '_blank']) ?>
                 <?= Html::a(Icon::getIconAndLabel('go-back'), ['index'], ['class' => 'btn btn-outline-secondary']) ?>
             </p>
             <?php

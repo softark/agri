@@ -79,7 +79,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     ['class' => 'btn btn-sm btn-primary', 'data-pjax' => 0]),
                                             Html::button(Icon::getIconAndLabel('map-location'),
                                                     ['class' => 'btn-map-open btn btn-sm btn-outline-success', 'data-url' => $model->mapurl]),
-                                            Html::a(Icon::getIcon('map-location') . ' i-GIS で見る', $model->mapurl,
+                                            Html::a(Icon::getIcon('map-location') . ' i-GIS', $model->mapurl,
                                                     ['class' => 'btn btn-sm btn-outline-success', 'target' => '_blank']),
                                     ];
                                     if (Yii::$app->user->can('forest.edit')) {

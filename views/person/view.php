@@ -160,6 +160,18 @@ $this->params['breadcrumbs'][] = $this->title;
                                         }
                                 ],
                                 [
+                                        'attribute' => 'chusankan',
+                                        'value' => function ($model) {
+                                            return $model->chusankan ? $model->chusankan_name : '&nbsp;';
+                                        }
+                                ],
+                                [
+                                        'attribute' => 'saimokusho',
+                                        'value' => function ($model) {
+                                            return $model->saimokusho ? $model->saimokusho_name : '&nbsp;';
+                                        }
+                                ],
+                                [
                                         'attribute' => 'usage',
                                         'label' => '利用状況',
                                         'value' => function ($model) {
@@ -175,16 +187,16 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'footer' => Field::getAreaText(FieldSearch::getFAreaTotal($fieldDp)),
                                         'footerOptions' => ['class' => 'text-end'],
                                 ],
-                                [
-                                        'attribute' => 'c_area',
-                                        'value' => function ($model) {
-                                            return Field::getAreaText($model->c_area);
-                                        },
-                                        'contentOptions' => ['class' => 'text-end'],
-                                        'footer' => Field::getAreaText(FieldSearch::getCAreaTotal($fieldDp)),
-                                        'footerOptions' => ['class' => 'text-end'],
-                                ],
-                                'note',
+//                                [
+//                                        'attribute' => 'c_area',
+//                                        'value' => function ($model) {
+//                                            return Field::getAreaText($model->c_area);
+//                                        },
+//                                        'contentOptions' => ['class' => 'text-end'],
+//                                        'footer' => Field::getAreaText(FieldSearch::getCAreaTotal($fieldDp)),
+//                                        'footerOptions' => ['class' => 'text-end'],
+//                                ],
+//                                'note',
                         ],
                 ]); ?>
                 <?php Pjax::end(); ?>

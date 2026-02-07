@@ -25,8 +25,8 @@ $this->params['breadcrumbs'][] = $model->p_no;
                             ['update', 'id' => $model->id, 'ret_route' => ['view', 'id' => $model->id]],
                             ['class' => 'btn btn-primary']) ?>
                 <?php endif; ?>
-                <?= Html::a(Icon::getIcon('map-location') . ' i-GIS で見る', $model->mapurl,
-                        ['class' => 'btn btn-outline-primary', 'target' => '_blank']) ?>
+                <?= Html::a(Icon::getIcon('map-location') . ' i-GIS', $model->mapurl,
+                        ['class' => 'btn btn-outline-success', 'target' => '_blank']) ?>
                 <?= Html::a(Icon::getIconAndLabel('go-back'), ['index'], ['class' => 'btn btn-outline-secondary']) ?>
             </p>
             <?php
@@ -140,6 +140,76 @@ $this->params['breadcrumbs'][] = $model->p_no;
                             <td><?= Html::a($cfp->person->dispname, ['/person/view', 'id' => $cfp->person_id],
                                         ['class' => 'btn btn-sm btn-outline-primary']) ?></td>
                             <td><?= $cfp->note ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                </tbody>
+            </table>
+            <h2 class="h5">中山間名義人</h2>
+            <table class="table table-striped table-bordered table-sm">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>FROM</th>
+                    <th>TO</th>
+                    <th>中山間名義人</th>
+                    <th>メモ</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php if (count($model->chusankanFieldPersons) == 0): ?>
+                    <tr>
+                        <td>1</td>
+                        <td>****</td>
+                        <td>現在</td>
+                        <td>未登録</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                <?php else: ?>
+                    <?php $n = 1; ?>
+                    <?php foreach ($model->chusankanFieldPersons as $chfp): ?>
+                        <tr>
+                            <td><?= $n++ ?></td>
+                            <td><?= $chfp->valid_from_text ?></td>
+                            <td><?= $chfp->valid_to_text ?></td>
+                            <td><?= Html::a($chfp->person->dispname, ['/person/view', 'id' => $chfp->person_id],
+                                        ['class' => 'btn btn-sm btn-outline-primary']) ?></td>
+                            <td><?= $chfp->note ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                </tbody>
+            </table>
+            <h2 class="h5">細目書名義人</h2>
+            <table class="table table-striped table-bordered table-sm">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>FROM</th>
+                    <th>TO</th>
+                    <th>細目書名義人</th>
+                    <th>メモ</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php if (count($model->saimokushoFieldPersons) == 0): ?>
+                    <tr>
+                        <td>1</td>
+                        <td>****</td>
+                        <td>現在</td>
+                        <td>未登録</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                <?php else: ?>
+                    <?php $n = 1; ?>
+                    <?php foreach ($model->saimokushoFieldPersons as $safp): ?>
+                        <tr>
+                            <td><?= $n++ ?></td>
+                            <td><?= $safp->valid_from_text ?></td>
+                            <td><?= $safp->valid_to_text ?></td>
+                            <td><?= Html::a($safp->person->dispname, ['/person/view', 'id' => $safp->person_id],
+                                        ['class' => 'btn btn-sm btn-outline-primary']) ?></td>
+                            <td><?= $safp->note ?></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>

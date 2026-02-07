@@ -18,6 +18,7 @@ use yii\web\JqueryAsset;
  */
 class SelectModalAsset extends AssetBundle
 {
+    public $sourcePath = null;
     public $js = [
         'js/select-modal.js',
     ];

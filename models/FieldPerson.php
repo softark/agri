@@ -41,12 +41,16 @@ class FieldPerson extends \yii\db\ActiveRecord
 
     const ROLE_OWNER = 1;
     const ROLE_CULTIVATOR = 2;
+    const ROLE_CHUSANKAN = 3;
+    const ROLE_SAIMOKUSHO = 4;
 
     public static function getRoleList()
     {
         return [
             self::ROLE_OWNER => '所有者',
             self::ROLE_CULTIVATOR => '耕作者',
+            self::ROLE_CHUSANKAN => '中山間名義',
+            self::ROLE_SAIMOKUSHO => '細目書名義',
         ];
     }
 
@@ -196,8 +200,7 @@ class FieldPerson extends \yii\db\ActiveRecord
      * @param bool $insert
      * @return bool
      */
-    public
-    function beforeSave($insert)
+    public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
             $user_id = (Yii::$app->user->isGuest) ? 1 : Yii::$app->user->id;

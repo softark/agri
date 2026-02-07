@@ -45,9 +45,11 @@ class FieldExcel
             $sheet->getCell('G' . $row)->setValueExplicit("=F$row / 100", DataType::TYPE_FORMULA);
             $sheet->getCell('H' . $row)->setValueExplicit($model->owner_name, DataType::TYPE_STRING);
             $sheet->getCell('I' . $row)->setValueExplicit($model->cultivator_name, DataType::TYPE_STRING);
-            $sheet->getCell('J' . $row)->setValueExplicit($model->usage_name, DataType::TYPE_STRING);
-            $sheet->getCell('K' . $row)->setValueExplicit($model->note, DataType::TYPE_STRING);
-            $sheet->getCell('L' . $row)->setValueExplicit('i-GIS で見る', DataType::TYPE_STRING)
+            $sheet->getCell('J' . $row)->setValueExplicit($model->chusankan_name, DataType::TYPE_STRING);
+            $sheet->getCell('K' . $row)->setValueExplicit($model->saimokusho_name, DataType::TYPE_STRING);
+            $sheet->getCell('L' . $row)->setValueExplicit($model->usage_name, DataType::TYPE_STRING);
+            $sheet->getCell('M' . $row)->setValueExplicit($model->note, DataType::TYPE_STRING);
+            $sheet->getCell('N' . $row)->setValueExplicit('i-GIS で見る', DataType::TYPE_STRING)
                 ->getHyperlink()->setUrl($model->mapurl);
         }
 

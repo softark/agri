@@ -54,6 +54,22 @@ $this->params['breadcrumbs'][] = $this->title;
                                 }
                         ],
                         [
+                                'attribute' => 'chusankan',
+                                'format' => 'raw',
+                                'value' => function ($model) {
+                                    return $model->chusankan ? Html::a($model->chusankan_name, ['/person/view', 'id' => $model->chusankan_id],
+                                            ['class' => 'btn btn-sm btn-outline-primary', 'data-pjax' => 0]) : '&nbsp;';
+                                }
+                        ],
+                        [
+                                'attribute' => 'saimokusho',
+                                'format' => 'raw',
+                                'value' => function ($model) {
+                                    return $model->saimokusho ? Html::a($model->saimokusho_name, ['/person/view', 'id' => $model->saimokusho_id],
+                                            ['class' => 'btn btn-sm btn-outline-primary', 'data-pjax' => 0]) : '&nbsp;';
+                                }
+                        ],
+                        [
                                 'attribute' => 'usage',
                                 'value' => function ($model) {
                                     return $model->usage_name;
@@ -68,16 +84,16 @@ $this->params['breadcrumbs'][] = $this->title;
                                 'footer' => Field::getAreaText(FieldSearch::getFAreaTotal($dataProvider)),
                                 'footerOptions' => ['class' => 'text-end'],
                         ],
-                        [
-                                'attribute' => 'c_area',
-                                'value' => function ($model) {
-                                    return Field::getAreaText($model->c_area);
-                                },
-                                'contentOptions' => ['class' => 'text-end'],
-                                'footer' => Field::getAreaText(FieldSearch::getCAreaTotal($dataProvider)),
-                                'footerOptions' => ['class' => 'text-end'],
-                        ],
-                        'note',
+//                        [
+//                                'attribute' => 'c_area',
+//                                'value' => function ($model) {
+//                                    return Field::getAreaText($model->c_area);
+//                                },
+//                                'contentOptions' => ['class' => 'text-end'],
+//                                'footer' => Field::getAreaText(FieldSearch::getCAreaTotal($dataProvider)),
+//                                'footerOptions' => ['class' => 'text-end'],
+//                        ],
+//                        'note',
                         [
                                 'format' => 'raw',
                                 'value' => function ($model) {
@@ -86,7 +102,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                                     ['class' => 'btn btn-sm btn-primary', 'data-pjax' => 0]),
                                             Html::button(Icon::getIconAndLabel('map-location'),
                                                     ['class' => 'btn-map-open btn btn-sm btn-outline-success', 'data-url' => $model->mapurl]),
-                                            Html::a(Icon::getIcon('map-location') . ' i-GIS で見る', $model->mapurl,
+                                            Html::a(Icon::getIcon('map-location') . ' i-GIS', $model->mapurl,
                                                     ['class' => 'btn btn-sm btn-outline-success', 'target' => '_blank']),
                                     ];
                                     if (Yii::$app->user->can('forest.edit')) {

@@ -15,18 +15,26 @@ class FieldForm extends Model
 
     public array $cfps;
 
+    public array $chfps;
+
+    public array $safps;
+
     public array $fus;
 
     public $new_ofp = false;
 
     public $new_cfp = false;
 
+    public $new_chfp = false;
+
+    public $new_safp = false;
+
     public $new_fu = false;
 
     public function rules()
     {
         return [
-            [['new_ofp', 'new_cfp', 'new_fu'], 'boolean'],
+            [['new_ofp', 'new_cfp', 'new_chfp', 'new_safp', 'new_fu'], 'boolean'],
         ];
     }
 
@@ -35,6 +43,8 @@ class FieldForm extends Model
         return [
             'new_ofp' => '新しい所有者を登録する',
             'new_cfp' => '新しい耕作者を登録する',
+            'new_chfp' => '新しい中山間名義人を登録する',
+            'new_safp' => '新しい細目書名義人を登録する',
             'new_fu' => '新しい利用状況を登録する',
         ];
     }
@@ -50,16 +60,41 @@ class FieldForm extends Model
             ->orderBy(['valid_from' => SORT_ASC])
             ->all();
         $this->ofps[] = new FieldPerson(['field_id' => $field_id, 'role' => FieldPerson::ROLE_OWNER]);
+        if (count($this->ofps) == 1) {
+            $this->ofps[0]->valid_from = '1900-01-01';
+        }
         $this->cfps = FieldPerson::find()
             ->where(['field_id' => $field_id, 'role' => FieldPerson::ROLE_CULTIVATOR])
             ->orderBy(['valid_from' => SORT_ASC])
             ->all();
         $this->cfps[] = new FieldPerson(['field_id' => $field_id, 'role' => FieldPerson::ROLE_CULTIVATOR]);
+        if (count($this->cfps) == 1) {
+            $this->cfps[0]->valid_from = '1900-01-01';
+        }
+        $this->chfps = FieldPerson::find()
+            ->where(['field_id' => $field_id, 'role' => FieldPerson::ROLE_CHUSANKAN])
+            ->orderBy(['valid_from' => SORT_ASC])
+            ->all();
+        $this->chfps[] = new FieldPerson(['field_id' => $field_id, 'role' => FieldPerson::ROLE_CHUSANKAN]);
+        if (count($this->chfps) == 1) {
+            $this->chfps[0]->valid_from = '1900-01-01';
+        }
+        $this->safps = FieldPerson::find()
+            ->where(['field_id' => $field_id, 'role' => FieldPerson::ROLE_SAIMOKUSHO])
+            ->orderBy(['valid_from' => SORT_ASC])
+            ->all();
+        $this->safps[] = new FieldPerson(['field_id' => $field_id, 'role' => FieldPerson::ROLE_SAIMOKUSHO]);
+        if (count($this->safps) == 1) {
+            $this->safps[0]->valid_from = '1900-01-01';
+        }
         $this->fus = FieldUsage::find()
             ->where(['field_id' => $field_id])
             ->orderBy(['valid_from' => SORT_ASC])
             ->all();
         $this->fus[] = new FieldUsage(['field_id' => $field_id]);
+        if (count($this->fus) == 1) {
+            $this->fus[0]->valid_from = '1900-01-01';
+        }
     }
 
     public function loadPost($mode, $params)
@@ -74,6 +109,10 @@ class FieldForm extends Model
             return FieldPerson::loadMultiple($this->ofps, $params);
         } elseif ($mode == 'c') {
             return FieldPerson::loadMultiple($this->cfps, $params);
+        } elseif ($mode == 'ch') {
+            return FieldPerson::loadMultiple($this->chfps, $params);
+        } elseif ($mode == 'sa') {
+            return FieldPerson::loadMultiple($this->safps, $params);
         } elseif ($mode == 'u') {
             return FieldUsage::loadMultiple($this->fus, $params);
         }
@@ -88,6 +127,10 @@ class FieldForm extends Model
             return $this->saveFps($this->ofps, $this->new_ofp);
         } elseif ($mode == 'c') {
             return $this->saveFps($this->cfps, $this->new_cfp);
+        } elseif ($mode == 'ch') {
+            return $this->saveFps($this->chfps, $this->new_chfp);
+        } elseif ($mode == 'sa') {
+            return $this->saveFps($this->safps, $this->new_safp);
         } elseif ($mode == 'u') {
             return $this->saveFus($this->fus, $this->new_fu);
         }

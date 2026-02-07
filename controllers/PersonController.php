@@ -88,9 +88,9 @@ class PersonController extends BaseController
 
     public function actionSelect()
     {
+        $searchModel = new PersonSearch(['_form_name' => 'psel']);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, 10, 'person:select');
         if (Yii::$app->request->isPjax) {
-            $searchModel = new PersonSearch(['_form_name' => 'psel']);
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, 10, 'person:select');
             return $this->renderPartial('_select', [
                 'dataProvider' => $dataProvider,
             ]);

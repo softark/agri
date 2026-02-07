@@ -10,7 +10,7 @@ use yii\widgets\Pjax;
 ?>
 
 <?php Pjax::begin([
-    'formSelector' => '#person-search-form',
+    'formSelector' => '#person-select-search-form',
     'id' => 'person-search-pjax',
     'enablePushState' => false,
     'timeout' => '3000',

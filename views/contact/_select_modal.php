@@ -41,9 +41,13 @@ Modal::begin([
     </div>
 
 <?php $form = ActiveForm::begin([
-        'id' => 'contact-search-form',
         'method' => 'get',
         'action' => ['/contact/select'],
+        'id' => 'contact-select-search-form',
+        'options' => [
+                'data-search-form' => 1,
+                'data-pjax' => 1,
+        ],
         'fieldConfig' => [
                 'inputOptions' => ['class' => 'allow_submit form-control']
         ],

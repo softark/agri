@@ -37,7 +37,7 @@ class FieldSearch extends Field
         return ArrayHelper::merge(
             parent::attributeLabels(),
             [
-                'search_name' => '所有者・耕作者',
+                'search_name' => '関係者',
                 'search_usage' => '農地利用状況',
             ]);
     }
@@ -69,6 +69,10 @@ class FieldSearch extends Field
             ->leftJoin('person po', 'po.id = fpo.person_id')
             ->leftJoin('field_person fpc', 'fpc.field_id = field.id and fpc.role = 2 and fpc.valid_to IS null')
             ->leftJoin('person pc', 'pc.id = fpc.person_id')
+            ->leftJoin('field_person fpch', 'fpch.field_id = field.id and fpch.role = 3 and fpch.valid_to IS null')
+            ->leftJoin('person pch', 'pch.id = fpch.person_id')
+            ->leftJoin('field_person fpsa', 'fpsa.field_id = field.id and fpsa.role = 4 and fpsa.valid_to IS null')
+            ->leftJoin('person psa', 'psa.id = fpsa.person_id')
             ->leftJoin('field_usage fu', 'fu.field_id = field.id and fu.valid_to IS null')
             ->leftJoin('usage u', 'u.id = fu.usage_id')
             ->with([
@@ -77,6 +81,10 @@ class FieldSearch extends Field
                 'ownerFieldPerson.person',
                 'cultivatorFieldPerson',
                 'cultivatorFieldPerson.person',
+                'chusankanFieldPerson',
+                'chusankanFieldPerson.person',
+                'saimokushoFieldPerson',
+                'saimokushoFieldPerson.person',
                 'fieldUsage',
                 'fieldUsage.usage',
             ]);
@@ -87,12 +95,12 @@ class FieldSearch extends Field
             'query' => $query,
             'pagination' => [
                 'pageParam' => 'fl-page',
-                'params'    => $params,
+                'params' => $params,
                 'pageSize' => $pageSize,
             ],
             'sort' => [
                 'sortParam' => 'fl-sort',
-                'params'    => $params,
+                'params' => $params,
                 'defaultOrder' => ['p_no' => SORT_ASC],
                 'attributes' => [
                     'aza_id' => [
@@ -110,6 +118,14 @@ class FieldSearch extends Field
                     'cultivator' => [
                         'asc' => ['pc.yomi' => SORT_ASC, 'p_no_sort' => SORT_ASC],
                         'desc' => ['pc.yomi' => SORT_DESC, 'p_no_sort' => SORT_ASC],
+                    ],
+                    'chusankan' => [
+                        'asc' => ['pch.yomi' => SORT_ASC, 'p_no_sort' => SORT_ASC],
+                        'desc' => ['pch.yomi' => SORT_DESC, 'p_no_sort' => SORT_ASC],
+                    ],
+                    'saimokusho' => [
+                        'asc' => ['psa.yomi' => SORT_ASC, 'p_no_sort' => SORT_ASC],
+                        'desc' => ['psa.yomi' => SORT_DESC, 'p_no_sort' => SORT_ASC],
                     ],
                     'usage' => [
                         'asc' => ['u.type' => SORT_ASC, 'u.order' => SORT_ASC, 'p_no_sort' => SORT_ASC],
@@ -152,8 +168,12 @@ class FieldSearch extends Field
             $query->andWhere(['or',
                 ['ilike', 'po.name', $this->search_name],
                 ['ilike', 'pc.name', $this->search_name],
+                ['ilike', 'pch.name', $this->search_name],
+                ['ilike', 'psa.name', $this->search_name],
                 ['ilike', 'po.yomi', $this->search_name],
-                ['ilike', 'pc.yomi', $this->search_name]
+                ['ilike', 'pc.yomi', $this->search_name],
+                ['ilike', 'pch.yomi', $this->search_name],
+                ['ilike', 'psa.yomi', $this->search_name]
             ]);
         }
 
@@ -161,6 +181,8 @@ class FieldSearch extends Field
             $query->andWhere(['or',
                 ['fpo.person_id' => $this->search_person_id],
                 ['fpc.person_id' => $this->search_person_id],
+                ['fpch.person_id' => $this->search_person_id],
+                ['fpsa.person_id' => $this->search_person_id],
             ]);
         }
 

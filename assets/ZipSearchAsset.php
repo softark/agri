@@ -18,6 +18,7 @@ use yii\web\JqueryAsset;
  */
 class ZipSearchAsset extends AssetBundle
 {
+    public $sourcePath = null;
     public $js = [
         'js/zip-search.js',
     ];

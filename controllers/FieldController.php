@@ -121,22 +121,6 @@ class FieldController extends BaseController
             'model' => $model,
             'ret_route' => $ret_route,
         ]);
-
-        /*
-        $model = $this->findModel($id);
-        if ($ret_route == null) {
-            $ret_route = ['index'];
-        }
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect($ret_route);
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-            'ret_route' => $ret_route,
-        ]);
-        */
     }
 
     /**
@@ -153,82 +137,5 @@ class FieldController extends BaseController
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
-    }
-
-    public function actionUpdateFieldPerson($id)
-    {
-        $model = FieldPerson::findOne($id);
-        if (!$model) {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-
-        $ret_route = ['view', 'id' => $model->field->id];
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect($ret_route);
-        }
-
-        return $this->render('update-field-person', [
-            'model' => $model,
-            'field' => $model->field,
-            'ret_route' => $ret_route,
-        ]);
-    }
-    public function actionAddFieldPerson($id, $role)
-    {
-        $field = $this->findModel($id);
-        $model = new FieldPerson();
-        $model->field_id = $field->id;
-        $model->role = $role;
-
-        $ret_route = ['view', 'id' => $id];
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->addHistory()) {
-            return $this->redirect($ret_route);
-        }
-
-        return $this->render('add-field-person', [
-            'model' => $model,
-            'field' => $field,
-            'ret_route' => $ret_route,
-        ]);
-    }
-
-    public function actionUpdateFieldUsage($id)
-    {
-        $model = FieldUsage::findOne($id);
-        if (!$model) {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-
-        $ret_route = ['view', 'id' => $model->field->id];
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect($ret_route);
-        }
-
-        return $this->render('update-field-usage', [
-            'model' => $model,
-            'field' => $model->field,
-            'ret_route' => $ret_route,
-        ]);
-    }
-    public function actionAddFieldUsage($id)
-    {
-        $field = $this->findModel($id);
-        $model = new FieldUsage();
-        $model->field_id = $field->id;
-
-        $ret_route = ['view', 'id' => $id];
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->addHistory()) {
-            return $this->redirect($ret_route);
-        }
-
-        return $this->render('add-field-usage', [
-            'model' => $model,
-            'field' => $field,
-            'ret_route' => $ret_route,
-        ]);
     }
 }

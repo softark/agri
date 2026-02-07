@@ -43,8 +43,8 @@ $(document).on('click', '#btn-contact-select', function(event){
             <p><?= Html::button(Icon::getIcon('contact') . ' 既存の連絡先をコピー', ['id' => 'btn-contact-select', 'class' => 'btn btn-outline-secondary']) ?></p>
             <p>関係者と連絡先の名前が同じ場合は、役割／肩書、連絡先名前半、連絡先名後半は省略して、郵便番号以下を入力してください</p>
             <?= $form->field($model, 'role')->textInput(['maxlength' => true, 'id' => 'role']) ?>
-            <?= $form->field($model, 'contact_name1')->textInput(['maxlength' => true,  'id' => 'contact-name1']) ?>
-            <?= $form->field($model, 'contact_name2')->textInput(['maxlength' => true,  'id' => 'contact-name2']) ?>
+            <?= $form->field($model, 'contact_name1')->textInput(['maxlength' => true, 'id' => 'contact-name1']) ?>
+            <?= $form->field($model, 'contact_name2')->textInput(['maxlength' => true, 'id' => 'contact-name2']) ?>
             <?= $form->field($model, 'zip')->textInput(['maxlength' => true, 'id' => 'zip',
                     'data-zip-autocomplete' => true, 'data-zip-target' => '#zip', 'data-address-target' => '#address1']) ?>
             <?= $form->field($model, 'address1')->textInput(['maxlength' => true, 'id' => 'address1',
@@ -64,21 +64,21 @@ $(document).on('click', '#btn-contact-select', function(event){
             </div>
 
             <?php ActiveForm::end(); ?>
-            <?= $this->render('/contact/_select_modal.php', [
-                    'modalId' => 'contact-select-modal',
-                    'pickerMap' => [
-                            'role' => '#role',
-                            'name1' => '#contact-name1',
-                            'name2' => '#contact-name2',
-                            'zip' => '#zip',
-                            'address1' => '#address1',
-                            'address2' => '#address2',
-                            'phone1' => '#phone1',
-                            'phone2' => '#phone2',
-                            'mail' => '#mail',
-                            'note' => '#contact-note',
-                    ],
-            ]); ?>
         </div>
     </div>
+    <?= $this->render('/contact/_select_modal.php', [
+            'modalId' => 'contact-select-modal',
+            'pickerMap' => [
+                    'role' => '#role',
+                    'name1' => '#contact-name1',
+                    'name2' => '#contact-name2',
+                    'zip' => '#zip',
+                    'address1' => '#address1',
+                    'address2' => '#address2',
+                    'phone1' => '#phone1',
+                    'phone2' => '#phone2',
+                    'mail' => '#mail',
+                    'note' => '#contact-note',
+            ],
+    ]); ?>
 </div>

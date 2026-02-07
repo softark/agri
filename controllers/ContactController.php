@@ -76,9 +76,9 @@ class ContactController extends BaseController
 
     public function actionSelect()
     {
+        $searchModel = new ContactSearch(['_form_name' => 'csel']);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, 10);
         if (Yii::$app->request->isPjax) {
-            $searchModel = new ContactSearch(['_form_name' => 'csel']);
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams, 10);
             return $this->renderPartial('_select', [
                 'dataProvider' => $dataProvider,
             ]);

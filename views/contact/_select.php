@@ -9,7 +9,7 @@ use yii\widgets\Pjax;
 ?>
 
 <?php Pjax::begin([
-    'formSelector' => '#contact-search-form',
+    'formSelector' => '#contact-select-search-form',
     'id' => 'contact-search-pjax',
     'enablePushState' => false,
     'timeout' => '3000',

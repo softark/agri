@@ -21,14 +21,25 @@ use Yii;
  * @property int $updated_by
  *
  * @property Aza $aza
+ *
  * @property FieldPerson $ownerFieldPerson
  * @property Person $owner
  * @property FieldPerson $cultivatorFieldPerson
  * @property Person $cultivator
+ * @property FieldPerson $chusankanFieldPerson
+ * @property Person $chusankan
+ * @property FieldPerson $saimokushoFieldPerson
+ * @property Person $saimokusho
+ *
  * @property FieldPerson[] $ownerFieldPersons
  * @property Person[] $owners
  * @property FieldPerson[] $cultivatorFieldPersons
  * @property Person[] $cultivators
+ * @property FieldPerson[] $chusankanFieldPersons
+ * @property Person[] $chusankans
+ * @property FieldPerson[] $saimokushoFieldPersons
+ * @property Person[] $saimokushos
+ *
  * @property FieldUsage[] $fieldUsages
  * @property Usage[] $usages
  * @property FieldUsage $fieldUsage
@@ -113,6 +124,34 @@ class Field extends \yii\db\ActiveRecord
         return $this->_cultivator_name;
     }
 
+    private ?string $_chusankan_name = null;
+
+    public function getChusankan_Name()
+    {
+        if ($this->_chusankan_name === null) {
+            if ($this->chusankan) {
+                $this->_chusankan_name = $this->chusankan->dispname;
+            } else {
+                $this->_chusankan_name = '';
+            }
+        }
+        return $this->_chusankan_name;
+    }
+
+    private ?string $_saimokusho_name = null;
+
+    public function getSaimokusho_Name()
+    {
+        if ($this->_saimokusho_name === null) {
+            if ($this->saimokusho) {
+                $this->_saimokusho_name = $this->saimokusho->dispname;
+            } else {
+                $this->_saimokusho_name = '';
+            }
+        }
+        return $this->_saimokusho_name;
+    }
+
     private ?string $_usage_name = null;
 
     public function getUsage_Name()
@@ -185,6 +224,8 @@ class Field extends \yii\db\ActiveRecord
             'p_no' => '番地',
             'owner' => '所有者',
             'cultivator' => '耕作者',
+            'chusankan' => '中山間',
+            'saimokusho' => '細目書',
             'usage' => '農地利用状況',
             'c_area' => '地図面積',
             'f_area' => '公称面積',
@@ -290,6 +331,90 @@ class Field extends \yii\db\ActiveRecord
         return $this->_cultivator_id;
     }
 
+    public function getChusankanFieldPersons()
+    {
+        return $this->hasMany(FieldPerson::class, ['field_id' => 'id'])
+            ->andOnCondition(['field_person.role' => FieldPerson::ROLE_CHUSANKAN])
+            ->orderBy(['field_person.valid_from' => SORT_ASC]);
+    }
+
+    public function getChusankanFieldPerson()
+    {
+        return $this->hasOne(FieldPerson::class, ['field_id' => 'id'])
+            ->andOnCondition(['field_person.role' => FieldPerson::ROLE_CHUSANKAN])
+            ->andOnCondition(['field_person.valid_to' => null]);
+    }
+
+    private $_chusankans = null;
+
+    public function getChusankans()
+    {
+        if ($this->_chusankans === null) {
+            $this->_chusankans = [];
+            foreach ($this->chusankanFieldPersons as $fp) {
+                $this->_chusankans[] = $fp->person;
+            }
+        }
+        return $this->_chusankans;
+    }
+
+    public function getChusankan()
+    {
+        return $this->chusankanFieldPerson ? $this->chusankanFieldPerson->person : null;
+    }
+
+    private $_chusankan_id = -1;
+
+    public function getChusankan_id()
+    {
+        if ($this->_chusankan_id == -1) {
+            $this->_chusankan_id = $this->chusankan ? $this->chusankan->id : null;
+        }
+        return $this->_chusankan_id;
+    }
+
+    public function getSaimokushoFieldPersons()
+    {
+        return $this->hasMany(FieldPerson::class, ['field_id' => 'id'])
+            ->andOnCondition(['field_person.role' => FieldPerson::ROLE_SAIMOKUSHO])
+            ->orderBy(['field_person.valid_from' => SORT_ASC]);
+    }
+
+    public function getSaimokushoFieldPerson()
+    {
+        return $this->hasOne(FieldPerson::class, ['field_id' => 'id'])
+            ->andOnCondition(['field_person.role' => FieldPerson::ROLE_SAIMOKUSHO])
+            ->andOnCondition(['field_person.valid_to' => null]);
+    }
+
+    private $_saimokushos = null;
+
+    public function getSaimokushos()
+    {
+        if ($this->_saimokushos === null) {
+            $this->_saimokushos = [];
+            foreach ($this->saimokushoFieldPersons as $fp) {
+                $this->_saimokushos[] = $fp->person;
+            }
+        }
+        return $this->_saimokushos;
+    }
+
+    public function getSaimokusho()
+    {
+        return $this->saimokushoFieldPerson ? $this->saimokushoFieldPerson->person : null;
+    }
+
+    private $_saimokusho_id = -1;
+
+    public function getSaimokusho_id()
+    {
+        if ($this->_saimokusho_id == -1) {
+            $this->_saimokusho_id = $this->saimokusho ? $this->saimokusho->id : null;
+        }
+        return $this->_saimokusho_id;
+    }
+
     public function getFieldUsages()
     {
         return $this->hasMany(FieldUsage::class, ['field_id' => 'id'])
@@ -388,8 +513,7 @@ SQL2;
      * @param bool $insert
      * @return bool
      */
-    public
-    function beforeSave($insert)
+    public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
             $user_id = (Yii::$app->user->isGuest) ? 1 : Yii::$app->user->id;
