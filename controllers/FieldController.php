@@ -109,7 +109,7 @@ class FieldController extends BaseController
             if ($ret) {
                 $ret = $model->saveModels($mode);
                 if ($ret) {
-                    if ($mode == 'o' || $mode == 'c' || $mode == 'u') {
+                    if ($mode == 'o' || $mode == 'c' || $mode == 'ch' || $mode == 'sa' || $mode == 'u') {
                         return $this->redirect(['update', 'id' => $id, 'ret_route' => $ret_route]);
                     }
                     return $this->redirect($ret_route);

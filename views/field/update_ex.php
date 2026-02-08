@@ -235,7 +235,7 @@ $this->params['breadcrumbs'][] = '編集';
                     $count = count($model->safps);
                     ?>
                     <?php $form = ActiveForm::begin([
-                            'action' => ['update', 'mode' => 'c', 'id' => $model->field->id, 'ret_route' => $ret_route],
+                            'action' => ['update', 'mode' => 'sa', 'id' => $model->field->id, 'ret_route' => $ret_route],
                             'id' => 'field-safps-edit-form',
                             'enableAjaxValidation' => false,
                             'enableClientValidation' => false,
