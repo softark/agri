@@ -29,6 +29,7 @@ class ForestController extends BaseController
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'export' => ['POST'],
+                        'delete-forest-person' => ['POST'],
                     ],
                 ],
             ]
@@ -136,4 +137,16 @@ class ForestController extends BaseController
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    public function actionDeleteForestPerson($id)
+    {
+        $model = ForestPerson::findOne($id);
+        if ($model === null) {
+            throw new NotFoundHttpException('The requested forest-person does not exist.');
+        }
+        $forest_id = $model->forest_id;
+        Forest::deleteForestPerson($model);
+        return $this->redirect(['view', 'id' => $forest_id]);
+    }
+
 }

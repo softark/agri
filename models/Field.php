@@ -563,4 +563,91 @@ SQL2;
         fclose($fp);
         return $count;
     }
+
+    /**
+     * @param $fp FieldPerson
+     * @return void
+     */
+    public static function deleteFieldPerson($fp)
+    {
+        $field_id = $fp->field_id;
+        $role = $fp->role;
+        $valid_from = $fp->valid_from;
+
+        $prev = FieldPerson::find()
+            ->where(['and',
+                ['field_id' => $field_id],
+                ['role' => $role],
+                ['<', 'valid_from', $valid_from]
+            ])->orderBy(['valid_from' => SORT_DESC])->one();
+
+        $next = FieldPerson::find()
+            ->where(['and',
+                ['field_id' => $field_id],
+                ['role' => $role],
+                ['>', 'valid_from', $valid_from]
+            ])->orderBy(['valid_from' => SORT_ASC])->one();
+
+        $tr = Yii::$app->db->beginTransaction();
+        try {
+            $fp->delete();
+            if ($prev && $next) {
+                $prev->valid_to = $valid_from;
+                $prev->save();
+            } else if ($prev) {
+                $prev->valid_to = null;
+                $prev->save();
+            } else if ($next) {
+                $next->valid_from = '1900-01-01';
+                $next->save();
+            }
+            $tr->commit();
+        }
+        catch (\Exception $e) {
+            $tr->rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * @param $fu FieldUsage
+     * @return void
+     */
+    public static function deleteFieldUsage($fu)
+    {
+        $field_id = $fu->field_id;
+        $valid_from = $fu->valid_from;
+
+        $prev = FieldUsage::find()
+            ->where(['and',
+                ['field_id' => $field_id],
+                ['<', 'valid_from', $valid_from]
+            ])->orderBy(['valid_from' => SORT_DESC])->one();
+
+        $next = FieldUsage::find()
+            ->where(['and',
+                ['field_id' => $field_id],
+                ['>', 'valid_from', $valid_from]
+            ])->orderBy(['valid_from' => SORT_ASC])->one();
+
+        $tr = Yii::$app->db->beginTransaction();
+        try {
+            $fu->delete();
+            if ($prev && $next) {
+                $prev->valid_to = $valid_from;
+                $prev->save();
+            } else if ($prev) {
+                $prev->valid_to = null;
+                $prev->save();
+            } else if ($next) {
+                $next->valid_from = '1900-01-01';
+                $next->save();
+            }
+            $tr->commit();
+        }
+        catch (\Exception $e) {
+            $tr->rollBack();
+            throw $e;
+        }
+    }
 }

@@ -116,7 +116,8 @@ class FieldForm extends Model
 
     public function loadPost($params)
     {
-        $ret = $this->field->load($params);
+        $ret = $this->load($params);
+        $ret &= $this->field->load($params);
         $ret &= FieldPerson::loadMultiple($this->ofps, $params);
         $ret &= FieldPerson::loadMultiple($this->cfps, $params);
         $ret &= FieldPerson::loadMultiple($this->chfps, $params);

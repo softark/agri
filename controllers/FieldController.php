@@ -30,6 +30,8 @@ class FieldController extends BaseController
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'export' => ['POST'],
+                        'delete-field-person' => ['POST'],
+                        'delete-field-usage' => ['POST'],
                     ],
                 ],
             ]
@@ -105,7 +107,7 @@ class FieldController extends BaseController
         $model->loadModels($id);
 
         if ($this->request->isPost) {
-            $ret =$model->loadPost($this->request->post());
+            $ret = $model->loadPost($this->request->post());
             if ($ret) {
                 $ret = $model->validateModels();
                 if ($ret) {
@@ -136,6 +138,28 @@ class FieldController extends BaseController
             return $model;
         }
 
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException('The requested field does not exist.');
+    }
+
+    public function actionDeleteFieldPerson($id)
+    {
+        $model = FieldPerson::findOne($id);
+        if ($model === null) {
+            throw new NotFoundHttpException('The requested field-person does not exist.');
+        }
+        $field_id = $model->field_id;
+        Field::deleteFieldPerson($model);
+        return $this->redirect(['view', 'id' => $field_id]);
+    }
+
+    public function actionDeleteFieldUsage($id)
+    {
+        $model = FieldUsage::findOne($id);
+        if ($model === null) {
+            throw new NotFoundHttpException('The requested field-usage does not exist.');
+        }
+        $field_id = $model->field_id;
+        Field::deleteFieldUsage($model);
+        return $this->redirect(['view', 'id' => $field_id]);
     }
 }

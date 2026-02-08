@@ -67,7 +67,8 @@ class ForestForm extends Model
 
     public function loadPost($params)
     {
-        $ret = $this->forest->load($params);
+        $ret = $this->load($params);
+        $ret &= $this->forest->load($params);
         $ret &= ForestPerson::loadMultiple($this->ofps, $params);
         $ret &= ForestPerson::loadMultiple($this->mfps, $params);
         return $ret;

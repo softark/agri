@@ -81,9 +81,11 @@ $this->params['breadcrumbs'][] = $model->p_no;
                 <tr>
                     <th>#</th>
                     <th>FROM</th>
-                    <th>TO</th>
                     <th>所有者</th>
                     <th>メモ</th>
+                    <?php if (Yii::$app->user->can('field.edit')): ?>
+                        <th>削除</th>
+                    <?php endif; ?>
                 </tr>
                 </thead>
                 <tbody>
@@ -91,9 +93,11 @@ $this->params['breadcrumbs'][] = $model->p_no;
                     <tr>
                         <td>1</td>
                         <td>****</td>
-                        <td>現在</td>
                         <td>未登録</td>
                         <td>&nbsp;</td>
+                        <?php if (Yii::$app->user->can('field.edit')): ?>
+                            <td>&nbsp;</td>
+                        <?php endif; ?>
                     </tr>
                 <?php else: ?>
                     <?php $n = 1; ?>
@@ -101,10 +105,23 @@ $this->params['breadcrumbs'][] = $model->p_no;
                         <tr>
                             <td><?= $n++ ?></td>
                             <td><?= $ofp->valid_from_text ?></td>
-                            <td><?= $ofp->valid_to_text ?></td>
                             <td><?= Html::a($ofp->person->dispname, ['/person/view', 'id' => $ofp->person_id],
-                                ['class' => 'btn btn-sm btn-outline-primary']) ?></td>
+                                        ['class' => 'btn btn-sm btn-outline-primary']) ?></td>
                             <td><?= $ofp->note ?></td>
+                            <?php if (Yii::$app->user->can('field.edit')): ?>
+                                <td>
+                                    <?=
+                                    Html::a(Icon::getIcon('delete'), ['delete-field-person', 'id' => $ofp->id],
+                                            [
+                                                    'class' => 'btn btn-danger btn-sm',
+                                                    'data' => [
+                                                            'confirm' => "この所有者 [{$ofp->person->dispname}] を削除しますか？",
+                                                            'method' => 'post',
+                                                    ]
+                                            ]);
+                                    ?>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -116,9 +133,11 @@ $this->params['breadcrumbs'][] = $model->p_no;
                 <tr>
                     <th>#</th>
                     <th>FROM</th>
-                    <th>TO</th>
                     <th>耕作者</th>
                     <th>メモ</th>
+                    <?php if (Yii::$app->user->can('field.edit')): ?>
+                        <th>削除</th>
+                    <?php endif; ?>
                 </tr>
                 </thead>
                 <tbody>
@@ -126,9 +145,11 @@ $this->params['breadcrumbs'][] = $model->p_no;
                     <tr>
                         <td>1</td>
                         <td>****</td>
-                        <td>現在</td>
                         <td>未登録</td>
                         <td>&nbsp;</td>
+                        <?php if (Yii::$app->user->can('field.edit')): ?>
+                            <td>&nbsp;</td>
+                        <?php endif; ?>
                     </tr>
                 <?php else: ?>
                     <?php $n = 1; ?>
@@ -136,10 +157,23 @@ $this->params['breadcrumbs'][] = $model->p_no;
                         <tr>
                             <td><?= $n++ ?></td>
                             <td><?= $cfp->valid_from_text ?></td>
-                            <td><?= $cfp->valid_to_text ?></td>
                             <td><?= Html::a($cfp->person->dispname, ['/person/view', 'id' => $cfp->person_id],
                                         ['class' => 'btn btn-sm btn-outline-primary']) ?></td>
                             <td><?= $cfp->note ?></td>
+                            <?php if (Yii::$app->user->can('field.edit')): ?>
+                                <td>
+                                    <?=
+                                    Html::a(Icon::getIcon('delete'), ['delete-field-person', 'id' => $cfp->id],
+                                            [
+                                                    'class' => 'btn btn-danger btn-sm',
+                                                    'data' => [
+                                                            'confirm' => "この耕作者 [{$cfp->person->dispname}] を削除しますか？",
+                                                            'method' => 'post',
+                                                    ]
+                                            ]);
+                                    ?>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -151,9 +185,11 @@ $this->params['breadcrumbs'][] = $model->p_no;
                 <tr>
                     <th>#</th>
                     <th>FROM</th>
-                    <th>TO</th>
                     <th>中山間名義人</th>
                     <th>メモ</th>
+                    <?php if (Yii::$app->user->can('field.edit')): ?>
+                        <th>削除</th>
+                    <?php endif; ?>
                 </tr>
                 </thead>
                 <tbody>
@@ -161,9 +197,11 @@ $this->params['breadcrumbs'][] = $model->p_no;
                     <tr>
                         <td>1</td>
                         <td>****</td>
-                        <td>現在</td>
                         <td>未登録</td>
                         <td>&nbsp;</td>
+                        <?php if (Yii::$app->user->can('field.edit')): ?>
+                            <td>&nbsp;</td>
+                        <?php endif; ?>
                     </tr>
                 <?php else: ?>
                     <?php $n = 1; ?>
@@ -171,10 +209,23 @@ $this->params['breadcrumbs'][] = $model->p_no;
                         <tr>
                             <td><?= $n++ ?></td>
                             <td><?= $chfp->valid_from_text ?></td>
-                            <td><?= $chfp->valid_to_text ?></td>
                             <td><?= Html::a($chfp->person->dispname, ['/person/view', 'id' => $chfp->person_id],
                                         ['class' => 'btn btn-sm btn-outline-primary']) ?></td>
                             <td><?= $chfp->note ?></td>
+                            <?php if (Yii::$app->user->can('field.edit')): ?>
+                                <td>
+                                    <?=
+                                    Html::a(Icon::getIcon('delete'), ['delete-field-person', 'id' => $chfp->id],
+                                            [
+                                                    'class' => 'btn btn-danger btn-sm',
+                                                    'data' => [
+                                                            'confirm' => "この中山間名義人 [{$chfp->person->dispname}] を削除しますか？",
+                                                            'method' => 'post',
+                                                    ]
+                                            ]);
+                                    ?>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -186,9 +237,11 @@ $this->params['breadcrumbs'][] = $model->p_no;
                 <tr>
                     <th>#</th>
                     <th>FROM</th>
-                    <th>TO</th>
                     <th>細目書名義人</th>
                     <th>メモ</th>
+                    <?php if (Yii::$app->user->can('field.edit')): ?>
+                        <th>削除</th>
+                    <?php endif; ?>
                 </tr>
                 </thead>
                 <tbody>
@@ -196,9 +249,11 @@ $this->params['breadcrumbs'][] = $model->p_no;
                     <tr>
                         <td>1</td>
                         <td>****</td>
-                        <td>現在</td>
                         <td>未登録</td>
                         <td>&nbsp;</td>
+                        <?php if (Yii::$app->user->can('field.edit')): ?>
+                            <td>&nbsp;</td>
+                        <?php endif; ?>
                     </tr>
                 <?php else: ?>
                     <?php $n = 1; ?>
@@ -206,10 +261,23 @@ $this->params['breadcrumbs'][] = $model->p_no;
                         <tr>
                             <td><?= $n++ ?></td>
                             <td><?= $safp->valid_from_text ?></td>
-                            <td><?= $safp->valid_to_text ?></td>
                             <td><?= Html::a($safp->person->dispname, ['/person/view', 'id' => $safp->person_id],
                                         ['class' => 'btn btn-sm btn-outline-primary']) ?></td>
                             <td><?= $safp->note ?></td>
+                            <?php if (Yii::$app->user->can('field.edit')): ?>
+                                <td>
+                                    <?=
+                                    Html::a(Icon::getIcon('delete'), ['delete-field-person', 'id' => $safp->id],
+                                            [
+                                                    'class' => 'btn btn-danger btn-sm',
+                                                    'data' => [
+                                                            'confirm' => "この細目書名義人 [{$safp->person->dispname}] を削除しますか？",
+                                                            'method' => 'post',
+                                                    ]
+                                            ]);
+                                    ?>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -221,9 +289,11 @@ $this->params['breadcrumbs'][] = $model->p_no;
                 <tr>
                     <th>#</th>
                     <th>FROM</th>
-                    <th>TO</th>
                     <th>利用状況</th>
                     <th>メモ</th>
+                    <?php if (Yii::$app->user->can('field.edit')): ?>
+                        <th>削除</th>
+                    <?php endif; ?>
                 </tr>
                 </thead>
                 <tbody>
@@ -231,19 +301,34 @@ $this->params['breadcrumbs'][] = $model->p_no;
                     <tr>
                         <td>1</td>
                         <td>****</td>
-                        <td>現在</td>
                         <td>未登録</td>
                         <td>&nbsp;</td>
+                        <?php if (Yii::$app->user->can('field.edit')): ?>
+                            <td>&nbsp;</td>
+                        <?php endif; ?>
                     </tr>
                 <?php else: ?>
                     <?php $n = 1; ?>
-                    <?php foreach ($model->fieldUsages as $fo): ?>
+                    <?php foreach ($model->fieldUsages as $fu): ?>
                         <tr>
                             <td><?= $n++ ?></td>
-                            <td><?= $fo->valid_from_text ?></td>
-                            <td><?= $fo->valid_to_text ?></td>
-                            <td><?= $fo->usage->name ?></td>
-                            <td><?= $fo->note ?></td>
+                            <td><?= $fu->valid_from_text ?></td>
+                            <td><?= $fu->usage->name ?></td>
+                            <td><?= $fu->note ?></td>
+                            <?php if (Yii::$app->user->can('field.edit')): ?>
+                                <td>
+                                    <?=
+                                    Html::a(Icon::getIcon('delete'), ['delete-field-usage', 'id' => $fu->id],
+                                            [
+                                                    'class' => 'btn btn-danger btn-sm',
+                                                    'data' => [
+                                                            'confirm' => "この利用状況 [{$fu->usage->name}] を削除しますか？",
+                                                            'method' => 'post',
+                                                    ]
+                                            ]);
+                                    ?>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>

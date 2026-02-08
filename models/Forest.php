@@ -393,4 +393,49 @@ SQL2;
         }
     }
 
+    /**
+     * @param $fp ForestPerson
+     * @return void
+     */
+    public static function deleteForestPerson($fp)
+    {
+        $forest_id = $fp->forest_id;
+        $role = $fp->role;
+        $valid_from = $fp->valid_from;
+
+        $prev = ForestPerson::find()
+            ->where(['and',
+                ['forest_id' => $forest_id],
+                ['role' => $role],
+                ['<', 'valid_from', $valid_from]
+            ])->orderBy(['valid_from' => SORT_DESC])->one();
+
+        $next = ForestPerson::find()
+            ->where(['and',
+                ['forest_id' => $forest_id],
+                ['role' => $role],
+                ['>', 'valid_from', $valid_from]
+            ])->orderBy(['valid_from' => SORT_ASC])->one();
+
+        $tr = Yii::$app->db->beginTransaction();
+        try {
+            $fp->delete();
+            if ($prev && $next) {
+                $prev->valid_to = $valid_from;
+                $prev->save();
+            } else if ($prev) {
+                $prev->valid_to = null;
+                $prev->save();
+            } else if ($next) {
+                $next->valid_from = '1900-01-01';
+                $next->save();
+            }
+            $tr->commit();
+        }
+        catch (\Exception $e) {
+            $tr->rollBack();
+            throw $e;
+        }
+    }
+
 }

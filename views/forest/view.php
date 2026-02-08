@@ -82,9 +82,11 @@ $this->params['breadcrumbs'][] = $model->title;
                 <tr>
                     <th>#</th>
                     <th>FROM</th>
-                    <th>TO</th>
                     <th>所有者</th>
                     <th>メモ</th>
+                    <?php if (Yii::$app->user->can('forest.edit')): ?>
+                        <th>削除</th>
+                    <?php endif; ?>
                 </tr>
                 </thead>
                 <tbody>
@@ -92,9 +94,11 @@ $this->params['breadcrumbs'][] = $model->title;
                     <tr>
                         <td>1</td>
                         <td>****</td>
-                        <td>現在</td>
                         <td>未登録</td>
                         <td>&nbsp;</td>
+                        <?php if (Yii::$app->user->can('forest.edit')): ?>
+                            <td>&nbsp;</td>
+                        <?php endif; ?>
                     </tr>
                 <?php else: ?>
                     <?php $n = 1; ?>
@@ -102,10 +106,23 @@ $this->params['breadcrumbs'][] = $model->title;
                         <tr>
                             <td><?= $n++ ?></td>
                             <td><?= $ofp->valid_from_text ?></td>
-                            <td><?= $ofp->valid_to_text ?></td>
                             <td><?= Html::a($ofp->person->dispname, ['/person/view', 'id' => $ofp->person_id],
                                         ['class' => 'btn btn-sm btn-outline-primary']); ?></td>
                             <td><?= $ofp->note ?></td>
+                            <?php if (Yii::$app->user->can('forest.edit')): ?>
+                                <td>
+                                    <?=
+                                    Html::a(Icon::getIcon('delete'), ['delete-forest-person', 'id' => $ofp->id],
+                                            [
+                                                    'class' => 'btn btn-danger btn-sm',
+                                                    'data' => [
+                                                            'confirm' => "この所有者 [{$ofp->person->dispname}] を削除しますか？",
+                                                            'method' => 'post',
+                                                    ]
+                                            ]);
+                                    ?>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -117,9 +134,11 @@ $this->params['breadcrumbs'][] = $model->title;
                 <tr>
                     <th>#</th>
                     <th>FROM</th>
-                    <th>TO</th>
                     <th>管理者</th>
                     <th>メモ</th>
+                    <?php if (Yii::$app->user->can('forest.edit')): ?>
+                        <th>削除</th>
+                    <?php endif; ?>
                 </tr>
                 </thead>
                 <tbody>
@@ -127,9 +146,11 @@ $this->params['breadcrumbs'][] = $model->title;
                     <tr>
                         <td>1</td>
                         <td>****</td>
-                        <td>現在</td>
                         <td>未登録</td>
                         <td>&nbsp;</td>
+                        <?php if (Yii::$app->user->can('forest.edit')): ?>
+                            <td>&nbsp;</td>
+                        <?php endif; ?>
                     </tr>
                 <?php else: ?>
                     <?php $n = 1; ?>
@@ -137,10 +158,23 @@ $this->params['breadcrumbs'][] = $model->title;
                         <tr>
                             <td><?= $n++ ?></td>
                             <td><?= $mfp->valid_from_text ?></td>
-                            <td><?= $mfp->valid_to_text ?></td>
                             <td><?= Html::a($mfp->person->dispname, ['/person/view', 'id' => $mfp->person_id],
                                         ['class' => 'btn btn-sm btn-outline-primary']); ?></td>
                             <td><?= $mfp->note ?></td>
+                            <?php if (Yii::$app->user->can('forest.edit')): ?>
+                                <td>
+                                    <?=
+                                    Html::a(Icon::getIcon('delete'), ['delete-forest-person', 'id' => $mfp->id],
+                                            [
+                                                    'class' => 'btn btn-danger btn-sm',
+                                                    'data' => [
+                                                            'confirm' => "この管理者 [{$mfp->person->dispname}] を削除しますか？",
+                                                            'method' => 'post',
+                                                    ]
+                                            ]);
+                                    ?>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
