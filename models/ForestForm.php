@@ -39,47 +39,65 @@ class ForestForm extends Model
         if (!$this->forest) {
             throw new NotFoundHttpException('The requested Forest data does not exist.');
         }
+        
         $this->ofps = ForestPerson::find()
             ->where(['forest_id' => $forest_id, 'role' => ForestPerson::ROLE_OWNER])
             ->orderBy(['valid_from' => SORT_ASC])
             ->all();
         $this->ofps[] = new ForestPerson(['forest_id' => $forest_id, 'role' => ForestPerson::ROLE_OWNER]);
+        foreach ($this->ofps as $ofp) {
+            $ofp->setFormName('ofp');
+        }
+        if (count($this->ofps) == 1) {
+            $this->ofps[0]->valid_from = '1900-01-01';
+        }
+        
         $this->mfps = ForestPerson::find()
             ->where(['forest_id' => $forest_id, 'role' => ForestPerson::ROLE_MANAGER])
             ->orderBy(['valid_from' => SORT_ASC])
             ->all();
         $this->mfps[] = new ForestPerson(['forest_id' => $forest_id, 'role' => ForestPerson::ROLE_MANAGER]);
+        foreach ($this->mfps as $mfp) {
+            $mfp->setFormName('mfp');
+        }
+        if (count($this->mfps) == 1) {
+            $this->mfps[0]->valid_from = '1900-01-01';
+        }
     }
 
-    public function loadPost($mode, $params)
+    public function loadPost($params)
     {
-        if ($mode == 'f') {
-            return $this->forest->load($params);
-        }
-        if (!$this->load($params)) {
-            return false;
-        }
-        if ($mode == 'o') {
-            return ForestPerson::loadMultiple($this->ofps, $params);
-        } elseif ($mode == 'm') {
-            return ForestPerson::loadMultiple($this->mfps, $params);
-        }
-        return false;
+        $ret = $this->forest->load($params);
+        $ret &= ForestPerson::loadMultiple($this->ofps, $params);
+        $ret &= ForestPerson::loadMultiple($this->mfps, $params);
+        return $ret;
+    }
+
+    public function validateModels()
+    {
+        $ret = $this->forest->validate();
+        $ret &= $this->validateFps($this->ofps, $this->new_ofp);
+        $ret &= $this->validateFps($this->mfps, $this->new_mfp);
+        return $ret;
     }
 
     public function saveModels($mode)
     {
-        if ($mode == 'f') {
-            return $this->forest->save();
-        } elseif ($mode == 'o') {
-            return $this->saveFps($this->ofps, $this->new_ofp);
-        } elseif ($mode == 'm') {
-            return $this->saveFps($this->mfps, $this->new_mfp);
+        $tr = Yii::$app->db->beginTransaction();
+        try {
+            $this->forest->save(false);
+            $this->saveFps($this->ofps, $this->new_ofp);
+            $this->saveFps($this->mfps, $this->new_mfp);
+            $tr->commit();
         }
-        return false;
+        catch (Exception $e) {
+            $tr->rollBack();
+            throw $e;
+        }
+        return true;
     }
 
-    protected function saveFps($forestPersons, $new_fp)
+    protected function validateFps($forestPersons, $new_fp)
     {
         $count = count($forestPersons);
         if (!$new_fp) {
@@ -104,28 +122,27 @@ class ForestForm extends Model
                 }
             }
         }
-        if (!$ret) {
-            return false;
-        }
-
-        // valid_to を調整
-        if ($count > 1) {
-            for ($i = 0; $i < $count - 1; $i++) {
-                $forestPersons[$i]->valid_to = $forestPersons[$i + 1]->valid_from;
+        if ($ret) {
+            // valid_to を調整
+            if ($count > 1) {
+                for ($i = 0; $i < $count - 1; $i++) {
+                    $forestPersons[$i]->valid_to = $forestPersons[$i + 1]->valid_from;
+                }
             }
+        }
+        return $ret;
+    }
+
+    protected function saveFps($forestPersons, $new_fp)
+    {
+        $count = count($forestPersons);
+        if (!$new_fp) {
+            $count--;
         }
 
         // save
-        $tr = Yii::$app->db->beginTransaction();
-        try {
-            for ($i = 0; $i < $count; $i++) {
-                $ret = $forestPersons[$i]->save(false);
-            }
-            $tr->commit();
-        } catch (Exception $e) {
-            $tr->rollBack();
-            throw $e;
+        for ($i = 0; $i < $count; $i++) {
+            $forestPersons[$i]->save(false);
         }
-        return $ret;
     }
 }

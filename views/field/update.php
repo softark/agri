@@ -21,18 +21,19 @@ $this->params['breadcrumbs'][] = '編集';
         <h1><?= Icon::getIconAndLabel('field') . ' : ' . $model->field->p_no . ' - ' . Icon::getIconAndLabel('update') ?></h1>
 
         <div class="field-form" id="field-form">
+            <?php $form = ActiveForm::begin([
+                    'action' => ['update', 'id' => $model->field->id, 'ret_route' => $ret_route],
+                    'id' => 'field-edit-form',
+                    'enableAjaxValidation' => false,
+                    'enableClientValidation' => false,
+                    'options' => ['autocomplete' => 'off'],
+                    'fieldConfig' => [
+                            'options' => ['class' => 'mb-3']
+                    ],
+            ]); ?>
             <div class="row">
                 <div class="col-xl-4 col-lg-6">
                     <h2 class="h5">地理情報</h2>
-                    <?php $form = ActiveForm::begin([
-                            'action' => ['update', 'mode' => 'f', 'id' => $model->field->id, 'ret_route' => $ret_route],
-                            'id' => 'field-edit-form',
-                            'enableAjaxValidation' => false,
-                            'options' => ['autocomplete' => 'off'],
-                            'fieldConfig' => [
-                                    'options' => ['class' => 'mb-3']
-                            ],
-                    ]); ?>
                     <div class="p-2 mb-3 border border-secondary rounded">
                         <?= $form->field($model->field, 'aza_id')->dropDownList(Aza::getAzaList(), ['prompt' => '']) ?>
                         <?= $form->field($model->field, 'p_no')->textInput(['maxlength' => true]) ?>
@@ -40,13 +41,6 @@ $this->params['breadcrumbs'][] = '編集';
                         <?= $form->field($model->field, 'f_area')->textInput()->label('公称面積 - ㎡ で入力') ?>
                         <?= $form->field($model->field, 'note')->textInput(['maxlength' => true]) ?>
                     </div>
-                    <div class="form-group">
-                        <?= Html::button(Icon::getIconAndLabel('map-location'),
-                                ['class' => 'btn btn-outline-success', 'id' => 'open-map-modal', 'data-url' => $model->field->mapurl]) ?>
-                        <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a(Icon::getIconAndLabel('end-edit'), $ret_route, ['class' => 'btn btn-outline-secondary']) ?>
-                    </div>
-                    <?php ActiveForm::end(); ?>
                 </div>
 
                 <div class="col-xl-4 col-lg-6">
@@ -54,17 +48,6 @@ $this->params['breadcrumbs'][] = '編集';
                     <?php
                     $count = count($model->ofps);
                     ?>
-                    <?php $form = ActiveForm::begin([
-                            'action' => ['update', 'mode' => 'o', 'id' => $model->field->id, 'ret_route' => $ret_route],
-                            'id' => 'field-ofps-edit-form',
-                            'enableAjaxValidation' => false,
-                            'enableClientValidation' => false,
-                            'options' => ['autocomplete' => 'off'],
-                            'fieldConfig' => [
-                                    'options' => ['class' => 'mb-3'],
-                                    'errorOptions' => ['class' => 'd-none'],
-                            ],
-                    ]); ?>
                     <?php foreach ($model->ofps as $i => $ofp) : ?>
                         <?php if ($i == $count - 1): ?>
                             <?= $form->field($model, 'new_ofp')
@@ -99,14 +82,8 @@ $this->params['breadcrumbs'][] = '編集';
                                 </div>
                             </div>
                             <?= $form->field($ofp, "[$i]note")->textInput(['maxlength' => true]) ?>
-                            <?= $form->errorSummary($ofp); ?>
                         </div>
                     <?php endforeach; ?>
-                    <div class="form-group">
-                        <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a(Icon::getIconAndLabel('end-edit'), $ret_route, ['class' => 'btn btn-outline-secondary']) ?>
-                    </div>
-                    <?php ActiveForm::end(); ?>
                 </div>
 
                 <div class="col-xl-4 col-lg-6">
@@ -114,17 +91,6 @@ $this->params['breadcrumbs'][] = '編集';
                     <?php
                     $count = count($model->cfps);
                     ?>
-                    <?php $form = ActiveForm::begin([
-                            'action' => ['update', 'mode' => 'c', 'id' => $model->field->id, 'ret_route' => $ret_route],
-                            'id' => 'field-cfps-edit-form',
-                            'enableAjaxValidation' => false,
-                            'enableClientValidation' => false,
-                            'options' => ['autocomplete' => 'off'],
-                            'fieldConfig' => [
-                                    'options' => ['class' => 'mb-3'],
-                                    'errorOptions' => ['class' => 'd-none'],
-                            ],
-                    ]); ?>
                     <?php foreach ($model->cfps as $i => $cfp) : ?>
                         <?php if ($i == $count - 1): ?>
                             <?= $form->field($model, 'new_cfp')
@@ -159,14 +125,8 @@ $this->params['breadcrumbs'][] = '編集';
                                 </div>
                             </div>
                             <?= $form->field($cfp, "[$i]note")->textInput(['maxlength' => true]) ?>
-                            <?= $form->errorSummary($cfp); ?>
                         </div>
                     <?php endforeach; ?>
-                    <div class="form-group">
-                        <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a(Icon::getIconAndLabel('end-edit'), $ret_route, ['class' => 'btn btn-outline-secondary']) ?>
-                    </div>
-                    <?php ActiveForm::end(); ?>
                 </div>
 
                 <div class="col-xl-4 col-lg-6">
@@ -174,17 +134,6 @@ $this->params['breadcrumbs'][] = '編集';
                     <?php
                     $count = count($model->chfps);
                     ?>
-                    <?php $form = ActiveForm::begin([
-                            'action' => ['update', 'mode' => 'ch', 'id' => $model->field->id, 'ret_route' => $ret_route],
-                            'id' => 'field-chfps-edit-form',
-                            'enableAjaxValidation' => false,
-                            'enableClientValidation' => false,
-                            'options' => ['autocomplete' => 'off'],
-                            'fieldConfig' => [
-                                    'options' => ['class' => 'mb-3'],
-                                    'errorOptions' => ['class' => 'd-none'],
-                            ],
-                    ]); ?>
                     <?php foreach ($model->chfps as $i => $chfp) : ?>
                         <?php if ($i == $count - 1): ?>
                             <?= $form->field($model, 'new_chfp')
@@ -219,14 +168,8 @@ $this->params['breadcrumbs'][] = '編集';
                                 </div>
                             </div>
                             <?= $form->field($chfp, "[$i]note")->textInput(['maxlength' => true]) ?>
-                            <?= $form->errorSummary($chfp); ?>
                         </div>
                     <?php endforeach; ?>
-                    <div class="form-group">
-                        <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a(Icon::getIconAndLabel('end-edit'), $ret_route, ['class' => 'btn btn-outline-secondary']) ?>
-                    </div>
-                    <?php ActiveForm::end(); ?>
                 </div>
 
                 <div class="col-xl-4 col-lg-6">
@@ -234,17 +177,6 @@ $this->params['breadcrumbs'][] = '編集';
                     <?php
                     $count = count($model->safps);
                     ?>
-                    <?php $form = ActiveForm::begin([
-                            'action' => ['update', 'mode' => 'sa', 'id' => $model->field->id, 'ret_route' => $ret_route],
-                            'id' => 'field-safps-edit-form',
-                            'enableAjaxValidation' => false,
-                            'enableClientValidation' => false,
-                            'options' => ['autocomplete' => 'off'],
-                            'fieldConfig' => [
-                                    'options' => ['class' => 'mb-3'],
-                                    'errorOptions' => ['class' => 'd-none'],
-                            ],
-                    ]); ?>
                     <?php foreach ($model->safps as $i => $safp) : ?>
                         <?php if ($i == $count - 1): ?>
                             <?= $form->field($model, 'new_safp')
@@ -279,14 +211,8 @@ $this->params['breadcrumbs'][] = '編集';
                                 </div>
                             </div>
                             <?= $form->field($safp, "[$i]note")->textInput(['maxlength' => true]) ?>
-                            <?= $form->errorSummary($safp); ?>
                         </div>
                     <?php endforeach; ?>
-                    <div class="form-group">
-                        <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a(Icon::getIconAndLabel('end-edit'), $ret_route, ['class' => 'btn btn-outline-secondary']) ?>
-                    </div>
-                    <?php ActiveForm::end(); ?>
                 </div>
 
                 <div class="col-xl-4 col-lg-6">
@@ -294,17 +220,6 @@ $this->params['breadcrumbs'][] = '編集';
                     <?php
                     $count = count($model->fus);
                     ?>
-                    <?php $form = ActiveForm::begin([
-                            'action' => ['update', 'mode' => 'u', 'id' => $model->field->id, 'ret_route' => $ret_route],
-                            'id' => 'field-fus-edit-form',
-                            'enableAjaxValidation' => false,
-                            'enableClientValidation' => false,
-                            'options' => ['autocomplete' => 'off'],
-                            'fieldConfig' => [
-                                    'options' => ['class' => 'mb-3'],
-                                    'errorOptions' => ['class' => 'd-none'],
-                            ],
-                    ]); ?>
                     <?php foreach ($model->fus as $i => $fu) : ?>
                         <?php if ($i == $count - 1): ?>
                             <?= $form->field($model, 'new_fu')
@@ -326,16 +241,18 @@ $this->params['breadcrumbs'][] = '編集';
                             <?php endif; ?>
                             <?= $form->field($fu, "[$i]usage_id")->dropDownList(Usage::getUsageList()) ?>
                             <?= $form->field($fu, "[$i]note")->textInput(['maxlength' => true]) ?>
-                            <?= $form->errorSummary($cfp); ?>
                         </div>
                     <?php endforeach; ?>
-                    <div class="form-group">
-                        <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a(Icon::getIconAndLabel('end-edit'), $ret_route, ['class' => 'btn btn-outline-secondary']) ?>
-                    </div>
-                    <?php ActiveForm::end(); ?>
                 </div>
             </div>
+            <?= $form->errorSummary($model); ?>
+            <div class="form-group">
+                <?= Html::button(Icon::getIconAndLabel('map-location'),
+                        ['class' => 'btn btn-outline-success', 'id' => 'open-map-modal', 'data-url' => $model->field->mapurl]) ?>
+                <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
+                <?= Html::a(Icon::getIconAndLabel('end-edit'), $ret_route, ['class' => 'btn btn-outline-secondary']) ?>
+            </div>
+            <?php ActiveForm::end(); ?>
         </div>
         <?= $this->render('/field/_map_modal') ?>
         <?= Html::hiddenInput('person_id', '', ['id' => 'person-id']) ?>

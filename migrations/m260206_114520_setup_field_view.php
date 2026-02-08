@@ -73,7 +73,7 @@ BEGIN
     RETURN NEW;
 
   ELSIF TG_OP = 'DELETE' THEN
-    DELETE FROM argi.field
+    DELETE FROM agri.field
     WHERE id = OLD.id;
 
     RETURN OLD;

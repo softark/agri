@@ -27,6 +27,17 @@ use yii\base\UserException;
  */
 class FieldPerson extends \yii\db\ActiveRecord
 {
+    private $_form_name = 'FieldPerson';
+
+    public function setFormName($form_name)
+    {
+        $this->_form_name = $form_name;
+    }
+
+    public function formName()
+    {
+        return $this->_form_name;
+    }
 
     public function behaviors()
     {

@@ -49,6 +49,7 @@
 
         $modal.trigger('picker:selected');
         $modal.modal('hide');
+        $modal.find('[data-picker-row].is-selected').removeClass('is-selected');
         $modal.find('[data-picker-ok]').addClass('disabled');
     });
 
@@ -57,6 +58,7 @@
         e.preventDefault();
         var $modal = $(this).closest('.modal');
         $modal.modal('hide');
+        $modal.find('[data-picker-row].is-selected').removeClass('is-selected');
         $modal.find('[data-picker-ok]').addClass('disabled');
     });
 

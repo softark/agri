@@ -21,18 +21,19 @@ $this->params['breadcrumbs'][] = '編集';
         <h1><?= Icon::getIconAndLabel('tree') . ' : ' . $model->forest->title . ' - ' . Icon::getIconAndLabel('update') ?></h1>
 
         <div class="forest-form" id="forest-form">
+            <?php $form = ActiveForm::begin([
+                    'action' => ['update', 'id' => $model->forest->id, 'ret_route' => $ret_route],
+                    'id' => 'forest-edit-form',
+                    'enableAjaxValidation' => false,
+                    'enableClientValidation' => false,
+                    'options' => ['autocomplete' => 'off'],
+                    'fieldConfig' => [
+                            'options' => ['class' => 'mb-3']
+                    ],
+            ]); ?>
             <div class="row">
                 <div class="col-xl-4 col-lg-6">
                     <h2 class="h5">地理情報</h2>
-                    <?php $form = ActiveForm::begin([
-                            'action' => ['update', 'mode' => 'f', 'id' => $model->forest->id, 'ret_route' => $ret_route],
-                            'id' => 'forest-edit-form',
-                            'enableAjaxValidation' => false,
-                            'options' => ['autocomplete' => 'off'],
-                            'fieldConfig' => [
-                                    'options' => ['class' => 'mb-3']
-                            ],
-                    ]); ?>
                     <div class="p-2 mb-3 border border-secondary rounded">
                         <?= $form->field($model->forest, 'aza_id')->dropDownList(Aza::getAzaList(), ['prompt' => '']) ?>
                         <?= $form->field($model->forest, 'p_no')->textInput(['maxlength' => true]) ?>
@@ -40,30 +41,12 @@ $this->params['breadcrumbs'][] = '編集';
                         <?= $form->field($model->forest, 'area')->textInput(['disabled' => true])->label('面積 - 単位は ㎡') ?>
                         <?= $form->field($model->forest, 'note')->textInput(['maxlength' => true]) ?>
                     </div>
-                    <div class="form-group">
-                        <?= Html::button(Icon::getIconAndLabel('map-location'),
-                                ['class' => 'btn btn-outline-success', 'id' => 'open-map-modal', 'data-url' => $model->forest->mapurl]) ?>
-                        <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a(Icon::getIconAndLabel('end-edit'), $ret_route, ['class' => 'btn btn-outline-secondary']) ?>
-                    </div>
-                    <?php ActiveForm::end(); ?>
                 </div>
                 <div class="col-xl-4 col-lg-6">
                     <h2 class="h5">所有者</h2>
                     <?php
                     $count = count($model->ofps);
                     ?>
-                    <?php $form = ActiveForm::begin([
-                            'action' => ['update', 'mode' => 'o', 'id' => $model->forest->id, 'ret_route' => $ret_route],
-                            'id' => 'forest-ofps-edit-form',
-                            'enableAjaxValidation' => false,
-                            'enableClientValidation' => false,
-                            'options' => ['autocomplete' => 'off'],
-                            'fieldConfig' => [
-                                    'options' => ['class' => 'mb-3'],
-                                    'errorOptions' => ['class' => 'd-none'],
-                            ],
-                    ]); ?>
                     <?php foreach ($model->ofps as $i => $ofp) : ?>
                         <?php if ($i == $count - 1): ?>
                             <?= $form->field($model, 'new_ofp')
@@ -98,31 +81,14 @@ $this->params['breadcrumbs'][] = '編集';
                                 </div>
                             </div>
                             <?= $form->field($ofp, "[$i]note")->textInput(['maxlength' => true]) ?>
-                            <?= $form->errorSummary($ofp); ?>
                         </div>
                     <?php endforeach; ?>
-                    <div class="form-group">
-                        <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a(Icon::getIconAndLabel('end-edit'), $ret_route, ['class' => 'btn btn-outline-secondary']) ?>
-                    </div>
-                    <?php ActiveForm::end(); ?>
                 </div>
                 <div class="col-xl-4 col-lg-6">
                     <h2 class="h5">管理者</h2>
                     <?php
                     $count = count($model->mfps);
                     ?>
-                    <?php $form = ActiveForm::begin([
-                            'action' => ['update', 'mode' => 'm', 'id' => $model->forest->id, 'ret_route' => $ret_route],
-                            'id' => 'forest-mfps-edit-form',
-                            'enableAjaxValidation' => false,
-                            'enableClientValidation' => false,
-                            'options' => ['autocomplete' => 'off'],
-                            'fieldConfig' => [
-                                    'options' => ['class' => 'mb-3'],
-                                    'errorOptions' => ['class' => 'd-none'],
-                            ],
-                    ]); ?>
                     <?php foreach ($model->mfps as $i => $mfp) : ?>
                         <?php if ($i == $count - 1): ?>
                             <?= $form->field($model, 'new_mfp')
@@ -157,16 +123,18 @@ $this->params['breadcrumbs'][] = '編集';
                                 </div>
                             </div>
                             <?= $form->field($mfp, "[$i]note")->textInput(['maxlength' => true]) ?>
-                            <?= $form->errorSummary($mfp); ?>
                         </div>
                     <?php endforeach; ?>
-                    <div class="form-group">
-                        <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a(Icon::getIconAndLabel('end-edit'), $ret_route, ['class' => 'btn btn-outline-secondary']) ?>
-                    </div>
-                    <?php ActiveForm::end(); ?>
                 </div>
             </div>
+            <?= $form->errorSummary($mfp); ?>
+            <div class="form-group">
+                <?= Html::button(Icon::getIconAndLabel('map-location'),
+                        ['class' => 'btn btn-outline-success', 'id' => 'open-map-modal', 'data-url' => $model->forest->mapurl]) ?>
+                <?= Html::submitButton(Icon::getIconAndLabel('ok', '更新'), ['class' => 'btn btn-primary']) ?>
+                <?= Html::a(Icon::getIconAndLabel('end-edit'), $ret_route, ['class' => 'btn btn-outline-secondary']) ?>
+            </div>
+            <?php ActiveForm::end(); ?>
         </div>
         <?= $this->render('/field/_map_modal') ?>
         <?= Html::hiddenInput('person_id', '', ['id' => 'person-id']) ?>

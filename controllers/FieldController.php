@@ -95,7 +95,7 @@ class FieldController extends BaseController
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id, $mode = null, $ret_route = null)
+    public function actionUpdate($id, $ret_route = null)
     {
         if ($ret_route == null) {
             $ret_route = ['index'];
@@ -105,19 +105,19 @@ class FieldController extends BaseController
         $model->loadModels($id);
 
         if ($this->request->isPost) {
-            $ret =$model->loadPost($mode, $this->request->post());
+            $ret =$model->loadPost($this->request->post());
             if ($ret) {
-                $ret = $model->saveModels($mode);
+                $ret = $model->validateModels();
                 if ($ret) {
-                    if ($mode == 'o' || $mode == 'c' || $mode == 'ch' || $mode == 'sa' || $mode == 'u') {
-                        return $this->redirect(['update', 'id' => $id, 'ret_route' => $ret_route]);
+                    $ret = $model->saveModels();
+                    if ($ret) {
+                        return $this->redirect($ret_route);
                     }
-                    return $this->redirect($ret_route);
                 }
             }
         }
 
-        return $this->render('update_ex', [
+        return $this->render('update', [
             'model' => $model,
             'ret_route' => $ret_route,
         ]);

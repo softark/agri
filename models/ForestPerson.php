@@ -26,6 +26,18 @@ use yii\base\UserException;
  */
 class ForestPerson extends \yii\db\ActiveRecord
 {
+    private $_form_name = 'ForestPerson';
+
+    public function setFormName($form_name)
+    {
+        $this->_form_name = $form_name;
+    }
+
+    public function formName()
+    {
+        return $this->_form_name;
+    }
+
     public function behaviors()
     {
         return array_merge(parent::behaviors(), [
