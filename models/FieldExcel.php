@@ -56,6 +56,13 @@ class FieldExcel
         $sheet->getCell('D' . $row + 1)->setValueExplicit("=subtotal(109, D2:D$row)", DataType::TYPE_FORMULA);
         $sheet->getCell('F' . $row + 1)->setValueExplicit("=subtotal(109, F2:F$row)", DataType::TYPE_FORMULA);
 
+        $ids = FieldSearch::getModelIds($dataProvider);
+        $bbox = FieldSearch::getBboxTotal($ids);
+        $selectionUrl = Field::getSelectionMapUrl($ids, $bbox);
+
+        $sheet->getCell('N' . $row + 1)->setValueExplicit('i-GIS で見る', DataType::TYPE_STRING)
+            ->getHyperlink()->setUrl($selectionUrl);
+
         // 選択状態をリセット
         $sheet->setSelectedCell('A1');
 

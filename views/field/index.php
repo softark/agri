@@ -22,6 +22,17 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php Pjax::begin(['timeout' => 5000]) ?>
         <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
+        <?php
+        $ids = FieldSearch::getModelIds($dataProvider);
+        $bbox = FieldSearch::getBboxTotal($ids);
+        $selectionUrl = Field::getSelectionMapUrl($ids, $bbox);
+        $buttonsText = Html::button(Icon::getIconAndLabel('map-location'),
+                        ['class' => 'btn-map-open btn btn-sm btn-outline-success', 'data-url' => $selectionUrl])
+                . ' ' .
+                Html::a(Icon::getIcon('map-location') . ' i-GIS', $selectionUrl,
+                        ['class' => 'btn btn-sm btn-outline-success', 'target' => '_blank']);
+        ?>
+
         <?= GridView::widget([
                 'dataProvider' => $dataProvider,
             // 'filterModel' => $searchModel,
@@ -110,11 +121,11 @@ $this->params['breadcrumbs'][] = $this->title;
                                                 ['class' => 'btn btn-sm btn-primary', 'data-pjax' => 0]);
                                     }
                                     return implode(' ', $buttons);
-                                }
+                                },
+                                'footer' => $buttonsText,
                         ],
                 ],
         ]); ?>
-
         <?php Pjax::end(); ?>
         <?= $this->render('/field/_map_modal') ?>
         <hr/>
@@ -129,8 +140,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </span>
         </p>
         <div class="excel-export">
-            <?php $form = ActiveForm::begin([
-                    'action' => ['export'],
+            <?php $form = ActiveForm::begin(['action' => ['export'],
                     'method' => 'post',
                     'id' => 'export-form',
                     'options' => ['target' => 'dl_iframe'],   // ★ここ重要

@@ -129,6 +129,16 @@ $this->params['breadcrumbs'][] = $this->title;
                         'linkSelector' => '#field-grid-pjax a',
                         'timeout' => 5000
                 ]); ?>
+                <?php
+                $ids = FieldSearch::getModelIds($fieldDp);
+                $bbox = FieldSearch::getBboxTotal($ids);
+                $selectionUrl = Field::getSelectionMapUrl($ids, $bbox);
+                $buttonsText = Html::button(Icon::getIcon('map-location'),
+                                ['class' => 'btn-map-open btn btn-sm btn-outline-success', 'data-url' => $selectionUrl])
+                        . ' ' .
+                        Html::a(Icon::getIcon('map-location') . ' i-GIS', $selectionUrl,
+                                ['class' => 'btn btn-sm btn-outline-success', 'target' => '_blank']);
+                ?>
                 <?= GridView::widget([
                         'dataProvider' => $fieldDp,
                     // 'filterModel' => $searchModel,
@@ -145,7 +155,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                                             ['class' => 'btn btn-outline-primary btn-sm']) . ' ' .
                                                     Html::button(Icon::getIcon('map-location'),
                                                             ['class' => 'btn-map-open btn btn-sm btn-outline-success', 'data-url' => $model->mapurl]);
-                                        }
+                                        },
+                                        'footer' => $buttonsText,
                                 ],
                                 [
                                         'attribute' => 'owner',

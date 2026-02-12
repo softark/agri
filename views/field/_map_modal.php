@@ -18,19 +18,35 @@ Modal::begin([
         'bodyOptions' => ['style' => 'height:85vh']
 ]);
 ?>
-    <iframe id="map-frame" src="" style="border:0; width:100%; height:100%;" allowfullscreen></iframe>
-
+    <div id="map-frame-container" style="width:100%; height:100%;"></div>
 <?php
 Modal::end();
 
 $this->registerJs("
 function openMapModal(src) {
-    $('#map-frame').attr('src', src);
-    $('#igis-map-modal').modal('show');
+  const modal = $('#igis-map-modal');
+  const container = $('#map-frame-container');
+
+  // 念のため前回の残骸を消す
+  container.empty();
+
+  // 先に modal を表示（サイズ確定）
+  modal.modal('show');
+
+  // 表示後に iframe を作る（これが効く）
+  modal.one('shown.bs.modal', function () {
+    const iframe = $('<iframe>', {
+      id: 'map-frame',
+      src: src,
+      style: 'border:0; width:100%; height:100%;',
+      allowfullscreen: true
+    });
+    container.append(iframe);
+  });
 }
 
-$('#igis-map-modal').on('hidden.bs.modal', () => {
-  // 閉じたら読み込み停止（重要）
-  $('#map-frame').attr('src', '');
+// 閉じたら iframe を破棄（読み込み停止＋状態リセット）
+$('#igis-map-modal').on('hidden.bs.modal', function () {
+  $('#map-frame-container').empty();
 });
 ");
