@@ -208,22 +208,19 @@ class FieldSearch extends Field
         return $dataProvider;
     }
 
-    public
-    static function getFAreaTotal($dataProvider)
+    public static function getFAreaTotal($dataProvider)
     {
         $query = clone($dataProvider->query);
         return $query->limit(-1)->offset(-1)->orderBy([])->sum('f_area');
     }
 
-    public
-    static function getCAreaTotal($dataProvider)
+    public static function getCAreaTotal($dataProvider)
     {
         $query = clone($dataProvider->query);
         return $query->limit(-1)->offset(-1)->orderBy([])->sum('c_area');
     }
 
-    public
-    static function getModelIds($dataProvider)
+    public static function getModelIds($dataProvider)
     {
         $query = clone($dataProvider->query);
         $rows = $query->limit(-1)->offset(-1)->orderBy([])->select(['field.id'])->all();
@@ -258,5 +255,4 @@ class FieldSearch extends Field
         if (!$row || $row['xmin'] === null) return null;
         return $row;
     }
-
 }

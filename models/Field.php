@@ -126,10 +126,10 @@ class Field extends \yii\db\ActiveRecord
     {
         $row = Field::find()->where(['id' => $this->id])
             ->select([
-                'public.ST_XMin(field.bbox_3857) as xmin',
-                'public.ST_YMin(field.bbox_3857) as ymin',
-                'public.ST_XMax(field.bbox_3857) as xmax',
-                'public.ST_YMax(field.bbox_3857) as ymax',
+                'public.ST_XMin(bbox_3857) as xmin',
+                'public.ST_YMin(bbox_3857) as ymin',
+                'public.ST_XMax(bbox_3857) as xmax',
+                'public.ST_YMax(bbox_3857) as ymax',
             ])->one();
         if ($row) {
             $this->_xmin = $row['xmin'];
@@ -176,8 +176,8 @@ class Field extends \yii\db\ActiveRecord
     {
         $row = Field::find()->where(['id' => $this->id])
             ->select([
-                'public.ST_X(field.center_3857) as cx',
-                'public.ST_Y(field.center_3857) as cy',
+                'public.ST_X(center_3857) as cx',
+                'public.ST_Y(center_3857) as cy',
             ])->one();
         if ($row) {
             $this->_cx = $row['cx'];
@@ -597,7 +597,7 @@ class Field extends \yii\db\ActiveRecord
     }
 
     public const MAP_SERVER = YII_ENV_DEV ? 'https://gis.vmware/' : 'https://gis.isarigami.net/';
-    public const MAP_URL = self::MAP_SERVER . '?t=isg-agfr&l=forest!,f_forest!,p_no!,agri!,f_agri,bld,road,water,isarigami!,sh355!,sh35!,sh79~,sh125!,sh172!,ir355!,ir35!,ir79~,ir125!,ir172!,contour~,cs!,dem-shade!,dsm-shade!,dem!,dsm!&bl=g-sat';
+    public const MAP_URL = self::MAP_SERVER . '?t=isg-agfr&l=forest!,f_forest!,p_no!,agri,f_agri,bld,road,water,isarigami!,sh355!,sh35!,sh79~,sh125!,sh172!,ir355!,ir35!,ir79~,ir125!,ir172!,contour~,cs!,dem-shade!,dsm-shade!,dem!,dsm!&bl=g-sat';
 
     private ?string $_map_url = null;
 
@@ -614,8 +614,8 @@ class Field extends \yii\db\ActiveRecord
             $f = rawurlencode(json_encode($filter, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
             $ext_xmin = $this->xmin - 50;
-            $ext_xmax = $this->xmax + 50;
             $ext_ymin = $this->ymin - 50;
+            $ext_xmax = $this->xmax + 50;
             $ext_ymax = $this->ymax + 50;
 
             $this->_map_url = self::MAP_URL
@@ -629,10 +629,10 @@ class Field extends \yii\db\ActiveRecord
 
     public static function getSelectionMapUrl($ids, $bbox): string
     {
-        $xmin = $bbox['xmin'] - 50;
-        $ymin = $bbox['ymin'] - 50;
-        $xmax = $bbox['xmax'] + 50;
-        $ymax = $bbox['ymax'] + 50;
+        $xmin = $bbox['xmin'] - 100;
+        $ymin = $bbox['ymin'] - 100;
+        $xmax = $bbox['xmax'] + 100;
+        $ymax = $bbox['ymax'] + 100;
 
         $ptx = ($bbox['xmin'] + $bbox['xmax']) / 2;
         $pty = ($bbox['ymin'] + $bbox['ymax']) / 2;

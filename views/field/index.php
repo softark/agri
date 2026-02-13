@@ -23,14 +23,17 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
         <?php
+        $buttonsText = '';
         $ids = FieldSearch::getModelIds($dataProvider);
-        $bbox = FieldSearch::getBboxTotal($ids);
-        $selectionUrl = Field::getSelectionMapUrl($ids, $bbox);
-        $buttonsText = Html::button(Icon::getIconAndLabel('map-location'),
-                        ['class' => 'btn-map-open btn btn-sm btn-outline-success', 'data-url' => $selectionUrl])
-                . ' ' .
-                Html::a(Icon::getIcon('map-location') . ' i-GIS', $selectionUrl,
-                        ['class' => 'btn btn-sm btn-outline-success', 'target' => '_blank']);
+        if (count($ids) > 0) {
+            $bbox = FieldSearch::getBboxTotal($ids);
+            $selectionUrl = Field::getSelectionMapUrl($ids, $bbox);
+            $buttonsText = Html::button(Icon::getIconAndLabel('map-location'),
+                            ['class' => 'btn-map-open btn btn-sm btn-outline-success', 'data-url' => $selectionUrl])
+                    . ' ' .
+                    Html::a(Icon::getIcon('map-location') . ' i-GIS', $selectionUrl,
+                            ['class' => 'btn btn-sm btn-outline-success', 'target' => '_blank']);
+        }
         ?>
 
         <?= GridView::widget([

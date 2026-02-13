@@ -13,19 +13,19 @@ use yii\bootstrap5\Modal;
 Modal::begin([
         'title' => '<span class="text-success">' . Icon::getIconAndLabel('map-location') . '</span>',
         'toggleButton' => false,
-        'id' => 'igis-map-modal',
+        'id' => 'field-map-modal',
         'size' => Modal::SIZE_EXTRA_LARGE,
         'bodyOptions' => ['style' => 'height:85vh']
 ]);
 ?>
-    <div id="map-frame-container" style="width:100%; height:100%;"></div>
+    <div id="field-map-container" style="width:100%; height:100%;"></div>
 <?php
 Modal::end();
 
 $this->registerJs("
 function openMapModal(src) {
-  const modal = $('#igis-map-modal');
-  const container = $('#map-frame-container');
+  const modal = $('#field-map-modal');
+  const container = $('#field-map-container');
 
   // 念のため前回の残骸を消す
   container.empty();
@@ -46,7 +46,7 @@ function openMapModal(src) {
 }
 
 // 閉じたら iframe を破棄（読み込み停止＋状態リセット）
-$('#igis-map-modal').on('hidden.bs.modal', function () {
-  $('#map-frame-container').empty();
+$('#field-map-modal').on('hidden.bs.modal', function () {
+  $('#field-map-container').empty();
 });
 ");

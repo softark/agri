@@ -5,6 +5,8 @@ namespace app\models;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Forest;
+use yii\db\Expression;
+use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -74,6 +76,15 @@ class ForestSearch extends Forest
                 'ownerForestPerson.person',
                 'managerForestPerson',
                 'managerForestPerson.person',
+            ])
+            ->select([
+                'forest.*',
+                'public.ST_XMin(bbox_3857) AS xmin',
+                'public.ST_YMin(bbox_3857) AS ymin',
+                'public.ST_XMax(bbox_3857) AS xmax',
+                'public.ST_YMax(bbox_3857) AS ymax',
+                'public.ST_X(center_3857)  AS cx',
+                'public.ST_Y(center_3857)  AS cy'
             ]);
 
         // add conditions that should always apply here
@@ -165,5 +176,41 @@ class ForestSearch extends Forest
     {
         $query = clone($dataProvider->query);
         return $query->limit(-1)->offset(-1)->orderBy([])->sum('area');
+    }
+
+    public static function getModelIds($dataProvider)
+    {
+        $query = clone($dataProvider->query);
+        $rows = $query->limit(-1)->offset(-1)->orderBy([])->select(['forest.id'])->all();
+        return array_column($rows, 'id');
+    }
+
+    public static function getBboxTotal(array $ids): ?array
+    {
+        $ids = array_values(array_unique(array_map('intval', $ids)));
+        if (!$ids) return null;
+
+        // PostgreSQL: 配列パラメータは '{1,2,3}' 形式で渡すのが楽
+        $pgArray = '{' . implode(',', $ids) . '}';
+
+        $sub = (new Query())
+            ->from('agri.forest')
+            ->select([
+                'e' => new Expression('public.ST_Extent(bbox_3857)')
+            ])
+            ->where(new Expression('id = ANY(:ids::int[])', [':ids' => $pgArray]));
+
+        $row = (new Query())
+            ->from(['s' => $sub])
+            ->select([
+                'xmin' => new Expression('public.ST_XMin(s.e)'),
+                'ymin' => new Expression('public.ST_YMin(s.e)'),
+                'xmax' => new Expression('public.ST_XMax(s.e)'),
+                'ymax' => new Expression('public.ST_YMax(s.e)'),
+            ])
+            ->one();
+
+        if (!$row || $row['xmin'] === null) return null;
+        return $row;
     }
 }

@@ -56,6 +56,126 @@ class Forest extends \yii\db\ActiveRecord
         return 'forest';
     }
 
+    // 地物の BBOX
+    private $_xmin;
+    private $_ymin;
+    private $_xmax;
+    private $_ymax;
+
+    public function getXmin()
+    {
+        if ($this->_xmin == null) {
+            $this->getBBox();
+        }
+        return $this->_xmin;
+    }
+    public function setXmin($value)
+    {
+        $this->_xmin = $value;
+    }
+
+    public function getYmin()
+    {
+        if ($this->_ymin == null) {
+            $this->getBBox();
+        }
+        return $this->_ymin;
+    }
+    public function setYmin($value)
+    {
+        $this->_ymin = $value;
+    }
+
+    public function getXmax()
+    {
+        if ($this->_xmax == null) {
+            $this->getBBox();
+        }
+        return $this->_xmax;
+    }
+    public function setXmax($value)
+    {
+        $this->_xmax = $value;
+    }
+
+    public function getYmax()
+    {
+        if ($this->_ymax == null) {
+            $this->getBBox();
+        }
+        return $this->_ymax;
+    }
+    public function setYmax($value)
+    {
+        $this->_ymax = $value;
+    }
+
+    private function getBBox()
+    {
+        $row = Forest::find()->where(['id' => $this->id])
+            ->select([
+                'public.ST_XMin(bbox_3857) as xmin',
+                'public.ST_YMin(bbox_3857) as ymin',
+                'public.ST_XMax(bbox_3857) as xmax',
+                'public.ST_YMax(bbox_3857) as ymax',
+            ])->one();
+        if ($row) {
+            $this->_xmin = $row['xmin'];
+            $this->_ymin = $row['ymin'];
+            $this->_xmax = $row['xmax'];
+            $this->_ymax = $row['ymax'];
+        } else {
+            $this->_xmin = 0;
+            $this->_ymin = 0;
+            $this->_xmax = 0;
+            $this->_ymax = 0;
+        }
+    }
+
+    // 地物の中心点
+    private $_cx;
+    private $_cy;
+
+    public function getCx()
+    {
+        if ($this->_cx == null) {
+            $this->getCenterPoint();
+        }
+        return $this->_cx;
+    }
+    public function setCx($value)
+    {
+        $this->_cx = $value;
+    }
+
+    public function getCy()
+    {
+        if ($this->_cy == null) {
+            $this->getCenterPoint();
+        }
+        return $this->_cy;
+    }
+    public function setCy($value)
+    {
+        $this->_cy = $value;
+    }
+
+    private function getCenterPoint()
+    {
+        $row = Forest::find()->where(['id' => $this->id])
+            ->select([
+                'public.ST_X(center_3857) as cx',
+                'public.ST_Y(center_3857) as cy',
+            ])->one();
+        if ($row) {
+            $this->_cx = $row['cx'];
+            $this->_cy = $row['cy'];
+        } else {
+            $this->_cx = 0;
+            $this->_cy = 0;
+        }
+    }
+
     private ?string $_title = null;
 
     public function getTitle(): string
@@ -339,38 +459,61 @@ class Forest extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'updated_by']);
     }
 
-    public const MAP_URL =
-        'https://gis.isarigami.net/?t=isg-agfr&l=forest,p_no!,agri!,bld!,road,water,isarigami!,sh355!,sh35!,sh79~,sh125!,sh172!,ir355!,ir35!,ir79~,ir125!,ir172!,contour~,cs!,dem-shade!,dsm-shade!,dem!,dsm!&bl=g-sat';
+    public const MAP_SERVER = YII_ENV_DEV ? 'https://gis.vmware/' : 'https://gis.isarigami.net/';
+    public const MAP_URL = self::MAP_SERVER . '?t=isg-agfr&l=forest,f_forest,p_no!,agri!,f_agri!,bld,road,water,isarigami!,sh355!,sh35!,sh79~,sh125!,sh172!,ir355!,ir35!,ir79~,ir125!,ir172!,contour~,cs!,dem-shade!,dsm-shade!,dem!,dsm!&bl=g-sat';
 
     private ?string $_map_url = null;
 
     public function getMapUrl(): ?string
     {
         if ($this->_map_url === null) {
-            $sql = <<< SQL
-SELECT
-  public.ST_X(public.ST_Transform(public.ST_pointonsurface((geom)::public.geometry), 3857)) AS x,
-  public.ST_Y(public.ST_Transform(public.ST_PointOnSurface((geom)::public.geometry), 3857)) AS y
-FROM agri.forest
-  WHERE id = :id
-SQL;
-            $sql2 = <<< SQL2
-SELECT
-  public.ST_XMin(e) AS xmin, public.ST_YMin(e) AS ymin,
-  public.ST_XMax(e) AS xmax, public.ST_YMax(e) AS ymax
-FROM (
-  SELECT public.ST_Extent(public.ST_Expand(public.ST_Transform((geom)::public.geometry, 3857), 50)) AS e
-  FROM agri.forest
-  WHERE id = :id
-)
-SQL2;
-            $pt = Yii::$app->db->createCommand($sql, ['id' => $this->id])->queryOne();
-            $ex = Yii::$app->db->createCommand($sql2, ['id' => $this->id])->queryOne();
+            $filter = [
+                "__custom" => [[
+                    "title" => "選択された山林",
+                    "layer" => "f_forest",
+                    "expr" => ["id", "=", (int)$this->id],   // まずは1件ならこれ
+                ]]
+            ];
+            $f = rawurlencode(json_encode($filter, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
+            $ext_xmin = $this->xmin - 100;
+            $ext_ymin = $this->ymin - 100;
+            $ext_xmax = $this->xmax + 100;
+            $ext_ymax = $this->ymax + 100;
+
             $this->_map_url = self::MAP_URL
-                . "&e={$ex['xmin']},{$ex['ymin']},{$ex['xmax']},{$ex['ymax']}"
-                . "&c={$pt['x']},{$pt['y']}&hc=1";
+                . "&e=$ext_xmin,$ext_ymin,$ext_xmax,$ext_ymax"
+                // . "&c=$this->cx,$this->cy"&hc=1"
+                . "&c=$this->cx,$this->cy"
+                . "&f=$f";
         }
         return $this->_map_url;
+    }
+
+    public static function getSelectionMapUrl($ids, $bbox): string
+    {
+        $xmin = $bbox['xmin'] - 200;
+        $ymin = $bbox['ymin'] - 200;
+        $xmax = $bbox['xmax'] + 200;
+        $ymax = $bbox['ymax'] + 200;
+
+        $ptx = ($bbox['xmin'] + $bbox['xmax']) / 2;
+        $pty = ($bbox['ymin'] + $bbox['ymax']) / 2;
+
+        $filter = [
+            "__custom" => [[
+                "title" => "選択された山林",
+                "layer" => "f_forest",
+                "expr" => ["id", "in", $ids],
+            ]]
+        ];
+        $f = rawurlencode(json_encode($filter, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
+        return self::MAP_URL
+            . "&e=$xmin,$ymin,$xmax,$ymax"
+            // . "&c=$ptx,$pty&hc=1"
+            . "&c=$ptx,$pty"
+            . "&f=$f";
     }
 
     /**

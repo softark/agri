@@ -65,6 +65,13 @@ class ForestExcel
 
         $sheet->getCell('E' . $row + 1)->setValueExplicit("=subtotal(109, E2:E$row)", DataType::TYPE_FORMULA);
 
+        $ids = ForestSearch::getModelIds($dataProvider);
+        $bbox = ForestSearch::getBboxTotal($ids);
+        $selectionUrl = Forest::getSelectionMapUrl($ids, $bbox);
+
+        $sheet->getCell('P' . $row + 1)->setValueExplicit('i-GIS で見る', DataType::TYPE_STRING)
+            ->getHyperlink()->setUrl($selectionUrl);
+
         // 選択状態をリセット
         $sheet->setSelectedCell('A1');
 

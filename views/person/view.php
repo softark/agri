@@ -3,6 +3,7 @@
 use app\components\Icon;
 use app\models\Field;
 use app\models\FieldSearch;
+use app\models\Forest;
 use app\models\ForestSearch;
 use yii\bootstrap5\Html;
 use yii\data\ActiveDataProvider;
@@ -130,14 +131,17 @@ $this->params['breadcrumbs'][] = $this->title;
                         'timeout' => 5000
                 ]); ?>
                 <?php
+                $buttonsText = '';
                 $ids = FieldSearch::getModelIds($fieldDp);
-                $bbox = FieldSearch::getBboxTotal($ids);
-                $selectionUrl = Field::getSelectionMapUrl($ids, $bbox);
-                $buttonsText = Html::button(Icon::getIcon('map-location'),
-                                ['class' => 'btn-map-open btn btn-sm btn-outline-success', 'data-url' => $selectionUrl])
-                        . ' ' .
-                        Html::a(Icon::getIcon('map-location') . ' i-GIS', $selectionUrl,
-                                ['class' => 'btn btn-sm btn-outline-success', 'target' => '_blank']);
+                if (count($ids) > 0) {
+                    $bbox = FieldSearch::getBboxTotal($ids);
+                    $selectionUrl = Field::getSelectionMapUrl($ids, $bbox);
+                    $buttonsText = Html::button(Icon::getIcon('map-location'),
+                                    ['class' => 'btn-map-open btn btn-sm btn-outline-success', 'data-url' => $selectionUrl])
+                            . ' ' .
+                            Html::a(Icon::getIcon('map-location') . ' i-GIS', $selectionUrl,
+                                    ['class' => 'btn btn-sm btn-outline-success', 'target' => '_blank']);
+                }
                 ?>
                 <?= GridView::widget([
                         'dataProvider' => $fieldDp,
@@ -218,6 +222,19 @@ $this->params['breadcrumbs'][] = $this->title;
                         'linkSelector' => '#forest-grid-pjax a',
                         'timeout' => 5000
                 ]); ?>
+                <?php
+                $buttonsText = '';
+                $ids = ForestSearch::getModelIds($forestDp);
+                if (count($ids) > 0) {
+                    $bbox = ForestSearch::getBboxTotal($ids);
+                    $selectionUrl = Forest::getSelectionMapUrl($ids, $bbox);
+                    $buttonsText = Html::button(Icon::getIcon('map-location'),
+                                    ['class' => 'btn-map-open btn btn-sm btn-outline-success', 'data-url' => $selectionUrl])
+                            . ' ' .
+                            Html::a(Icon::getIcon('map-location') . ' i-GIS', $selectionUrl,
+                                    ['class' => 'btn btn-sm btn-outline-success', 'target' => '_blank']);
+                }
+                ?>
                 <?= GridView::widget([
                         'dataProvider' => $forestDp,
                     // 'filterModel' => $searchModel,
@@ -234,7 +251,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                                             ['class' => 'btn btn-outline-primary btn-sm']) . ' ' .
                                                     Html::button(Icon::getIcon('map-location'),
                                                             ['class' => 'btn-map-open btn btn-sm btn-outline-success', 'data-url' => $model->mapurl]);
-                                        }
+                                        },
+                                        'footer' => $buttonsText,
                                 ],
                                 [
                                         'attribute' => 'owner',

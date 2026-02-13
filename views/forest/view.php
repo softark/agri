@@ -182,7 +182,7 @@ $this->params['breadcrumbs'][] = $model->title;
             </table>
         </div>
         <div class="col-lg-8 col-md-6">
-            <iframe src="<?= $model->mapurl ?>" style="width:100%; height:75vh;"></iframe>
+            <iframe src="<?= $model->mapurl ?>" style="width:100%; height:550px;"></iframe>
         </div>
     </div>
 </div>
