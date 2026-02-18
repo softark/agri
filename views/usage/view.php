@@ -17,14 +17,18 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a(Icon::getIconAndLabel('update'), ['update', 'id' => $model->id, 'ret_route' => ['view', 'id' => $model->id]], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Icon::getIconAndLabel('delete'), ['delete', 'id' => $model->id], [
-                'class' => 'btn btn-danger',
-                'data' => [
-                        'confirm' => 'この農地利用状況を削除しても構いませんか？?',
-                        'method' => 'post',
-                ],
-        ]) ?>
+        <?php if (Yii::$app->user->can('usage.edit')) : ?>
+            <?= Html::a(Icon::getIconAndLabel('update'), ['update', 'id' => $model->id, 'ret_route' => ['view', 'id' => $model->id]], ['class' => 'btn btn-primary']) ?>
+            <?php if (Yii::$app->user->can('usage.delete')) : ?>
+                <?= Html::a(Icon::getIconAndLabel('delete'), ['delete', 'id' => $model->id], [
+                        'class' => 'btn btn-danger',
+                        'data' => [
+                                'confirm' => 'この農地利用状況を削除しても構いませんか？?',
+                                'method' => 'post',
+                        ],
+                ]) ?>
+            <?php endif; ?>
+        <?php endif; ?>
         <?= Html::a(Icon::getIconAndLabel('go-back'), ['index'], ['class' => 'btn btn-outline-secondary']) ?>
     </p>
 
@@ -35,9 +39,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attributes' => [
                             [
                                     'attribute' => 'type',
-                                'value' => function($model) {
-                return $model->typeText;
-                                }
+                                    'value' => function ($model) {
+                                        return $model->typeText;
+                                    }
                             ],
                             'order',
                             'name',

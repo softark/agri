@@ -83,8 +83,8 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
                     ]
             ];
         }
-        $items[] = ['label' => Icon::getIcon('map-location') . ' i-GIS', 'url' => 'https://gis.isarigami.net/home', 'encode' => false];
     }
+    $items[] = ['label' => Html::img('/i-gis.svg', ['style' => 'height:26px']) . ' 地図', 'url' => 'https://gis.isarigami.net//?t=isg-agfr', 'encode' => false];
     echo Nav::widget([
             'options' => ['class' => 'navbar-nav me-auto'],
             'items' => $items,

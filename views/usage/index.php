@@ -19,9 +19,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>
-        <?= Html::a(Icon::getIcon('plus') . ' 農地利用状況を新規登録', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <?php if (Yii::$app->user->can('usage.create')) : ?>
+        <p>
+            <?= Html::a(Icon::getIcon('plus') . ' 農地利用状況を新規登録', ['create'], ['class' => 'btn btn-success']) ?>
+        </p>
+    <?php endif; ?>
 
     <?php Pjax::begin(); ?>
     <?php echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -40,6 +42,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     'name',
                     [
                             'class' => ActionColumn::className(),
+                            'template' => Yii::$app->user->can('usage.delete') ? '{view} {update} {delete}' :
+                                    (Yii::$app->user->can('usage.edit') ? '{view} {update}' : '{view}'),
                             'urlCreator' => function ($action, Usage $model, $key, $index, $column) {
                                 return Url::toRoute([$action, 'id' => $model->id]);
                             }
