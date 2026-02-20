@@ -28,19 +28,22 @@ SearchFormAsset::register($this);
     ]); ?>
 
     <div class="row">
-        <div class="col-md-2 col-sm-3 col-5">
+        <div class="col-lg-2 col-sm-3 col-4">
             <?= $form->field($model, 'aza_id')->dropDownList(Aza::getAzaList(), ['prompt' => '']) ?>
         </div>
-        <div class="col-md-2 col-sm-3 col-5">
-            <?= $form->field($model, 'p_no') ?>
-        </div>
-        <div class="col-md-2 col-sm-3 col-5">
+        <div class="col-lg-2 col-sm-3 col-4">
             <?= $form->field($model, 'type_id')->dropDownList(Frtype::getTypeList(), ['prompt' => '']) ?>
         </div>
-        <div class="col-md-2 col-sm-3 col-5">
+        <div class="col-lg-2 col-sm-3 col-4">
             <?= $form->field($model, 'search_name') ?>
         </div>
-        <div class="col-md-2 col-sm-3 col-5">
+        <div class="col-xl-1 col-lg-2 col-sm-3 col-4">
+            <?= $form->field($model, 'owner_name') ?>
+        </div>
+        <div class="col-xl-1 col-lg-2 col-sm-3 col-4">
+            <?= $form->field($model, 'manager_name') ?>
+        </div>
+        <div class="col-lg-2 col-sm-3 col-4">
             <?= $form->field($model, 'note') ?>
         </div>
 

@@ -17,6 +17,8 @@ class ForestSearch extends Forest
     use LoadParamsTrait;
 
     public ?string $search_name = null;
+    public ?string $owner_name = null;
+    public ?string $manager_name = null;
 
     public $search_person_id = null;
 
@@ -27,7 +29,7 @@ class ForestSearch extends Forest
     {
         return [
             [['id', 'aza_id', 'type_id', 'search_person_id', 'created_by', 'updated_by'], 'integer'],
-            [['p_no', 'note', 'search_name', 'created_at', 'updated_at'], 'safe'],
+            [['p_no', 'note', 'search_name', 'owner_name', 'manager_name', 'created_at', 'updated_at'], 'safe'],
             [['area'], 'number'],
         ];
     }
@@ -37,7 +39,9 @@ class ForestSearch extends Forest
         return ArrayHelper::merge(
             parent::attributeLabels(),
             [
-                'search_name' => '所有者・管理者',
+                'search_name' => '関係者(所/管)',
+                'owner_name' => '所有者',
+                'manager_name' => '所有者',
             ]);
     }
 
@@ -153,6 +157,18 @@ class ForestSearch extends Forest
         $query->andFilterWhere(['ilike', 'p_no', $this->p_no])
             ->andFilterWhere(['ilike', 'forest.note', $this->note]);
 
+        if ($this->owner_name != '') {
+            $query->andWhere(['or',
+                ['ilike', 'po.name', $this->owner_name],
+                ['ilike', 'po.yomi', $this->owner_name],
+            ]);
+        }
+        if ($this->manager_name != '') {
+            $query->andWhere(['or',
+                ['ilike', 'pm.name', $this->manager_name],
+                ['ilike', 'pm.yomi', $this->manager_name],
+            ]);
+        }
         if ($this->search_name != '') {
             $query->andWhere(['or',
                 ['ilike', 'po.name', $this->search_name],

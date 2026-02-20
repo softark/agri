@@ -17,6 +17,10 @@ class FieldSearch extends Field
     use LoadParamsTrait;
 
     public ?string $search_name = null;
+    public ?string $owner_name = null;
+    public ?string $cultivator_name = null;
+    public ?string $chusankan_name = null;
+    public ?string $saimokusho_name = null;
 
     public $search_usage = null;
 
@@ -29,7 +33,7 @@ class FieldSearch extends Field
     {
         return [
             [['id', 'aza_id', 'search_person_id', 'created_by', 'updated_by'], 'integer'],
-            [['p_no', 'note', 'search_name', 'search_usage', 'created_at', 'updated_at'], 'safe'],
+            [['p_no', 'note', 'search_name', 'owner_name', 'cultivator_name', 'chusankan_name', 'saimokusho_name', 'search_usage', 'created_at', 'updated_at'], 'safe'],
             [['c_area', 'f_area'], 'number'],
         ];
     }
@@ -39,7 +43,11 @@ class FieldSearch extends Field
         return ArrayHelper::merge(
             parent::attributeLabels(),
             [
-                'search_name' => '関係者',
+                'search_name' => '関係者(所/耕/中/細)',
+                'owner_name' => '所有者',
+                'cultivator_name' => '耕作者',
+                'chusankan_name' => '中山間',
+                'saimokusho_name' => '細目書',
                 'search_usage' => '農地利用状況',
             ]);
     }
@@ -175,6 +183,30 @@ class FieldSearch extends Field
         $query->andFilterWhere(['ilike', 'p_no', $this->p_no])
             ->andFilterWhere(['ilike', 'field.note', $this->note]);
 
+        if ($this->owner_name != '') {
+            $query->andWhere(['or',
+                ['ilike', 'po.name', $this->owner_name],
+                ['ilike', 'po.yomi', $this->owner_name]
+            ]);
+        }
+        if ($this->cultivator_name != '') {
+            $query->andWhere(['or',
+                ['ilike', 'pc.name', $this->cultivator_name],
+                ['ilike', 'pc.yomi', $this->cultivator_name]
+            ]);
+        }
+        if ($this->chusankan_name != '') {
+            $query->andWhere(['or',
+                ['ilike', 'pch.name', $this->chusankan_name],
+                ['ilike', 'pch.yomi', $this->chusankan_name]
+            ]);
+        }
+        if ($this->saimokusho_name != '') {
+            $query->andWhere(['or',
+                ['ilike', 'psa.name', $this->saimokusho_name],
+                ['ilike', 'psa.yomi', $this->saimokusho_name]
+            ]);
+        }
         if ($this->search_name != '') {
             $query->andWhere(['or',
                 ['ilike', 'po.name', $this->search_name],
