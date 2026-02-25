@@ -14,13 +14,19 @@ $config = [
         '@tests' => '@app/tests',
     ],
     'components' => [
+        'redis' => [
+            'class' => yii\redis\Connection::class,
+            'hostname' => '127.0.0.1',
+            'port' => 6379,
+            'database' => 0,
+        ],
         'cache' => [
-            'class' => yii\caching\ApcCache::class,
-            'useApcu' => true,
+            'class' => yii\redis\Cache::class,
         ],
         'authManager' => [
             'class' => yii\rbac\DbManager::class,
             'cache' => 'cache',
+            'cacheKey' => 'rbac',
         ],
         'log' => [
             'targets' => [

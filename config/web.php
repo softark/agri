@@ -11,8 +11,8 @@ $config = [
         'log',
         'session',
         function () {
-            \app\components\GridAndListUtil::setupGrid();
-            \app\components\GridAndListUtil::setupListView();
+            app\components\GridAndListUtil::setupGrid();
+            app\components\GridAndListUtil::setupListView();
         }
     ],
     'aliases' => [
@@ -24,9 +24,18 @@ $config = [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'mqzVmDBdfzNs-DEgRoBZdNJ1kXwZvA8H',
         ],
-        'cache' => [
+        'redis' => [
+            'class' => yii\redis\Connection::class,
+            'hostname' => '127.0.0.1',
+            'port' => 6379,
+            'database' => 0,
+        ],
+        'apcCache' => [
             'class' => yii\caching\ApcCache::class,
             'useApcu' => true,
+        ],
+        'cache' => [
+            'class' => yii\redis\Cache::class,
         ],
         'user' => [
             'identityClass' => app\models\User::class,
@@ -41,14 +50,14 @@ $config = [
             ],
         ],
         'formatter' => [
-            'class' => 'yii\i18n\Formatter',
+            'class' => yii\i18n\Formatter::class,
             'nullDisplay' => '&nbsp;',
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
         'mailer' => [
-            'class' => \yii\symfonymailer\Mailer::class,
+            'class' => yii\symfonymailer\Mailer::class,
             'viewPath' => '@app/mail',
             // send all mails to a file by default.
             'useFileTransport' => true,
@@ -61,7 +70,7 @@ $config = [
                     'levels' => ['error', 'warning'],
                 ],
                 [
-                    'class' => \yii\log\FileTarget::class,
+                    'class' => yii\log\FileTarget::class,
                     'levels' => ['info', 'warning', 'error'],
                     'categories' => ['audit'],
                     'logFile' => '@runtime/logs/audit.log',
@@ -91,7 +100,7 @@ $config = [
             'class' => yii\rbac\DbManager::class,
             'defaultRoles' => ['user'],
             'cache' => 'cache',
-            'cacheKey' => 'agri-rbac',
+            'cacheKey' => 'rbac',
         ],
     ],
     'modules' => [
@@ -100,7 +109,7 @@ $config = [
             'controllerMap' => [
                 'assignment' => [
                     'class' => mdm\admin\controllers\AssignmentController::class,
-                    'searchClass' => \app\models\UserSearch::class,
+                    'searchClass' => app\models\UserSearch::class,
                     'usernameField' => 'username',
                     'fullnameField' => 'dispname',
                     'extraColumns' => [

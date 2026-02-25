@@ -13,7 +13,7 @@ return [
         ],
     ],
     // Schema cache options (for production environment)
-    'enableSchemaCache' => !YII_DEBUG,
-    'schemaCacheDuration' => 60,
+    'enableSchemaCache' => true,
+    'schemaCacheDuration' => 86400,
     'schemaCache' => 'cache',
 ];
